@@ -46,11 +46,11 @@ Tap it for an inline breakdown of **audio** vs. **video** data; tap again to hid
 
 ## Download
 
-There are no official releases yet. Every push is built automatically by GitHub Actions:
+**[Download the latest release](../../releases)**: grab `BetterTube-<version>.apk` under *Assets* and open it on your phone. Android may ask you to allow installs from your browser or file manager.
 
-1. Open the [latest successful build](../../actions/workflows/ci.yml?query=is%3Asuccess) and sign in to GitHub.
-2. Under **Artifacts**, download **app** (a zip file).
-3. Unzip it and install `app-debug.apk`. Android may ask you to allow installs from your browser or file manager.
+The current release is a **preview** (`v0.1.0-preview`), signed with BetterTube's public debug key: only install BetterTube updates from this repository.
+
+Want the very latest changes? Every push is also built by GitHub Actions: open the [latest successful build](../../actions/workflows/ci.yml?query=is%3Asuccess), sign in to GitHub, download **app** under *Artifacts*, unzip it and install `app-debug.apk`.
 
 > [!NOTE]
 > - These are debug builds. They install as **BetterTube** alongside the official LibreTube app instead of replacing it.
