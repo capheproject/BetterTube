@@ -22,48 +22,28 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <!-- Compact shortcuts; if one is hidden the other takes the full width -->
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="10dp"
-                    android:orientation="horizontal">
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="12dp">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/watch_history"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="10dp"
-                        android:ellipsize="marquee"
-                        android:maxLines="1"
+                        style="@style/LibraryShortcut"
                         android:text="@string/watch_history"
-                        android:textAlignment="viewStart"
-                        android:textStyle="bold"
                         app:icon="@drawable/ic_time_outlined"
-                        app:layout_constraintEnd_toStartOf="@id/downloads"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintWidth_max="wrap"
-                        app:layout_constraintWidth_percent="0.5"
-                        app:materialSizeOverlay="@style/SizeOverlay.Material3Expressive.Button.Medium"
                         tools:text="a longer translated text version" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/downloads"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="marquee"
-                        android:maxLines="1"
+                        style="@style/LibraryShortcut"
                         android:text="@string/downloads"
-                        android:textStyle="bold"
-                        app:icon="@drawable/ic_download"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/watch_history"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintWidth_max="wrap"
-                        app:layout_constraintWidth_percent="0.5"
-                        app:materialSizeOverlay="@style/SizeOverlay.Material3Expressive.Button.Medium" />
+                        app:icon="@drawable/ic_download" />
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -73,25 +53,25 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="bottom"
                         android:orientation="horizontal">
 
                         <TextView
+                            style="@style/HomeCategoryTitle"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:maxLines="1"
-                            android:padding="8dp"
-                            android:text="@string/playlists"
-                            android:textAlignment="viewStart"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
+                            android:text="@string/playlists" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/sortTV"
-                            style="?materialButtonTonalStyle"
+                            style="@style/Widget.Material3.Button.TextButton.Icon"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            app:iconTint="?attr/colorOnSurfaceVariant"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="8dp"
+                            android:layout_marginEnd="16dp"
                             android:ellipsize="end"
                             android:maxLines="1"
                             android:paddingHorizontal="10dp"
@@ -142,12 +122,10 @@
                     android:orientation="vertical">
 
                     <TextView
+                        style="@style/HomeCategoryTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="8dp"
-                        android:text="@string/bookmarks"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
+                        android:text="@string/bookmarks" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/bookmarks_recView"
