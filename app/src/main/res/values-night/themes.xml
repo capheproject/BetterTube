@@ -13,7 +13,10 @@
 
         <item name="snackbarStyle">@style/snackBarStyle</item>
 
-        <item name="loadingIndicatorStyle">@style/Widget.Material3.LoadingIndicator.Contained</item>
+        <item name="loadingIndicatorStyle">@style/Widget.Material3.LoadingIndicator</item>
+        <item name="circularProgressIndicatorStyle">@style/Spinner</item>
+        <item name="bottomNavigationStyle">@style/BottomNav</item>
+        <item name="toolbarStyle">@style/AppToolbar</item>
 
         <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
 

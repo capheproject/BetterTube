@@ -10,6 +10,6 @@
 
     <!-- Material 3 shape tokens -->
     <dimen name="corner_thumbnail">12dp</dimen>
-    <dimen name="corner_thumbnail_large">16dp</dimen>
+    <dimen name="corner_thumbnail_large">20dp</dimen>
     <dimen name="corner_badge">6dp</dimen>
 </resources>

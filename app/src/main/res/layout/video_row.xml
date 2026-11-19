@@ -54,8 +54,7 @@
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="6dp"
                     android:paddingVertical="2dp"
-                    android:textAppearance="?attr/textAppearanceLabelMedium"
-                    android:textColor="@color/duration_text_color"
+                    android:textAppearance="@style/DurationBadge"
                     tools:text="05:36" />
 
             </androidx.cardview.widget.CardView>
@@ -104,12 +103,11 @@
         android:id="@+id/video_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="12dp"
         android:ellipsize="end"
         android:maxLines="2"
         android:textAlignment="viewStart"
-        android:textAppearance="?attr/textAppearanceTitleSmall"
-        android:textColor="?attr/colorOnSurface"
+        android:textAppearance="@style/VideoTitle.Small"
         app:layout_constraintEnd_toStartOf="@id/download_badge"
         app:layout_constraintStart_toEndOf="@id/thumbnail_card"
         app:layout_constraintTop_toTopOf="parent" />
@@ -118,7 +116,7 @@
         android:id="@+id/video_info_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="4dp"
         app:layout_constraintEnd_toEndOf="@id/download_badge"
         app:layout_constraintStart_toEndOf="@id/thumbnail_card"
@@ -167,24 +165,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start|center_vertical"
-        android:layout_marginHorizontal="8dp"
-        android:layout_marginTop="6dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
         android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toEndOf="@+id/thumbnail_card"
         app:layout_constraintTop_toBottomOf="@id/video_info_container">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/channel_image_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="13.5dp"
+            app:cardCornerRadius="11dp"
+            app:cardElevation="0dp"
             android:layout_gravity="center"
-            android:layout_marginEnd="10dp">
+            android:layout_marginEnd="8dp">
 
             <ImageView
                 android:id="@+id/channel_image"
-                android:layout_width="27dp"
-                android:layout_height="27dp" />
+                android:layout_width="22dp"
+                android:layout_height="22dp" />
 
         </androidx.cardview.widget.CardView>
 

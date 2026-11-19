@@ -1,6 +1,6 @@
 <resources>
 
-    <color name="duration_background_color">#AA000000</color>
+    <color name="duration_background_color">#CC000000</color>
     <color name="duration_text_color">#EEFFFFFF</color>
     <color name="shortcut_color">#0061A6</color>
     <color name="splash_screen_icon_color">#222</color>

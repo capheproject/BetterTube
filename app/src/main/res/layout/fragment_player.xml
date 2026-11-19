@@ -90,21 +90,21 @@
                 android:layout_marginVertical="10dp"
                 android:background="@drawable/rounded_ripple"
                 android:orientation="horizontal"
-                android:padding="5dp">
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="6dp">
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/player_channelImage"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center"
-                    android:layout_marginEnd="4dp"
                     app:shapeAppearance="@style/CircleImageView" />
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|center_vertical"
-                    android:layout_marginStart="5dp"
+                    android:layout_marginStart="12dp"
                     android:layout_marginEnd="8dp"
                     android:layout_weight="1"
                     android:layoutDirection="locale"
@@ -116,7 +116,7 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:textSize="15sp" />
+                        android:textAppearance="@style/VideoTitle.Small" />
 
                     <TextView
                         android:id="@+id/player_channelSubCount"
@@ -124,7 +124,8 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:textSize="11sp"
+                        android:textAppearance="?attr/textAppearanceBodySmall"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         tools:text="2.5M subscribers" />
 
                 </LinearLayout>
@@ -134,8 +135,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:minHeight="40dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
                     android:text="@string/subscribe"
-                    android:textSize="12sp" />
+                    android:textAppearance="?attr/textAppearanceLabelLarge" />
             </LinearLayout>
 
             <com.google.android.material.button.MaterialButton

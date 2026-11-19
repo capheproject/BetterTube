@@ -17,7 +17,7 @@ import com.github.libretube.extensions.toAndroidUri
 import com.github.libretube.extensions.toastFromMainThread
 import com.github.libretube.util.MediaExporter
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.loadingindicator.LoadingIndicator
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -83,7 +83,10 @@ class DownloadExportDialog : DialogFragment() {
         // prevent user from closing dialog
         isCancelable = false
 
-        val loadingIndicator = LoadingIndicator(requireContext())
+        val loadingIndicator = CircularProgressIndicator(requireContext()).apply {
+            isIndeterminate = true
+            setPadding(0, 48, 0, 48)
+        }
         val dialog = MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.exporting)
             .setView(loadingIndicator)

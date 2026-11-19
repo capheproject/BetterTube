@@ -66,9 +66,17 @@
     <style name="PlayerActionsButton" parent="@style/Widget.Material3Expressive.Button.TonalButton">
 
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:minHeight">40dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
         <item name="android:layout_marginStart">4dp</item>
         <item name="android:layout_marginEnd">4dp</item>
+        <item name="android:paddingStart">14dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="iconSize">18dp</item>
+        <item name="iconPadding">6dp</item>
+        <item name="android:textAppearance">?attr/textAppearanceLabelLarge</item>
         <item name="iconGravity">textStart</item>
 
     </style>
@@ -146,7 +154,8 @@
 
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:padding">8dp</item>
+        <item name="android:paddingHorizontal">16dp</item>
+        <item name="android:paddingVertical">8dp</item>
         <item name="android:background">@drawable/rounded_ripple</item>
         <item name="android:orientation">horizontal</item>
 
@@ -174,9 +183,12 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textAppearance">?attr/textAppearanceTitleLarge</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:textAlignment">viewStart</item>
-        <item name="android:padding">8dp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:paddingTop">20dp</item>
+        <item name="android:paddingBottom">8dp</item>
 
     </style>
 
@@ -211,6 +223,60 @@
 
     <style name="PositiveButton" parent="Widget.Material3.Button">
         <item name="android:layout_marginStart">16dp</item>
+    </style>
+
+    <!-- Slim, round-capped spinner that replaces the morphing "contained" loading indicator -->
+    <style name="Spinner" parent="Widget.Material3.CircularProgressIndicator">
+        <item name="indicatorSize">36dp</item>
+        <item name="trackThickness">3.5dp</item>
+        <item name="trackCornerRadius">2dp</item>
+        <item name="indicatorColor">?attr/colorPrimary</item>
+        <item name="trackColor">@android:color/transparent</item>
+        <item name="indicatorTrackGapSize">0dp</item>
+    </style>
+
+    <!-- Spinner shown on top of video -->
+    <style name="Spinner.OnMedia">
+        <item name="indicatorColor">@android:color/white</item>
+    </style>
+
+    <!-- Slimmer bottom bar on a tonal surface -->
+    <style name="BottomNav" parent="Widget.Material3.BottomNavigationView">
+        <item name="android:minHeight">64dp</item>
+        <item name="itemPaddingTop">8dp</item>
+        <item name="itemPaddingBottom">8dp</item>
+        <item name="backgroundTint">?attr/colorSurfaceContainer</item>
+        <item name="itemTextAppearanceActive">@style/BottomNavLabel</item>
+        <item name="itemTextAppearanceInactive">@style/BottomNavLabel</item>
+    </style>
+
+    <style name="BottomNavLabel" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="AppToolbar" parent="Widget.Material3.Toolbar.Surface">
+        <item name="titleTextAppearance">@style/AppToolbarTitle</item>
+    </style>
+
+    <style name="AppToolbarTitle" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:letterSpacing">-0.01</item>
+    </style>
+
+    <!-- Titles of videos in lists and feeds -->
+    <style name="VideoTitle" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="VideoTitle.Small" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="DurationBadge" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/duration_text_color</item>
     </style>
 
 </resources>
