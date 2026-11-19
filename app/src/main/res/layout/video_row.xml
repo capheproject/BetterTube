@@ -15,7 +15,8 @@
         android:id="@+id/thumbnail_card"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:cardCornerRadius="8dp"
+        app:cardCornerRadius="@dimen/corner_thumbnail"
+        app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="16:9"
         app:layout_constraintEnd_toStartOf="@+id/guideline"
@@ -42,7 +43,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_marginBottom="5dp"
                 app:cardBackgroundColor="@color/duration_background_color"
-                app:cardCornerRadius="8dp"
+                app:cardCornerRadius="@dimen/corner_badge"
                 app:cardElevation="0dp"
                 app:layout_constraintBottom_toTopOf="@id/watch_progress"
                 app:layout_constraintEnd_toEndOf="parent">
@@ -53,8 +54,8 @@
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="6dp"
                     android:paddingVertical="2dp"
+                    android:textAppearance="?attr/textAppearanceLabelMedium"
                     android:textColor="@color/duration_text_color"
-                    android:textSize="11sp"
                     tools:text="05:36" />
 
             </androidx.cardview.widget.CardView>
@@ -107,6 +108,8 @@
         android:ellipsize="end"
         android:maxLines="2"
         android:textAlignment="viewStart"
+        android:textAppearance="?attr/textAppearanceTitleSmall"
+        android:textColor="?attr/colorOnSurface"
         app:layout_constraintEnd_toStartOf="@id/download_badge"
         app:layout_constraintStart_toEndOf="@id/thumbnail_card"
         app:layout_constraintTop_toTopOf="parent" />
@@ -129,6 +132,8 @@
             android:layout_gravity="center_vertical"
             android:ellipsize="end"
             android:maxLines="1"
+            android:textAppearance="?attr/textAppearanceBodySmall"
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:layout_marginEnd="6dp" />
 
         <TextView
@@ -190,6 +195,8 @@
             android:layout_gravity="center"
             android:ellipsize="end"
             tools:text="Uploader name"
+            android:textAppearance="?attr/textAppearanceBodySmall"
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:maxLines="1" />
 
     </LinearLayout>

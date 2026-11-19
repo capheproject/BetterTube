@@ -14,7 +14,7 @@
         android:layout_height="45dp"
         android:layout_gravity="center"
         android:layout_marginEnd="10dp"
-        app:cardCornerRadius="8dp">
+        app:cardCornerRadius="@dimen/corner_thumbnail">
 
         <ImageView
             android:id="@+id/thumbnail"
@@ -38,8 +38,7 @@
             android:layout_marginBottom="2dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textSize="16sp"
-            android:textStyle="bold"
+            android:textAppearance="?attr/textAppearanceTitleSmall"
             tools:text="I am Hardstyle - Episode 111" />
 
         <TextView
@@ -48,7 +47,8 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textSize="12sp"
+            android:textAppearance="?attr/textAppearanceBodySmall"
+            android:textColor="?attr/colorOnSurfaceVariant"
             tools:text="Brennan Heart" />
 
     </LinearLayout>

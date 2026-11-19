@@ -1,11 +1,9 @@
 package com.github.libretube.ui.extensions
 
-import android.graphics.Color
 import android.graphics.Outline
 import android.view.View
 import android.view.ViewOutlineProvider
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.graphics.ColorUtils
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
@@ -44,15 +42,10 @@ fun View.setWatchProgressLength(positionMillis: Long?, duration: Long) {
         matchConstraintPercentWidth = progress.toFloat() / duration.toFloat()
     }
 
-    var backgroundColor = ThemeHelper.getThemeColor(
-        context,
-        com.google.android.material.R.attr.colorPrimaryVariant
+    // use the accent color of the selected theme
+    setBackgroundColor(
+        ThemeHelper.getThemeColor(context, androidx.appcompat.R.attr.colorPrimary)
     )
-    // increase the brightness for better contrast in light mode
-    if (!ThemeHelper.isDarkMode(context)) {
-        backgroundColor = ColorUtils.blendARGB(backgroundColor, Color.WHITE, 0.4f)
-    }
-    setBackgroundColor(backgroundColor)
 
     // set corner-radius
     clipToOutline = true
