@@ -1,0 +1,44 @@
+name: Release
+
+# Publishes a GitHub release when a version tag is pushed (e.g. v0.1.0-preview).
+# Release notes come from .github/release-notes/<tag>.md.
+# Tags with a "-" (like -preview) are marked as pre-releases.
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: gradle/actions/wrapper-validation@v5
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          java-version: 17
+          distribution: "temurin"
+          cache: "gradle"
+
+      - name: Build APK
+        env:
+          BETTERTUBE_RELEASE: ${{ github.ref_name }}
+        run: ./gradlew assembleDebug
+
+      - name: Name the APK
+        run: cp app/build/outputs/apk/debug/app-debug.apk "BetterTube-${{ github.ref_name }}.apk"
+
+      - name: Publish release
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ github.token }}
+          name: BetterTube ${{ github.ref_name }}
+          bodyFile: .github/release-notes/${{ github.ref_name }}.md
+          artifacts: BetterTube-${{ github.ref_name }}.apk
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          allowUpdates: true

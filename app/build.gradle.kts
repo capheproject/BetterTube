@@ -83,8 +83,11 @@ android {
             isDebuggable = true
             applicationIdSuffix = ".debug"
             signingConfig = signingConfigs.getByName("debug")
-            // e.g. "32.1-ci.13" for GitHub Actions run 13, shown in Android's app info
-            versionNameSuffix = System.getenv("GITHUB_RUN_NUMBER")?.let { "-ci.$it" } ?: "-dev"
+            // shown in Android's app info: the release tag for releases (e.g. "32.1-v0.1.0-preview"),
+            // the CI run for test builds (e.g. "32.1-ci.13"), "-dev" for local builds
+            versionNameSuffix = System.getenv("BETTERTUBE_RELEASE")?.let { "-$it" }
+                ?: System.getenv("GITHUB_RUN_NUMBER")?.let { "-ci.$it" }
+                ?: "-dev"
             resValue("string", "app_name", "BetterTube")
         }
     }
