@@ -1,21 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Floating dock with a glassy treatment: translucent tonal surface, a soft top sheen and a
-     light-catching rim. Content scrolling underneath shows through faintly. -->
+<!-- Floating dock: opaque tonal surface with a soft colour sheen (accent flowing into a
+     secondary tint), a gentle top highlight and a fine rim. -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- translucent base -->
+    <!-- opaque base -->
     <item>
         <shape>
-            <solid android:color="@color/dock_surface" />
+            <solid android:color="?attr/colorSurfaceContainerHigh" />
             <corners android:radius="32dp" />
         </shape>
     </item>
-    <!-- top sheen -->
+    <!-- colour sheen -->
+    <item>
+        <shape>
+            <gradient
+                android:angle="0"
+                android:centerColor="@color/dock_tint_center"
+                android:endColor="@color/dock_tint_end"
+                android:startColor="@color/dock_tint_start" />
+            <corners android:radius="32dp" />
+        </shape>
+    </item>
+    <!-- top highlight -->
     <item>
         <shape>
             <gradient
                 android:angle="270"
                 android:centerColor="@android:color/transparent"
-                android:centerY="0.55"
+                android:centerY="0.5"
                 android:endColor="@android:color/transparent"
                 android:startColor="@color/dock_sheen" />
             <corners android:radius="32dp" />
