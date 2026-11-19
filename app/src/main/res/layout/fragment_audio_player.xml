@@ -271,14 +271,22 @@
 
         </LinearLayout>
 
+        <!-- Breathing room between the controls and Comments (the CommentsTeaser style sets
+             layout_marginVertical, which would override a marginTop here) -->
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="36dp" />
+
         <!-- Comments, as on the video page -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/comments_toggle"
             style="@style/CommentsTeaser"
-            android:layout_marginTop="28dp"
-            android:layout_marginBottom="20dp"
             android:text="@string/comments"
             app:icon="@drawable/ic_arrow_up_down" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="12dp" />
 
     </LinearLayout>
 
