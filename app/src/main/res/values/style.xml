@@ -252,7 +252,9 @@
         <item name="android:minHeight">@dimen/dock_height</item>
         <item name="android:background">@drawable/bottom_dock_background</item>
         <item name="backgroundTint">@null</item>
-        <item name="elevation">0dp</item>
+        <item name="elevation">8dp</item>
+        <item name="android:outlineAmbientShadowColor">#66000000</item>
+        <item name="android:outlineSpotShadowColor">#66000000</item>
         <!-- the dock floats above the system bar: MainActivity applies the inset as a margin -->
         <item name="paddingBottomSystemWindowInsets">false</item>
         <item name="itemPaddingTop">12dp</item>
