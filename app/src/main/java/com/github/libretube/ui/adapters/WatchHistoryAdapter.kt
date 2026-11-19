@@ -23,6 +23,7 @@ import com.github.libretube.ui.extensions.setWatchProgressLength
 import com.github.libretube.ui.sheets.VideoOptionsBottomSheet
 import com.github.libretube.ui.viewholders.WatchHistoryViewHolder
 import com.github.libretube.util.TextUtils
+import com.github.libretube.util.ThumbnailHints
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -72,6 +73,7 @@ class WatchHistoryAdapter(
             }
 
             root.setOnClickListener {
+                ThumbnailHints.put(video.url?.toID(), video.thumbnail, thumbnail)
                 NavigationHelper.navigateVideo(root.context, PlayerData(video.url?.toID()))
             }
 

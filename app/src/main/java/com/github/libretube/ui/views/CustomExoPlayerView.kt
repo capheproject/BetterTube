@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -57,6 +58,7 @@ import com.github.libretube.extensions.togglePlayPauseState
 import com.github.libretube.extensions.updateIfChanged
 import com.github.libretube.helpers.AudioHelper
 import com.github.libretube.helpers.BrightnessHelper
+import com.github.libretube.helpers.ImageHelper
 import com.github.libretube.helpers.PlayerHelper
 import com.github.libretube.helpers.PreferenceHelper
 import com.github.libretube.helpers.WindowHelper
@@ -586,6 +588,19 @@ class CustomExoPlayerView(
     }
 
     fun getOptionsMenuItems(): List<BottomSheetItem> = listOf(
+        // autoplay lives here instead of as a switch in the top bar (it looked like a pause button)
+        BottomSheetItem(
+            BottomSheetItemTitle.Text(context.getString(R.string.player_autoplay)),
+            R.drawable.ic_playlist,
+            {
+                BottomSheetItemTitle.Text(
+                    context.getString(if (PlayerHelper.autoPlayEnabled) R.string.enabled else R.string.disabled)
+                )
+            }
+        ) {
+            PlayerHelper.autoPlayEnabled = !PlayerHelper.autoPlayEnabled
+            binding.autoPlay.isChecked = PlayerHelper.autoPlayEnabled
+        },
         BottomSheetItem(
             BottomSheetItemTitle.Text(context.getString(R.string.repeat_mode)),
             R.drawable.ic_repeat,
@@ -744,16 +759,11 @@ class CustomExoPlayerView(
         }
 
         // hide the dimming background overlay if locked
-        backgroundBinding.exoControlsBackground.setBackgroundColor(
-            if (isLocked) {
-                ContextCompat.getColor(
-                    context,
-                    androidx.media3.ui.R.color.exo_black_opacity_60
-                )
-            } else {
-                Color.TRANSPARENT
-            }
-        )
+        if (isLocked) {
+            backgroundBinding.exoControlsBackground.setBackgroundResource(R.drawable.player_controls_scrim)
+        } else {
+            backgroundBinding.exoControlsBackground.setBackgroundColor(Color.TRANSPARENT)
+        }
 
         // disable tap and swipe gesture if the player is locked
         playerGestureController.areControlsLocked = !isLocked
@@ -1138,6 +1148,42 @@ class CustomExoPlayerView(
             .show(supportFragmentManager)
     }
 
+    private val loadingThumbnail: ImageView? get() = findViewById(R.id.loading_thumbnail)
+
+    /**
+     * Shows [thumbnailUrl] in place of the video while it loads, so opening a video continues
+     * from the thumbnail that was tapped instead of a black screen.
+     */
+    fun showLoadingThumbnail(thumbnailUrl: String?, shownImage: Drawable.ConstantState? = null) {
+        val view = loadingThumbnail ?: return
+        view.animate().cancel()
+        when {
+            // the exact image the user tapped (e.g. a DeArrow thumbnail)
+            shownImage != null -> view.setImageDrawable(shownImage.newDrawable(resources).mutate())
+            !thumbnailUrl.isNullOrEmpty() -> {
+                view.setImageDrawable(null)
+                ImageHelper.loadImage(thumbnailUrl, view)
+            }
+            else -> {
+                view.isGone = true
+                return
+            }
+        }
+        view.alpha = 1f
+        view.isVisible = true
+    }
+
+    /** Cross-fades the loading thumbnail into the video once its first frame is shown. */
+    fun hideLoadingThumbnail() {
+        val view = loadingThumbnail ?: return
+        if (!view.isVisible) return
+        view.animate()
+            .alpha(0f)
+            .setDuration(LOADING_THUMBNAIL_FADE_MS)
+            .withEndAction { view.isGone = true }
+            .start()
+    }
+
     fun isFullscreen() = commonPlayerViewModel?.isFullscreen?.value ?: false
 
     override fun onConfigurationChanged(newConfig: Configuration?) {
@@ -1466,6 +1512,7 @@ class CustomExoPlayerView(
     fun getWindow(): Window = currentWindow ?: activity.window
 
     companion object {
+        private const val LOADING_THUMBNAIL_FADE_MS = 350L
         private const val HIDE_CONTROLLER_TOKEN = "hideController"
         private const val HIDE_FORWARD_BUTTON_TOKEN = "hideForwardButton"
         private const val HIDE_REWIND_BUTTON_TOKEN = "hideRewindButton"

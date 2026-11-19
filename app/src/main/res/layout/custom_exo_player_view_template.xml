@@ -27,6 +27,14 @@
             android:scaleType="fitXY"
             android:contentDescription="@null"/>
 
+        <!-- The tapped thumbnail, shown in place while the video loads, then cross-faded away -->
+        <ImageView android:id="@+id/loading_thumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@null"
+            android:scaleType="centerCrop"
+            android:visibility="gone"/>
+
         <androidx.media3.ui.SubtitleView android:id="@id/exo_subtitles"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
@@ -57,7 +65,7 @@
             android:id="@id/exo_controls_background"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/exo_black_opacity_60"
+            android:background="@drawable/player_controls_scrim"
             android:alpha="0" />
 
     </androidx.media3.ui.AspectRatioFrameLayout>

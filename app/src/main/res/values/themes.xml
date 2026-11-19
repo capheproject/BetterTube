@@ -42,6 +42,7 @@
         <item name="textAppearanceLabelMedium">@style/TextAppearance.BT.LabelMedium</item>
         <item name="textAppearanceLabelSmall">@style/TextAppearance.BT.LabelSmall</item>
         <item name="tabStyle">@style/MinimalTabs</item>
+        <item name="preferenceTheme">@style/BT.PreferenceTheme</item>
 
         <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
 

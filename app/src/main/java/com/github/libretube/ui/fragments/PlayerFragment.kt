@@ -108,6 +108,7 @@ import com.github.libretube.ui.sheets.CommentsSheet
 import com.github.libretube.util.OfflineTimeFrameReceiver
 import com.github.libretube.util.OnlineTimeFrameReceiver
 import com.github.libretube.util.PlayingQueue
+import com.github.libretube.util.ThumbnailHints
 import com.github.libretube.util.TextUtils
 import com.github.libretube.util.TextUtils.toTimeInSeconds
 import com.google.android.material.snackbar.Snackbar
@@ -223,8 +224,15 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
     private var bufferingTimeoutTask: Runnable? = null
 
     private val playerListener = object : Player.Listener {
+        override fun onRenderedFirstFrame() {
+            _binding?.player?.hideLoadingThumbnail()
+        }
+
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             PictureInPictureCompat.setPictureInPictureParams(requireActivity(), pipParams)
+
+            // fallback in case no first-frame event arrives: playback is visibly running
+            if (isPlaying) _binding?.player?.postDelayed({ _binding?.player?.hideLoadingThumbnail() }, 400)
 
             if (isPlaying && PlayerHelper.sponsorBlockEnabled) {
                 handler.postDelayed(
@@ -334,6 +342,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
          */
         override fun onPlayerError(error: PlaybackException) {
             super.onPlayerError(error)
+            _binding?.player?.hideLoadingThumbnail()
             try {
                 playerController.play()
             } catch (e: Exception) {
@@ -387,6 +396,8 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
 
         val playerData = requireArguments().parcelable<PlayerData>(IntentData.playerData)!!
         playerData.videoId?.let { videoId = it }
+        // continue from the tapped thumbnail instead of a black screen while loading
+        if (requireArguments().getBoolean(IntentData.alreadyStarted).not()) showLoadingThumbnail(videoId)
         isOffline = playerData.isOffline
         playlistId = playerData.playlistId
         channelId = playerData.channelId
@@ -1031,10 +1042,23 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
      * video, i.e. either both are online or both are offline.
      */
     fun playVideo(videoId: String) {
+        showLoadingThumbnail(videoId)
         playerController.sendCustomCommand(
             AbstractPlayerService.runPlayerActionCommand,
             bundleOf(PlayerCommand.PLAY_VIDEO_BY_ID.name to videoId)
         )
+    }
+
+    /**
+     * Shows the thumbnail of [videoId] over the player until its first frame is rendered.
+     * Uses the thumbnail of the item the user tapped, or of the queue entry.
+     */
+    private fun showLoadingThumbnail(videoId: String?) {
+        if (videoId == null || _binding == null) return
+        val hint = ThumbnailHints.get(videoId)
+        val url = hint?.url
+            ?: PlayingQueue.getStreams().firstOrNull { it.url?.toID() == videoId }?.thumbnail
+        binding.player.showLoadingThumbnail(url, hint?.image)
     }
 
     /**

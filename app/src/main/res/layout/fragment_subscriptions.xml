@@ -7,14 +7,15 @@
     android:background="?android:colorBackground"
     tools:context=".ui.fragments.SubscriptionsFragment">
 
-    <com.google.android.material.progressindicator.CircularProgressIndicator
-        style="@style/Spinner"
-        android:indeterminate="true"
+    <!-- Loading placeholder shaped like the feed (replaces a spinner) -->
+    <com.github.libretube.ui.views.SkeletonFeedView
         android:id="@+id/sub_progress"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="gone" />
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="56dp"
+        android:visibility="gone"
+        tools:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/emptyFeed"

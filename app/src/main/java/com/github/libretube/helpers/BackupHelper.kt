@@ -1,6 +1,7 @@
 package com.github.libretube.helpers
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.net.Uri
 import android.util.Log
 import androidx.core.content.edit
@@ -17,6 +18,7 @@ import com.github.libretube.obj.PreferenceItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.json.encodeToStream
@@ -86,42 +88,52 @@ object BackupHelper {
 
             // decide for each preference which type it is and save it to the preferences
             preferences.forEach { (key, jsonValue) ->
-                val value = if (jsonValue.isString) {
-                    jsonValue.content
-                } else {
-                    jsonValue.booleanOrNull
-                        ?: jsonValue.intOrNull
-                        ?: jsonValue.longOrNull
-                        ?: jsonValue.floatOrNull
-                }
-                when (value) {
-                    is Boolean -> putBoolean(key, value)
-                    is Float -> putFloat(key, value)
-                    is Long -> putLong(key, value)
-                    is Int -> {
-                        // we only use integers for SponsorBlock colors and the start fragment
-                        if (key == PreferenceKeys.START_FRAGMENT || "_color" in key.orEmpty()) {
-                            putInt(key, value)
-                        } else {
-                            putLong(key, value.toLong())
-                        }
-                    }
-
-                    is String -> {
-                        if (
-                            key == PreferenceKeys.HOME_TAB_CONTENT ||
-                            key == PreferenceKeys.SELECTED_FEED_FILTERS
-                        ) {
-                            putStringSet(key, value.split(",").toSet())
-                        } else {
-                            putString(key, value)
-                        }
-                    }
-                }
+                putPreference(this, key, jsonValue)
             }
         }
 
         // re-schedule the notification worker as some settings related to it might have changed
         NotificationHelper.enqueueWork(context, ExistingPeriodicWorkPolicy.UPDATE)
+    }
+
+    /**
+     * Stores one backed-up preference value with the type the app expects.
+     * Also used to apply the build's default settings, see [DefaultPreferences].
+     */
+    fun putPreference(editor: SharedPreferences.Editor, key: String?, jsonValue: JsonPrimitive) {
+        editor.apply {
+            val value = if (jsonValue.isString) {
+                jsonValue.content
+            } else {
+                jsonValue.booleanOrNull
+                    ?: jsonValue.intOrNull
+                    ?: jsonValue.longOrNull
+                    ?: jsonValue.floatOrNull
+            }
+            when (value) {
+                is Boolean -> putBoolean(key, value)
+                is Float -> putFloat(key, value)
+                is Long -> putLong(key, value)
+                is Int -> {
+                    // we only use integers for SponsorBlock colors and the start fragment
+                    if (key == PreferenceKeys.START_FRAGMENT || "_color" in key.orEmpty()) {
+                        putInt(key, value)
+                    } else {
+                        putLong(key, value.toLong())
+                    }
+                }
+
+                is String -> {
+                    if (
+                        key == PreferenceKeys.HOME_TAB_CONTENT ||
+                        key == PreferenceKeys.SELECTED_FEED_FILTERS
+                    ) {
+                        putStringSet(key, value.split(",").toSet())
+                    } else {
+                        putString(key, value)
+                    }
+                }
+            }
+        }
     }
 }

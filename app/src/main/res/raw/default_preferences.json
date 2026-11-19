@@ -1,0 +1,382 @@
+[
+ {
+  "key": "PREFERENCE_VERSION",
+  "value": 9
+ },
+ {
+  "key": "accent_color",
+  "value": "my"
+ },
+ {
+  "key": "alternative_pip_controls",
+  "value": false
+ },
+ {
+  "key": "audio_download_format",
+  "value": "WEBMA_OPUS"
+ },
+ {
+  "key": "audio_download_quality",
+  "value": "50 bits"
+ },
+ {
+  "key": "audio_only_mode",
+  "value": false
+ },
+ {
+  "key": "auth_instance_toggle",
+  "value": false
+ },
+ {
+  "key": "auto_fullscreen",
+  "value": false
+ },
+ {
+  "key": "auto_fullscreen_shorts",
+  "value": false
+ },
+ {
+  "key": "automatic_update_checks",
+  "value": false
+ },
+ {
+  "key": "autoplay",
+  "value": false
+ },
+ {
+  "key": "autoplay_countdown",
+  "value": false
+ },
+ {
+  "key": "autoplay_playlists",
+  "value": false
+ },
+ {
+  "key": "buffering_goal",
+  "value": "50"
+ },
+ {
+  "key": "current_player_resize_mode",
+  "value": 0
+ },
+ {
+  "key": "data_saver_mode_key",
+  "value": "disabled"
+ },
+ {
+  "key": "dearrow",
+  "value": true
+ },
+ {
+  "key": "dearrow_contribute_key",
+  "value": false
+ },
+ {
+  "key": "default_res",
+  "value": "720p"
+ },
+ {
+  "key": "default_res_mobile",
+  "value": "480p"
+ },
+ {
+  "key": "default_res_mobile_no_fullscreen",
+  "value": ""
+ },
+ {
+  "key": "default_res_no_fullscreen",
+  "value": ""
+ },
+ {
+  "key": "default_subtitle",
+  "value": ""
+ },
+ {
+  "key": "double_tap_seek",
+  "value": true
+ },
+ {
+  "key": "exclusive_access_category",
+  "value": "manual"
+ },
+ {
+  "key": "filler_category",
+  "value": "manual"
+ },
+ {
+  "key": "filler_color",
+  "value": -9240321
+ },
+ {
+  "key": "filter_feed",
+  "value": "LIVESTREAMS,VIDEOS"
+ },
+ {
+  "key": "filter_history_status",
+  "value": 0
+ },
+ {
+  "key": "full_local_mode",
+  "value": true
+ },
+ {
+  "key": "fullscreen_gestures",
+  "value": true
+ },
+ {
+  "key": "fullscreen_orientation",
+  "value": "ratio"
+ },
+ {
+  "key": "grid",
+  "value": "1"
+ },
+ {
+  "key": "grid_landscape",
+  "value": "1"
+ },
+ {
+  "key": "hide_watched_from_feed",
+  "value": false
+ },
+ {
+  "key": "home_tab_content",
+  "value": "bookmarks,playlists,watching"
+ },
+ {
+  "key": "hook_category",
+  "value": "manual"
+ },
+ {
+  "key": "include_timestamp_in_filename",
+  "value": false
+ },
+ {
+  "key": "interaction_category",
+  "value": "manual"
+ },
+ {
+  "key": "interaction_color",
+  "value": -3407617
+ },
+ {
+  "key": "intro_category",
+  "value": "manual"
+ },
+ {
+  "key": "intro_color",
+  "value": -16711681
+ },
+ {
+  "key": "language",
+  "value": "GBR"
+ },
+ {
+  "key": "local_feed_extraction",
+  "value": true
+ },
+ {
+  "key": "local_return_youtube_dislikes",
+  "value": true
+ },
+ {
+  "key": "local_stream_extraction",
+  "value": true
+ },
+ {
+  "key": "long_press_fast_forward",
+  "value": false
+ },
+ {
+  "key": "music_offtopic_category",
+  "value": "manual"
+ },
+ {
+  "key": "music_offtopic_color",
+  "value": -26368
+ },
+ {
+  "key": "new_videos_badge",
+  "value": true
+ },
+ {
+  "key": "orientation",
+  "value": "portrait"
+ },
+ {
+  "key": "outro_category",
+  "value": "manual"
+ },
+ {
+  "key": "outro_color",
+  "value": -16645395
+ },
+ {
+  "key": "pause_screen_off",
+  "value": false
+ },
+ {
+  "key": "play_automatically",
+  "value": true
+ },
+ {
+  "key": "playback_speed",
+  "value": "1.0"
+ },
+ {
+  "key": "player_audio_quality",
+  "value": "auto"
+ },
+ {
+  "key": "player_audio_quality_mobile",
+  "value": "auto"
+ },
+ {
+  "key": "player_pinch_control",
+  "value": true
+ },
+ {
+  "key": "player_swipe_controls",
+  "value": false
+ },
+ {
+  "key": "playlist_sort_order",
+  "value": 1
+ },
+ {
+  "key": "preview_category",
+  "value": "manual"
+ },
+ {
+  "key": "preview_color",
+  "value": -16740394
+ },
+ {
+  "key": "pure_theme",
+  "value": false
+ },
+ {
+  "key": "queue_insert_related_videos",
+  "value": false
+ },
+ {
+  "key": "related_streams_toggle",
+  "value": false
+ },
+ {
+  "key": "rich_caption_rendering",
+  "value": false
+ },
+ {
+  "key": "sb_contribute_key",
+  "value": false
+ },
+ {
+  "key": "sb_enable_custom_colors",
+  "value": false
+ },
+ {
+  "key": "sb_enabled_key",
+  "value": true
+ },
+ {
+  "key": "sb_highlights",
+  "value": true
+ },
+ {
+  "key": "sb_notifications_key",
+  "value": true
+ },
+ {
+  "key": "search_history_toggle",
+  "value": true
+ },
+ {
+  "key": "search_suggestions",
+  "value": true
+ },
+ {
+  "key": "selectAuthInstance",
+  "value": "https://pipedapi.kavin.rocks"
+ },
+ {
+  "key": "selectInstance",
+  "value": "https://pipedapi.kavin.rocks"
+ },
+ {
+  "key": "selected_download_sort_type",
+  "value": 1
+ },
+ {
+  "key": "selfpromo_category",
+  "value": "automatic"
+ },
+ {
+  "key": "selfpromo_color",
+  "value": -256
+ },
+ {
+  "key": "share_with_time_code",
+  "value": true
+ },
+ {
+  "key": "show_time_left",
+  "value": true
+ },
+ {
+  "key": "show_upcoming_in_feed",
+  "value": true
+ },
+ {
+  "key": "skip_buttons",
+  "value": false
+ },
+ {
+  "key": "sort_oder_feed",
+  "value": 0
+ },
+ {
+  "key": "sponsor_category",
+  "value": "automatic"
+ },
+ {
+  "key": "sponsor_color",
+  "value": -16722944
+ },
+ {
+  "key": "subtitle_download_language",
+  "value": ""
+ },
+ {
+  "key": "system_caption_style",
+  "value": true
+ },
+ {
+  "key": "theme_toggle",
+  "value": "A"
+ },
+ {
+  "key": "trending_category",
+  "value": "LIVE"
+ },
+ {
+  "key": "unlimited_search_history",
+  "value": false
+ },
+ {
+  "key": "video_download_format",
+  "value": ""
+ },
+ {
+  "key": "video_download_quality",
+  "value": ""
+ },
+ {
+  "key": "watch_history_toggle",
+  "value": true
+ },
+ {
+  "key": "watch_positions",
+  "value": "always"
+ }
+]

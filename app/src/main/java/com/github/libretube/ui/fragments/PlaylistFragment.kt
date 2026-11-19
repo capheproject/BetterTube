@@ -51,6 +51,7 @@ import com.github.libretube.ui.sheets.BaseBottomSheet
 import com.github.libretube.ui.sheets.PlaylistOptionsBottomSheet
 import com.github.libretube.util.PlayingQueue
 import com.github.libretube.util.TextUtils
+import com.github.libretube.util.ThumbnailHints
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -317,6 +318,7 @@ class PlaylistFragment : DynamicLayoutManagerFragment(R.layout.fragment_playlist
     }
 
     private fun navigateVideo(streamItem: StreamItem) {
+        ThumbnailHints.put(streamItem.url?.toID(), streamItem.thumbnail)
         NavigationHelper.navigateVideo(
             requireContext(),
             playerData = PlayerData(

@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.ExistingPeriodicWorkPolicy
+import com.github.libretube.helpers.DefaultPreferences
 import com.github.libretube.helpers.ImageHelper
 import com.github.libretube.helpers.NewPipeExtractorInstance
 import com.github.libretube.helpers.NotificationHelper
@@ -25,6 +26,8 @@ class LibreTubeApp : Application() {
          * Initialize the [PreferenceHelper]
          */
         PreferenceHelper.initialize(applicationContext)
+        // BetterTube's built-in default settings (only fills in settings that aren't set yet)
+        DefaultPreferences.applyIfNeeded(applicationContext)
         PreferenceHelper.migrate()
 
         /**

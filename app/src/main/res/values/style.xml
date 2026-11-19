@@ -224,8 +224,8 @@
 
     <style name="AlertDialogTheme" parent="ThemeOverlay.Material3.MaterialAlertDialog">
         <item name="buttonBarPositiveButtonStyle">@style/PositiveButton</item>
-        <item name="buttonBarNegativeButtonStyle">@style/Widget.Material3.Button.OutlinedButton</item>
-        <item name="buttonBarNeutralButtonStyle">@style/Widget.Material3.Button.OutlinedButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.Material3.Button.TextButton.Dialog</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Widget.Material3.Button.TextButton.Dialog</item>
     </style>
 
     <style name="PositiveButton" parent="Widget.Material3.Button">
@@ -479,6 +479,18 @@
         <item name="android:textColor">?attr/colorOnSurface</item>
         <item name="iconTint">?attr/colorOnSurfaceVariant</item>
         <item name="android:textAppearance">?attr/textAppearanceLabelLarge</item>
+    </style>
+
+    <!-- Settings screens -->
+    <style name="BT.PreferenceTheme" parent="PreferenceThemeOverlay">
+        <item name="preferenceCategoryTitleTextAppearance">@style/BT.PreferenceCategoryTitle</item>
+        <item name="preferenceCategoryTitleTextColor">?attr/colorPrimary</item>
+    </style>
+
+    <style name="BT.PreferenceCategoryTitle" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:fontFamily">@font/jakarta_semibold</item>
+        <item name="fontFamily">@font/jakarta_semibold</item>
+        <item name="android:letterSpacing">0.02</item>
     </style>
 
 </resources>

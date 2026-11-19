@@ -32,6 +32,7 @@ import com.github.libretube.ui.sheets.VideoOptionsBottomSheet
 import com.github.libretube.ui.viewholders.SearchViewHolder
 import com.github.libretube.util.DeArrowUtil
 import com.github.libretube.util.TextUtils
+import com.github.libretube.util.ThumbnailHints
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -106,6 +107,7 @@ class SearchResultsAdapter(
             ImageHelper.loadImage(item.uploaderAvatar, channelImage, true)
 
             root.setOnClickListener {
+                ThumbnailHints.put(item.url?.toID(), item.thumbnail, thumbnail)
                 NavigationHelper.navigateVideo(root.context, PlayerData(item.url, timestamp = timeStamp))
             }
 

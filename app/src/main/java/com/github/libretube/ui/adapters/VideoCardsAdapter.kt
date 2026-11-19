@@ -27,6 +27,7 @@ import com.github.libretube.ui.sheets.VideoOptionsBottomSheet
 import com.github.libretube.ui.viewholders.VideoCardsViewHolder
 import com.github.libretube.util.DeArrowUtil
 import com.github.libretube.util.TextUtils
+import com.github.libretube.util.ThumbnailHints
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -113,6 +114,7 @@ class VideoCardsAdapter(private val columnWidthDp: Float? = null) :
                 }
             }
             root.setOnClickListener {
+                ThumbnailHints.put(videoId, video.thumbnail, thumbnail)
                 NavigationHelper.navigateVideo(root.context, PlayerData(videoId))
             }
 

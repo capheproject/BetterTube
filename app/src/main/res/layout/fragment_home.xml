@@ -237,13 +237,13 @@
             android:text="@string/change_instance" />
     </LinearLayout>
 
-    <com.google.android.material.progressindicator.CircularProgressIndicator
-        style="@style/Spinner"
-        android:indeterminate="true"
+    <!-- Loading placeholder shaped like the feed (replaces a spinner) -->
+    <com.github.libretube.ui.views.SkeletonFeedView
         android:id="@+id/progress"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_gravity="top"
+        android:layout_marginTop="8dp"
         tools:visibility="gone" />
 
 </FrameLayout>
