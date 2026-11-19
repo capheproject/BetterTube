@@ -1,12 +1,18 @@
 name: Release
 
-# Publishes a GitHub release when a version tag is pushed (e.g. v0.1.0-preview).
-# Release notes come from .github/release-notes/<tag>.md.
-# Tags with a "-" (like -preview) are marked as pre-releases.
+# Publishes a GitHub release, either when a version tag is pushed (e.g. v0.1.0-preview) or when
+# run manually with a version (Actions > Release > Run workflow), in which case the tag is
+# created on the selected commit. Release notes come from .github/release-notes/<version>.md.
+# Versions with a "-" (like -preview) are marked as pre-releases.
 on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release, e.g. v0.1.0-preview"
+        required: true
 
 permissions:
   contents: write
@@ -14,6 +20,8 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ inputs.version || github.ref_name }}
     steps:
       - uses: actions/checkout@v6
       - uses: gradle/actions/wrapper-validation@v5
@@ -27,18 +35,20 @@ jobs:
 
       - name: Build APK
         env:
-          BETTERTUBE_RELEASE: ${{ github.ref_name }}
+          BETTERTUBE_RELEASE: ${{ env.VERSION }}
         run: ./gradlew assembleDebug
 
       - name: Name the APK
-        run: cp app/build/outputs/apk/debug/app-debug.apk "BetterTube-${{ github.ref_name }}.apk"
+        run: cp app/build/outputs/apk/debug/app-debug.apk "BetterTube-${VERSION}.apk"
 
       - name: Publish release
         uses: ncipollo/release-action@v1
         with:
           token: ${{ github.token }}
-          name: BetterTube ${{ github.ref_name }}
-          bodyFile: .github/release-notes/${{ github.ref_name }}.md
-          artifacts: BetterTube-${{ github.ref_name }}.apk
-          prerelease: ${{ contains(github.ref_name, '-') }}
+          tag: ${{ env.VERSION }}
+          commit: ${{ github.sha }}
+          name: BetterTube ${{ env.VERSION }}
+          bodyFile: .github/release-notes/${{ env.VERSION }}.md
+          artifacts: BetterTube-${{ env.VERSION }}.apk
+          prerelease: ${{ contains(env.VERSION, '-') }}
           allowUpdates: true
