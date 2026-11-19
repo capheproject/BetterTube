@@ -249,28 +249,63 @@
 
         </LinearLayout>
 
-        <!-- The two quick actions worth keeping; everything else is in the overflow -->
-        <LinearLayout
+        <!-- Same actions as the video page (Video in place of Audio), plus Chapters -->
+        <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
+            android:clipToPadding="false"
+            android:fillViewport="true"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingHorizontal="12dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/share"
+                    style="@style/PlayerActionsButton"
+                    android:text="@string/share"
+                    app:icon="@drawable/ic_share" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/open_video"
+                    style="@style/PlayerActionsButton"
+                    android:text="@string/video"
+                    app:icon="@drawable/ic_video" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/save"
+                    style="@style/PlayerActionsButton"
+                    android:text="@string/save"
+                    app:icon="@drawable/ic_save" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/download"
+                    style="@style/PlayerActionsButton"
+                    android:text="@string/download"
+                    app:icon="@drawable/ic_download" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/open_chapters"
+                    style="@style/PlayerActionsButton"
+                    android:text="@string/chapters"
+                    app:icon="@drawable/ic_frame" />
+
+            </LinearLayout>
+
+        </HorizontalScrollView>
+
+        <!-- Comments, as on the video page -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/comments_toggle"
+            style="@style/CommentsTeaser"
             android:layout_marginBottom="16dp"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/open_chapters"
-                style="@style/AudioPlayerQuickAction"
-                android:text="@string/chapters"
-                app:icon="@drawable/ic_frame" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/open_video"
-                style="@style/AudioPlayerQuickAction"
-                android:text="@string/video"
-                app:icon="@drawable/ic_video" />
-
-        </LinearLayout>
+            android:text="@string/comments"
+            app:icon="@drawable/ic_arrow_up_down" />
 
     </LinearLayout>
 

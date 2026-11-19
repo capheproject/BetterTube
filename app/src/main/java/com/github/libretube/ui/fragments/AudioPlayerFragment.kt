@@ -1,5 +1,16 @@
 package com.github.libretube.ui.fragments
 
+import com.github.libretube.util.TextUtils.toTimeInSeconds
+import com.github.libretube.util.TextUtils
+import com.github.libretube.ui.sheets.CommentsSheet
+import com.github.libretube.ui.models.CommentsViewModel
+import com.github.libretube.ui.dialogs.ShareDialog
+import com.github.libretube.ui.dialogs.AddToPlaylistDialog
+import com.github.libretube.obj.ShareData
+import com.github.libretube.helpers.IntentHelper
+import com.github.libretube.helpers.DownloadHelper
+import com.github.libretube.enums.ShareObjectType
+import androidx.core.net.toUri
 import androidx.media3.common.PlaybackException
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
@@ -83,6 +94,7 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
     private val activity get() = context as AbstractPlayerHostActivity
     private val viewModel: CommonPlayerViewModel by activityViewModels()
     private val chaptersModel: ChaptersViewModel by activityViewModels()
+    private val commentsViewModel: CommentsViewModel by activityViewModels()
 
     // for the transition
     private var transitionStartId = 0
@@ -190,6 +202,8 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
                 }
                 .show(childFragmentManager)
         }
+
+        setupVideoActions()
 
         binding.playbackError.playbackRetry.setOnClickListener {
             binding.playbackError.root.isGone = true
@@ -509,6 +523,67 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
     }
 
     /**
+     * The same actions as on the video page: share, save, download and comments.
+     */
+    private fun setupVideoActions() {
+        // downloaded videos are already saved locally
+        binding.download.isGone = isOffline
+
+        binding.share.setOnClickListener {
+            val current = PlayingQueue.getCurrent() ?: return@setOnClickListener
+            ShareDialog().apply {
+                arguments = bundleOf(
+                    IntentData.id to current.url?.toID(),
+                    IntentData.shareObjectType to ShareObjectType.VIDEO,
+                    IntentData.shareData to ShareData(
+                        title = current.title,
+                        previewImageUrl = current.thumbnail,
+                        currentPosition = (playerController?.currentPosition ?: 0L) / 1000
+                    )
+                )
+            }.show(childFragmentManager, ShareDialog::class.java.name)
+        }
+
+        binding.save.setOnClickListener {
+            val current = PlayingQueue.getCurrent() ?: return@setOnClickListener
+            AddToPlaylistDialog().apply {
+                arguments = bundleOf(IntentData.videoInfo to current)
+            }.show(childFragmentManager, AddToPlaylistDialog::class.java.name)
+        }
+
+        binding.download.setOnClickListener {
+            val videoId = PlayingQueue.getCurrent()?.url?.toID() ?: return@setOnClickListener
+            DownloadHelper.startDownloadDialog(requireContext(), childFragmentManager, videoId)
+        }
+
+        binding.commentsToggle.setOnClickListener {
+            val current = PlayingQueue.getCurrent() ?: return@setOnClickListener
+            val videoId = current.url?.toID() ?: return@setOnClickListener
+            // leave the title and controls above the sheet visible
+            viewModel.maxSheetHeightPx = (binding.root.height * COMMENTS_SHEET_HEIGHT).toInt()
+            commentsViewModel.videoIdLiveData.updateIfChanged(videoId)
+            CommentsSheet()
+                .apply { arguments = bundleOf(IntentData.channelAvatar to current.uploaderAvatar) }
+                .show(childFragmentManager)
+        }
+
+        // links in comments: timestamps seek in the current video, other links open as usual
+        activity?.supportFragmentManager?.setFragmentResultListener(
+            CommentsSheet.HANDLE_LINK_REQUEST_KEY,
+            viewLifecycleOwner
+        ) { _, bundle ->
+            val link = bundle.getString(IntentData.url) ?: return@setFragmentResultListener
+            val linkedVideoId = TextUtils.getVideoIdFromUri(link.toUri())
+            val time = link.toUri().getQueryParameter("t")?.toTimeInSeconds()
+            if (linkedVideoId != null && linkedVideoId == PlayingQueue.getCurrent()?.url?.toID() && time != null) {
+                playerController?.seekTo(time * 1000)
+            } else {
+                IntentHelper.openLinkFromHref(requireContext(), childFragmentManager, link)
+            }
+        }
+    }
+
+    /**
      * Overflow menu with the less frequently used player actions, keeping the player itself minimal.
      */
     private fun showPlayerOptions() {
@@ -607,5 +682,9 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
                 chaptersModel.chapters
             )
         chaptersModel.currentChapterIndex.updateIfChanged(currentIndex ?: return)
+    }
+
+    companion object {
+        private const val COMMENTS_SHEET_HEIGHT = 0.75f
     }
 }

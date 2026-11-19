@@ -26,7 +26,7 @@ BetterTube keeps everything LibreTube does and focuses on two things: audio-only
 | **Switching to audio-only mid-video** | Keeps downloading the video stream in the background, wasting data and memory | Stops requesting video right away and only downloads audio |
 | **Seeing what's downloaded** | Not possible in the app | A small data label in both players shows the data used so far |
 | **Opening a video** | Black screen with a spinner | The thumbnail you tapped stays in place and fades into the video |
-| **Audio player** | Rows of buttons; play button that resizes and shifts its neighbours | Minimal: round fixed-size play button, Chapters and Video at hand, the rest in ⋮, blurred-artwork backdrop |
+| **Audio player** | Rows of buttons; play button that resizes and shifts its neighbours | Matches the video page: same action row (Share, Video, Save, Download, Chapters) and Comments; round fixed-size play button; blurred-artwork backdrop |
 | **Navigation** | Full-width bottom bar | Floating, icons-only dock with a soft colour sheen and a glow on the active tab; content flows underneath |
 | **Look and feel** | Material 3 Expressive defaults | Own design: Plus Jakarta Sans, a darker tonal palette with accent gradients shared by the dock, mini player, chips and buttons |
 | **Library** | Separate sections and a floating + button | Your watch history as the main feed, with your playlists in a carousel on top |
@@ -67,6 +67,7 @@ Want the very latest changes? Every push is also built by GitHub Actions: open t
 - Subscriptions: the filter row is hidden by default (Settings → Appearance → *Subscriptions toolbar* to show it)
 - Data label: no longer tappable, just shows the total
 - Audio player: the back chevron and ⋮ menu are the same size
+- Audio player matches the video page: Share, Video, Save, Download (and Chapters) in the same action row, and the same Comments row; links in comments work too
 - Playback errors no longer close the player: BetterTube retries automatically with a fresh stream at the same position, and a **Retry** button appears on the video (and in the audio player) if that doesn't work
 - Fixed the app crashing when opening the Library tab (v0.1.2-preview)
 - Fixed taps on the open player (e.g. on the data label) reaching the screen behind it and starting a video
