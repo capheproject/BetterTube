@@ -24,7 +24,8 @@ BetterTube keeps everything LibreTube does and focuses on two things: audio-only
 | | LibreTube | BetterTube |
 |---|---|---|
 | **Switching to audio-only mid-video** | Keeps downloading the video stream in the background, wasting data and memory | Stops requesting video right away and only downloads audio |
-| **Checking what's being downloaded** | Not possible in the app | Live **Network traffic** readout of audio vs. video data |
+| **Checking what's being downloaded** | Not possible in the app | Tap the data pill in the player to see audio vs. video data live |
+| **Audio player** | Rows of buttons; play button that resizes and shifts its neighbours | Minimal: fixed-size play button, Chapters and Video at hand, the rest in ⋮ |
 | **Loading indicator** | Shape-shifting "blob" in a filled circle | Slim round spinner in your accent colour |
 | **Look and feel** | Material 3 Expressive defaults | Refined Material 3: flatter cards, consistent spacing, lighter typography |
 
@@ -35,17 +36,17 @@ In LibreTube, if you start a video and then switch to audio-only, the app keeps 
 
 BetterTube tells the server to stop sending video as soon as video is turned off, and safely ignores any video data that was already on its way. Switching back to video works as before.
 
-### 📊 See it for yourself: Network traffic
+### 📊 See it for yourself: the data pill
 
-<img src="assets/readme/bettertube-traffic.png" width="320" align="right" alt="Network traffic sheet showing audio only status">
+<img src="assets/readme/bettertube-audio-player.png" width="300" align="right" alt="Audio player with the data usage breakdown expanded">
 
-While a video is playing, open **⋮ → Network traffic** (also under *Stats for nerds* in the player). It shows, live:
+Both players show a small pill with the data used so far for the current video: below the progress bar in the audio player, and under the title in the video player.
+Tap it to expand an inline breakdown, and tap again to hide it. It shows, live:
 
-- how much **audio** and **video** data has been received for the current video
-- how long ago the last video data arrived
-- a status line such as *"Audio only: no video data for 42 s"*
+- how much **audio** and **video** data has been received
+- a status line such as *"Audio only · no video data for 42 s"*
 
-Switch to audio-only and the video counter stops growing within a few seconds.
+Switch to audio-only and the video number stops growing within a few seconds; the pill then reads *"… · audio only"*.
 
 <br clear="right">
 
@@ -55,7 +56,8 @@ Switch to audio-only and the video counter stops growing within a few seconds.
 - Slimmer bottom navigation bar on a soft tinted surface
 - Feed cards with wider margins, rounder 20dp thumbnails and no drop shadows
 - List rows aligned to the same 16dp margin, medium-weight titles, softer secondary text
-- Compact pill buttons and a tidier channel row on the player page
+- Minimal audio player: no previous/next buttons, a fixed-size play button that never shifts its neighbours, Chapters and Video as the only quick actions, and queue, speed, sleep timer, autoplay and sharing in the ⋮ menu
+- Compact pill buttons and a tidier channel row on the video player page
 - Watch-progress bar follows your chosen accent colour
 - Works in light and dark mode with all of LibreTube's colour themes
 

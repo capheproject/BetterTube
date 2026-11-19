@@ -30,6 +30,15 @@
                 android:layout_height="wrap_content"
                 android:animateLayoutChanges="true" />
 
+            <!-- Data usage pill; tap to expand the audio/video breakdown inline (same as the audio player) -->
+            <com.github.libretube.ui.views.DataUsageView
+                android:id="@+id/data_usage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="start" />
+
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

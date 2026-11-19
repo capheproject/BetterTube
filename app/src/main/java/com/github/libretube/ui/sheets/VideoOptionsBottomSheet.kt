@@ -75,12 +75,6 @@ class VideoOptionsBottomSheet : BaseBottomSheet() {
                 )
             }
 
-            VideoBottomSheetItem.NetworkTraffic -> {
-                TrafficStatsSheet()
-                    .apply { arguments = bundleOf(IntentData.videoId to videoId) }
-                    .show(parentFragmentManager, TrafficStatsSheet::class.java.name)
-            }
-
             VideoBottomSheetItem.Share -> {
                 val bundle = bundleOf(
                     IntentData.id to videoId,
@@ -170,10 +164,6 @@ class VideoOptionsBottomSheet : BaseBottomSheet() {
             add(VideoBottomSheetItem.AddToPlaylist)
             if (!streamItem.isLive) add(VideoBottomSheetItem.Download)
             add(VideoBottomSheetItem.Share)
-            // lets the user check which media data is being received for the playing video
-            if (PlayingQueue.getCurrent()?.url?.toID() == videoId) {
-                add(VideoBottomSheetItem.NetworkTraffic)
-            }
         }
 
         setItems(optionsList) { which ->

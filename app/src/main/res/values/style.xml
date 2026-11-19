@@ -279,4 +279,68 @@
         <item name="android:textColor">@color/duration_text_color</item>
     </style>
 
+    <!-- Thin bars in the inline data usage breakdown -->
+    <style name="DataUsageBar" parent="Widget.Material3.LinearProgressIndicator">
+        <item name="trackThickness">4dp</item>
+        <item name="trackCornerRadius">2dp</item>
+        <item name="indicatorTrackGapSize">2dp</item>
+        <item name="trackStopIndicatorSize">0dp</item>
+        <item name="android:max">1000</item>
+    </style>
+
+    <!-- Minimal audio player -->
+    <style name="AudioPlayerArtwork">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">20dp</item>
+    </style>
+
+    <style name="AudioPlayerTitle" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <!-- Thin progress bar with a slim thumb -->
+    <style name="AudioPlayerSlider" parent="Widget.Material3.Slider">
+        <item name="trackHeight">4dp</item>
+        <item name="thumbWidth">4dp</item>
+        <item name="thumbHeight">20dp</item>
+        <item name="thumbTrackGapSize">4dp</item>
+        <item name="trackStopIndicatorSize">0dp</item>
+        <item name="trackInsideCornerSize">2dp</item>
+        <item name="tickVisibilityMode">hidden</item>
+    </style>
+
+    <!-- Plain icon button (non-expressive, so it never changes shape or size when pressed) -->
+    <style name="AudioPlayerSeekButton" parent="Widget.Material3.Button.IconButton">
+        <item name="android:layout_width">56dp</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="iconSize">30dp</item>
+        <item name="iconTint">?attr/colorOnSurface</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+    </style>
+
+    <style name="AudioPlayerTopButton" parent="Widget.Material3.Button.IconButton">
+        <item name="iconTint">?attr/colorOnSurface</item>
+    </style>
+
+    <!-- Fixed-size round play/pause button -->
+    <style name="AudioPlayerPlayButton" parent="Widget.Material3.Button.IconButton.Filled">
+        <item name="android:layout_width">72dp</item>
+        <item name="android:layout_height">72dp</item>
+        <item name="iconSize">34dp</item>
+        <item name="cornerRadius">36dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+    </style>
+
+    <style name="AudioPlayerQuickAction" parent="Widget.Material3.Button.TextButton.Icon">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginHorizontal">8dp</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="iconTint">?attr/colorOnSurfaceVariant</item>
+        <item name="iconSize">20dp</item>
+    </style>
+
 </resources>

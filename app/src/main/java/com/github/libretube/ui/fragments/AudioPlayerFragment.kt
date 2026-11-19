@@ -25,6 +25,9 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import com.github.libretube.R
+import com.github.libretube.ui.sheets.BaseBottomSheet
+import com.github.libretube.obj.bottomsheetitem.BottomSheetItemTitle
+import com.github.libretube.obj.bottomsheetitem.BottomSheetItem
 import com.github.libretube.api.JsonHelper
 import com.github.libretube.api.obj.ChapterSegment
 import com.github.libretube.constants.IntentData
@@ -140,19 +143,6 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
             binding.playerMotionLayout.transitionToEnd()
         }
 
-        binding.autoPlay.isChecked = PlayerHelper.autoPlayEnabled
-        binding.autoPlay.setOnCheckedChangeListener { _, isChecked ->
-            PlayerHelper.autoPlayEnabled = isChecked
-        }
-
-        binding.prev.setOnClickListener {
-            playerController?.navigateVideo(PlayingQueue.getPrev() ?: return@setOnClickListener)
-        }
-
-        binding.next.setOnClickListener {
-            playerController?.navigateVideo(PlayingQueue.getNext() ?: return@setOnClickListener)
-        }
-
         binding.rewindBTN.setOnClickListener {
             playerController?.seekBy(-PlayerHelper.seekIncrement)
         }
@@ -168,21 +158,6 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
                 args.getString(IntentData.videoId) ?: return@setFragmentResultListener
             )
         }
-        binding.openQueue.setOnClickListener {
-            PlayingQueueSheet().show(childFragmentManager)
-        }
-
-        binding.playbackOptions.setOnClickListener {
-            playerController?.let {
-                PlaybackOptionsSheet(it)
-                    .show(childFragmentManager)
-            }
-        }
-
-        binding.sleepTimer.setOnClickListener {
-            SleepTimerSheet().show(childFragmentManager)
-        }
-
         binding.openVideo.setOnClickListener {
             val currentId = PlayingQueue.getCurrent()?.url?.toID()
             switchToVideoMode(currentId ?: return@setOnClickListener)
@@ -225,7 +200,7 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
         }
 
         binding.showMore.setOnClickListener {
-            onLongTap()
+            showPlayerOptions()
         }
 
         // update the currently shown volume
@@ -478,6 +453,48 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
 
     override fun onSingleTap() {
         playerController?.togglePlayPauseState()
+    }
+
+    /**
+     * Overflow menu with the less frequently used player actions, keeping the player itself minimal.
+     */
+    private fun showPlayerOptions() {
+        val items = listOf(
+            BottomSheetItem(BottomSheetItemTitle.StringResource(R.string.queue), R.drawable.ic_queue),
+            BottomSheetItem(
+                BottomSheetItemTitle.StringResource(R.string.playback_speed),
+                R.drawable.ic_speed
+            ),
+            BottomSheetItem(
+                BottomSheetItemTitle.StringResource(R.string.sleep_timer),
+                R.drawable.ic_sleep
+            ),
+            BottomSheetItem(
+                BottomSheetItemTitle.StringResource(R.string.player_autoplay),
+                R.drawable.ic_playlist,
+                getCurrent = {
+                    BottomSheetItemTitle.StringResource(
+                        if (PlayerHelper.autoPlayEnabled) R.string.enabled else R.string.disabled
+                    )
+                }
+            ),
+            BottomSheetItem(
+                BottomSheetItemTitle.StringResource(R.string.video_options_more),
+                R.drawable.ic_share
+            )
+        )
+
+        BaseBottomSheet()
+            .setItems(items) { index ->
+                when (index) {
+                    0 -> PlayingQueueSheet().show(childFragmentManager)
+                    1 -> playerController?.let { PlaybackOptionsSheet(it).show(childFragmentManager) }
+                    2 -> SleepTimerSheet().show(childFragmentManager)
+                    3 -> PlayerHelper.autoPlayEnabled = !PlayerHelper.autoPlayEnabled
+                    4 -> onLongTap()
+                }
+            }
+            .show(childFragmentManager)
     }
 
     override fun onLongTap() {

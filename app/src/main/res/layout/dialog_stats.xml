@@ -98,16 +98,6 @@
                             style="@style/DisabledTextInput" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/network_traffic"
-                        style="@style/Widget.Material3.Button.TonalButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="15dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="@string/network_traffic"
-                        app:icon="@drawable/ic_signal" />
-
                 </LinearLayout>
 
             </ScrollView>
