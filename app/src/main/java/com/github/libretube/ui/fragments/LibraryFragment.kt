@@ -76,6 +76,8 @@ class LibraryFragment : DynamicLayoutManagerFragment(R.layout.fragment_library) 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         _binding = FragmentLibraryBinding.bind(view)
+        // sets the list's layout manager, which inflating the header against the list needs
+        super.onViewCreated(view, savedInstanceState)
         _header = LibraryHeaderBinding.inflate(layoutInflater, binding.libraryList, false)
         historyAdapter = WatchHistoryAdapter(
             historyModel::isVideoDownloaded,
@@ -83,7 +85,6 @@ class LibraryFragment : DynamicLayoutManagerFragment(R.layout.fragment_library) 
             historyModel::onWatchStatusChanged
         )
         headerAdapter = HeaderAdapter(header.root)
-        super.onViewCreated(view, savedInstanceState)
 
         binding.libraryList.adapter = ConcatAdapter(headerAdapter, historyAdapter)
 

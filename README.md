@@ -49,7 +49,7 @@ After switching to audio-only, the number grows much more slowly, because only t
 
 **[Download the latest release](../../releases)**: grab `BetterTube-<version>.apk` under *Assets* and open it on your phone. Android may ask you to allow installs from your browser or file manager.
 
-The current release is a **preview** (`v0.1.2-preview`), signed with BetterTube's public debug key: only install BetterTube updates from this repository.
+The current release is a **preview** (`v0.1.3-preview`), signed with BetterTube's public debug key: only install BetterTube updates from this repository.
 
 Want the very latest changes? Every push is also built by GitHub Actions: open the [latest successful build](../../actions/workflows/ci.yml?query=is%3Asuccess), sign in to GitHub, download **app** under *Artifacts*, unzip it and install `app-debug.apk`.
 
@@ -67,6 +67,7 @@ Want the very latest changes? Every push is also built by GitHub Actions: open t
 - Subscriptions: the filter row is hidden by default (Settings → Appearance → *Subscriptions toolbar* to show it)
 - Data label: no longer tappable, just shows the total
 - Audio player: the back chevron and ⋮ menu are the same size
+- Fixed the app crashing when opening the Library tab (v0.1.2-preview)
 - LibreTube's update checker is turned off; Settings → *BetterTube releases* opens this repository's releases page
 
 
