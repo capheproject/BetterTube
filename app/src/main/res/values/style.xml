@@ -4,7 +4,7 @@
     <style name="RoundedImageView">
 
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">8%</item>
+        <item name="cornerSize">@dimen/corner_thumbnail</item>
 
     </style>
 
@@ -15,17 +15,17 @@
 
     </style>
 
-    <style name="AboutCard" parent="Widget.Material3.CardView.Elevated">
+    <style name="AboutCard" parent="Widget.Material3.CardView.Filled">
 
         <item name="android:layout_marginStart">10dp</item>
         <item name="android:layout_marginEnd">10dp</item>
         <item name="android:layout_marginBottom">5dp</item>
         <item name="android:layout_marginTop">10dp</item>
         <item name="strokeWidth">0dp</item>
-        <item name="cardCornerRadius">18dp</item>
+        <item name="cardCornerRadius">24dp</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="cardElevation">5dp</item>
+        <item name="cardElevation">0dp</item>
 
     </style>
 
@@ -33,8 +33,8 @@
 
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:textAppearance">?attr/textAppearanceTitleMedium</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
         <item name="android:textAlignment">viewStart</item>
         <item name="android:drawablePadding">20dp</item>
         <item name="android:paddingStart">15dp</item>
@@ -63,15 +63,13 @@
 
     </style>
 
-    <style name="PlayerActionsButton" parent="@style/Widget.Material3.Button.ElevatedButton">
+    <style name="PlayerActionsButton" parent="@style/Widget.Material3Expressive.Button.TonalButton">
 
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">4dp</item>
         <item name="android:layout_marginEnd">4dp</item>
         <item name="iconGravity">textStart</item>
-        <item name="android:textColor">?colorPrimary</item>
-        <item name="iconTint">?colorPrimary</item>
 
     </style>
 
@@ -108,7 +106,7 @@
 
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">4dp</item>
-        <item name="android:background">?colorPrimaryDark</item>
+        <item name="android:background">?colorPrimary</item>
         <item name="android:visibility">gone</item>
 
     </style>
@@ -174,8 +172,8 @@
 
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">20sp</item>
-        <item name="android:textColor">?attr/colorControlNormal</item>
+        <item name="android:textAppearance">?attr/textAppearanceTitleLarge</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAlignment">viewStart</item>
         <item name="android:padding">8dp</item>

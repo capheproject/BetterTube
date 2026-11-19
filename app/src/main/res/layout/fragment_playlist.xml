@@ -49,7 +49,8 @@
                         android:layout_width="0dp"
                         android:layout_height="0dp"
                         android:layout_margin="8dp"
-                        app:cardCornerRadius="8dp"
+                        app:cardCornerRadius="@dimen/corner_thumbnail_large"
+                        app:cardElevation="0dp"
                         app:layout_constraintDimensionRatio="16:9"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -71,7 +72,7 @@
                             android:layout_marginEnd="6dp"
                             android:layout_marginBottom="6dp"
                             app:cardBackgroundColor="@color/duration_background_color"
-                            app:cardCornerRadius="8dp"
+                            app:cardCornerRadius="@dimen/corner_badge"
                             app:cardElevation="0dp">
 
                             <TextView
