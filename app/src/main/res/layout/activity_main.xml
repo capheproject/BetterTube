@@ -15,7 +15,7 @@
         android:id="@+id/main_coordinator"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/bottomNav"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -47,6 +47,17 @@
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
+
+    <!-- Soft fade under the status bar icons once the header has scrolled away -->
+    <View
+        android:id="@+id/status_bar_scrim"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/status_bar_scrim"
+        android:importantForAccessibility="no"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Floating dock: inset from the edges, icons only -->
     <com.google.android.material.bottomnavigation.BottomNavigationView

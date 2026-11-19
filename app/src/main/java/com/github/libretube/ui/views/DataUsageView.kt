@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.github.libretube.R
@@ -78,13 +79,34 @@ class DataUsageView @JvmOverloads constructor(
         super.onDetachedFromWindow()
     }
 
+    /** What the hosting player plays; decides the icon and how the breakdown is described. */
+    enum class Mode { VIDEO, AUDIO }
+
+    var mode: Mode = Mode.VIDEO
+        set(value) {
+            field = value
+            update()
+        }
+
+    private fun setChipIcon() {
+        val size = (16 * resources.displayMetrics.density).toInt()
+        val icon = AppCompatResources.getDrawable(
+            context,
+            if (mode == Mode.VIDEO) R.drawable.ic_video else R.drawable.ic_volume_up
+        )?.mutate()?.apply { setBounds(0, 0, size, size) }
+        binding.dataUsageChip.setCompoundDrawablesRelative(icon, null, null, null)
+    }
+
     private fun update() {
+        setChipIcon()
         val stats = SabrTrafficStats
         val currentVideoId = PlayingQueue.getCurrent()?.url?.toID()
+        val modeLabel = context.getString(if (mode == Mode.VIDEO) R.string.video else R.string.audio)
 
         // the stats only cover SABR streams, other stream types aren't measured
         if (currentVideoId == null || stats.videoId != currentVideoId) {
-            binding.dataUsageChip.text = context.getString(R.string.data_usage)
+            binding.dataUsageChip.text = context.getString(R.string.data_usage_not_measured_short)
+            binding.dataUsageChip.contentDescription = context.getString(R.string.data_usage_unavailable)
             binding.dataUsageStatus.text = context.getString(R.string.data_usage_unavailable)
             binding.dataUsageRows.isGone = true
             return
@@ -94,27 +116,28 @@ class DataUsageView @JvmOverloads constructor(
         val audio = stats.audio
         val video = stats.video
         val total = audio + video
-        val now = System.currentTimeMillis()
-        val sinceVideoMs = now - (stats.lastVideoDataMs.takeIf { it != 0L } ?: stats.sinceMs)
-        val audioOnly = audio > 0 && sinceVideoMs >= AUDIO_ONLY_THRESHOLD_MS
-
         val totalText = Formatter.formatShortFileSize(context, total)
-        binding.dataUsageChip.text = if (audioOnly) {
-            context.getString(R.string.data_usage_chip_audio_only, totalText)
-        } else {
-            context.getString(R.string.data_usage_chip, totalText)
-        }
+        binding.dataUsageChip.text = totalText
+        binding.dataUsageChip.contentDescription =
+            context.getString(R.string.data_usage_description, modeLabel, totalText)
 
         // the breakdown only needs updating while it's shown
         if (!binding.dataUsagePanel.isVisible) return
 
+        // Video arrives in bursts (the player buffers ahead), so a pause in video data doesn't
+        // mean audio only. Only the audio player can be audio only.
+        val now = System.currentTimeMillis()
+        val lastVideo = stats.lastVideoDataMs
+        val sinceVideoMs = now - (lastVideo.takeIf { it != 0L } ?: stats.sinceMs)
         binding.dataUsageStatus.text = when {
             total == 0L -> context.getString(R.string.data_usage_status_idle)
-            audioOnly -> context.getString(
+            mode == Mode.VIDEO -> context.getString(R.string.data_usage_status_both)
+            lastVideo != 0L && sinceVideoMs < AUDIO_ONLY_THRESHOLD_MS ->
+                context.getString(R.string.data_usage_status_switching)
+            else -> context.getString(
                 R.string.data_usage_status_audio_only,
                 formatDuration(sinceVideoMs / 1000)
             )
-            else -> context.getString(R.string.data_usage_status_both)
         }
         binding.dataUsageAudio.text = Formatter.formatShortFileSize(context, audio)
         binding.dataUsageVideo.text = Formatter.formatShortFileSize(context, video)

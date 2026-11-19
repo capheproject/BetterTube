@@ -29,9 +29,6 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import com.github.libretube.R
-import com.github.libretube.ui.sheets.BaseBottomSheet
-import com.github.libretube.obj.bottomsheetitem.BottomSheetItemTitle
-import com.github.libretube.obj.bottomsheetitem.BottomSheetItem
 import com.github.libretube.api.JsonHelper
 import com.github.libretube.api.obj.ChapterSegment
 import com.github.libretube.constants.IntentData
@@ -47,9 +44,12 @@ import com.github.libretube.helpers.AudioHelper
 import com.github.libretube.helpers.BackgroundHelper
 import com.github.libretube.helpers.ClipboardHelper
 import com.github.libretube.helpers.ImageHelper
+import com.github.libretube.helpers.MiniPlayerShape
 import com.github.libretube.helpers.NavigationHelper
 import com.github.libretube.helpers.PlayerHelper
 import com.github.libretube.helpers.ThemeHelper
+import com.github.libretube.obj.bottomsheetitem.BottomSheetItem
+import com.github.libretube.obj.bottomsheetitem.BottomSheetItemTitle
 import com.github.libretube.parcelable.PlayerData
 import com.github.libretube.services.AbstractPlayerService
 import com.github.libretube.services.OfflinePlayerService
@@ -61,11 +61,13 @@ import com.github.libretube.ui.interfaces.AudioPlayerOptions
 import com.github.libretube.ui.listeners.AudioPlayerThumbnailListener
 import com.github.libretube.ui.models.ChaptersViewModel
 import com.github.libretube.ui.models.CommonPlayerViewModel
+import com.github.libretube.ui.sheets.BaseBottomSheet
 import com.github.libretube.ui.sheets.ChaptersBottomSheet
 import com.github.libretube.ui.sheets.PlaybackOptionsSheet
 import com.github.libretube.ui.sheets.PlayingQueueSheet
 import com.github.libretube.ui.sheets.SleepTimerSheet
 import com.github.libretube.ui.sheets.VideoOptionsBottomSheet
+import com.github.libretube.ui.views.DataUsageView
 import com.github.libretube.util.DataSaverMode
 import com.github.libretube.util.PlayingQueue
 import kotlinx.coroutines.launch
@@ -207,6 +209,9 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
             showPlayerOptions()
         }
 
+        // the data label shows a speaker icon here
+        binding.dataUsage.mode = DataUsageView.Mode.AUDIO
+
         // update the currently shown volume
         binding.volumeProgressBar.let { bar ->
             bar.progress = (audioHelper.deviceVolume * bar.max).toInt().coerceIn(0, bar.max)
@@ -298,15 +303,18 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
                 progress: Float
             ) {
                 activity.setPlayerContainerProgress(progress.absoluteValue)
+                _binding?.let { MiniPlayerShape.apply(it.audioPlayerContainer, progress.absoluteValue) }
                 transitionEndId = endId
                 transitionStartId = startId
             }
 
             override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
                 if (currentId == transitionEndId) {
+                    _binding?.let { MiniPlayerShape.apply(it.audioPlayerContainer, 1f) }
                     viewModel.isMiniPlayerVisible.value = true
                     activity.minimizePlayerContainerLayout()
                 } else if (currentId == transitionStartId) {
+                    _binding?.let { MiniPlayerShape.apply(it.audioPlayerContainer, 0f) }
                     viewModel.isMiniPlayerVisible.value = false
                     activity.maximizePlayerContainerLayout()
                 }

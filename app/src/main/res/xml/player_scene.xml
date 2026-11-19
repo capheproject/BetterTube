@@ -43,10 +43,14 @@
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/end">
+        <!-- Mini player: a floating rounded card above the dock -->
         <Constraint
             android:id="@+id/main_container"
-            android:layout_width="match_parent"
-            android:layout_height="54dp"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/mini_player_height"
+            android:layout_marginStart="@dimen/mini_player_margin_horizontal"
+            android:layout_marginEnd="@dimen/mini_player_margin_horizontal"
+            android:layout_marginBottom="@dimen/mini_player_margin_bottom"
             motion:layout_constraintBottom_toBottomOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintHorizontal_bias="0.5"
@@ -55,16 +59,20 @@
             motion:layout_constraintVertical_bias="1.0" />
         <Constraint
             android:id="@+id/player"
-            android:layout_width="100dp"
+            android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             motion:layout_constraintBottom_toBottomOf="@id/main_container"
+            motion:layout_constraintDimensionRatio="16:9"
             motion:layout_constraintStart_toStartOf="@id/main_container"
             motion:layout_constraintTop_toTopOf="@id/main_container" />
         <Constraint
             android:id="@+id/close_imageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
             android:alpha="1"
             android:visibility="visible"
             motion:layout_constraintBottom_toBottomOf="@id/main_container"
@@ -83,7 +91,8 @@
             android:id="@+id/title_textView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="4dp"
             android:alpha="1"
             android:visibility="visible"
             motion:layout_constraintBottom_toBottomOf="@+id/play_imageView"

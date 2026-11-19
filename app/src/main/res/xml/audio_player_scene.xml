@@ -32,10 +32,14 @@
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/end">
+        <!-- Mini player: a floating rounded card above the dock -->
         <Constraint
             android:id="@+id/audio_player_container"
-            android:layout_width="match_parent"
-            android:layout_height="54dp"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/mini_player_height"
+            android:layout_marginStart="@dimen/mini_player_margin_horizontal"
+            android:layout_marginEnd="@dimen/mini_player_margin_horizontal"
+            android:layout_marginBottom="@dimen/mini_player_margin_bottom"
             motion:layout_constraintBottom_toBottomOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintHorizontal_bias="0.5"
@@ -52,8 +56,8 @@
             motion:layout_constraintTop_toBottomOf="@+id/main_container" />
         <Constraint
             android:id="@+id/miniPlayerControls"
-            android:layout_width="match_parent"
-            android:layout_height="54dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:alpha="1"
             android:paddingEnd="16dp"
             android:visibility="visible"

@@ -21,13 +21,18 @@ import androidx.core.os.bundleOf
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.allViews
 import androidx.core.view.children
+import androidx.core.view.doOnLayout
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.get
 import androidx.core.view.isNotEmpty
+import androidx.core.view.isVisible
 import androidx.core.view.marginBottom
 import androidx.core.view.size
 import androidx.core.view.updateLayoutParams
 import androidx.core.widget.NestedScrollView
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -47,6 +52,7 @@ import com.github.libretube.enums.ImportFormat
 import com.github.libretube.enums.SearchType
 import com.github.libretube.enums.TopLevelDestination
 import com.github.libretube.extensions.anyChildFocused
+import com.github.libretube.helpers.DockSpaceHelper
 import com.github.libretube.helpers.ImportHelper
 import com.github.libretube.helpers.IntentHelper
 import com.github.libretube.helpers.NavBarHelper
@@ -131,6 +137,7 @@ class MainActivity : AbstractPlayerHostActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val toolbarHeight = binding.toolbar.layoutParams.height
 
         // manually apply additional padding for edge-to-edge compatibility
         // see https://developer.android.com/develop/ui/views/layout/edge-to-edge
@@ -141,13 +148,17 @@ class MainActivity : AbstractPlayerHostActivity() {
             binding.root.viewTreeObserver.addOnGlobalLayoutListener(object :
                 ViewTreeObserver.OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
-                    with(binding.appBarLayout) {
-                        setPadding(
-                            paddingLeft,
-                            systemBarInsets.top,
-                            paddingRight,
-                            paddingBottom
-                        )
+                    // the status bar inset belongs to the toolbar, so the whole header
+                    // (incl. the status bar area) scrolls away with the content
+                    with(binding.toolbar) {
+                        setPadding(paddingLeft, systemBarInsets.top, paddingRight, paddingBottom)
+                        updateLayoutParams<ViewGroup.LayoutParams> {
+                            height = toolbarHeight + systemBarInsets.top
+                        }
+                    }
+                    // keeps the status bar icons readable over scrolled content
+                    binding.statusBarScrim.updateLayoutParams<ViewGroup.LayoutParams> {
+                        height = systemBarInsets.top
                     }
                     // the dock floats: keep it clear of the system navigation bar
                     binding.bottomNav.updateLayoutParams<ViewGroup.MarginLayoutParams> {
@@ -192,6 +203,24 @@ class MainActivity : AbstractPlayerHostActivity() {
         val navHostFragment = binding.fragment.getFragment<NavHostFragment>()
         navController = navHostFragment.navController
         binding.bottomNav.setupWithNavController(navController)
+
+        // the dock floats over the content: give each screen's lists room underneath it
+        supportFragmentManager.registerFragmentLifecycleCallbacks(
+            object : FragmentManager.FragmentLifecycleCallbacks() {
+                override fun onFragmentViewCreated(
+                    fm: FragmentManager,
+                    f: Fragment,
+                    v: View,
+                    savedInstanceState: Bundle?
+                ) {
+                    if (f is DialogFragment || !f.isInsideNavHost()) return
+                    binding.bottomNav.doOnLayout {
+                        v.post { DockSpaceHelper.apply(v, dockSpace()) }
+                    }
+                }
+            },
+            true
+        )
 
         // save start tab fragment id and apply navbar style
         startFragmentId = try {
@@ -624,6 +653,24 @@ class MainActivity : AbstractPlayerHostActivity() {
                 timestamp = intent.getLongExtra(IntentData.timeStamp, 0L)
             ),
         )
+    }
+
+    /** Space the floating dock takes at the bottom of the screen (0 if it's hidden). */
+    private fun dockSpace(): Int {
+        val dock = binding.bottomNav
+        if (!dock.isVisible || dock.height == 0) return 0
+        return dock.height + dock.marginBottom + (8 * resources.displayMetrics.density).toInt()
+    }
+
+    /** Whether this fragment is (inside) a screen of the main navigation, not a player or sheet. */
+    private fun Fragment.isInsideNavHost(): Boolean {
+        var parent = parentFragment
+        while (parent != null) {
+            if (parent is DialogFragment) return false
+            if (parent is NavHostFragment) return true
+            parent = parent.parentFragment
+        }
+        return false
     }
 
     private fun navigateToBottomSelectedItem(item: MenuItem): Boolean {

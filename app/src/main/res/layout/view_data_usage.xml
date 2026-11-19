@@ -17,7 +17,6 @@
         android:paddingHorizontal="6dp"
         android:textAppearance="?attr/textAppearanceLabelMedium"
         android:textColor="?attr/colorOnSurfaceVariant"
-        app:drawableStartCompat="@drawable/ic_data_usage_small"
         app:drawableTint="?attr/colorOnSurfaceVariant"
         tools:text="21 MB · audio only" />
 

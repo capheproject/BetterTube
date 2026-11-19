@@ -579,10 +579,11 @@
     <string name="comment_verified">Verified</string>
     <string name="comment_pinned">Pinned</string>
     <string name="data_usage">Data usage</string>
-    <string name="data_usage_chip">%1$s</string>
-    <string name="data_usage_chip_audio_only">%1$s · audio only</string>
     <string name="data_usage_status_both">Receiving audio and video</string>
     <string name="data_usage_status_audio_only">Audio only · no video data for %1$s</string>
+    <string name="data_usage_status_switching">Switching to audio only…</string>
+    <string name="data_usage_not_measured_short">–</string>
+    <string name="data_usage_description">%1$s, %2$s of data used. Tap for details</string>
     <string name="data_usage_status_idle">Waiting for data…</string>
     <string name="data_usage_unavailable">Not measured for this stream type</string>
     <string name="data_usage_toggle_description">Show or hide data usage</string>

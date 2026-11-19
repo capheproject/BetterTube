@@ -76,6 +76,7 @@ import com.github.libretube.extensions.updateIfChanged
 import com.github.libretube.helpers.BackgroundHelper
 import com.github.libretube.helpers.DownloadHelper
 import com.github.libretube.helpers.ImageHelper
+import com.github.libretube.helpers.MiniPlayerShape
 import com.github.libretube.helpers.NavigationHelper
 import com.github.libretube.helpers.PlayerHelper
 import com.github.libretube.helpers.PlayerHelper.getCurrentSegment
@@ -108,9 +109,9 @@ import com.github.libretube.ui.sheets.CommentsSheet
 import com.github.libretube.util.OfflineTimeFrameReceiver
 import com.github.libretube.util.OnlineTimeFrameReceiver
 import com.github.libretube.util.PlayingQueue
-import com.github.libretube.util.ThumbnailHints
 import com.github.libretube.util.TextUtils
 import com.github.libretube.util.TextUtils.toTimeInSeconds
+import com.github.libretube.util.ThumbnailHints
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -581,6 +582,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
                 if (_binding == null) return
 
                 baseActivity.setPlayerContainerProgress(progress.absoluteValue)
+                MiniPlayerShape.apply(binding.mainContainer, progress.absoluteValue)
                 disableController()
                 commonPlayerViewModel.setSheetExpand(false)
                 transitionEndId = endId
@@ -591,6 +593,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
                 if (_binding == null) return
 
                 if (currentId == transitionStartId) {
+                    MiniPlayerShape.apply(binding.mainContainer, 0f)
                     commonPlayerViewModel.isMiniPlayerVisible.value = false
                     // re-enable captions
                     binding.player.updateCurrentSubtitle(viewModel.currentCaptionId)
@@ -602,6 +605,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
                     // clear search bar focus to avoid keyboard popups
                     baseActivity.clearSearchViewFocus()
                 } else if (currentId == transitionEndId) {
+                    MiniPlayerShape.apply(binding.mainContainer, 1f)
                     commonPlayerViewModel.isMiniPlayerVisible.value = true
                     // disable captions temporarily
                     binding.player.updateCurrentSubtitle(null)
