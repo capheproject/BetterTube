@@ -27,7 +27,7 @@ BetterTube keeps everything LibreTube does and focuses on two things: audio-only
 | **Seeing what's downloaded** | Not possible in the app | A small data label in both players; tap it for an audio vs. video breakdown |
 | **Opening a video** | Black screen with a spinner | The thumbnail you tapped stays in place and fades into the video |
 | **Audio player** | Rows of buttons; play button that resizes and shifts its neighbours | Minimal: round fixed-size play button, Chapters and Video at hand, the rest in ⋮, blurred-artwork backdrop |
-| **Navigation** | Full-width bottom bar | Floating, glassy, icons-only dock; content flows underneath |
+| **Navigation** | Full-width bottom bar | Floating, icons-only dock with a soft colour sheen; content flows underneath |
 | **Look and feel** | Material 3 Expressive defaults | Own design: Plus Jakarta Sans, flat cards on one 16dp grid, quiet secondary text |
 | **Motion** | Default fades | Screens rise in on emphasized easing, lists ease in item by item, cards respond to touch |
 | **Loading** | Spinners | Card-shaped placeholders that gently pulse |
@@ -48,7 +48,7 @@ Tap it for an inline breakdown of **audio** vs. **video** data; tap again to hid
 
 **[Download the latest release](../../releases)**: grab `BetterTube-<version>.apk` under *Assets* and open it on your phone. Android may ask you to allow installs from your browser or file manager.
 
-The current release is a **preview** (`v0.1.0-preview`), signed with BetterTube's public debug key: only install BetterTube updates from this repository.
+The current release is a **preview** (`v0.1.1-preview`), signed with BetterTube's public debug key: only install BetterTube updates from this repository.
 
 Want the very latest changes? Every push is also built by GitHub Actions: open the [latest successful build](../../actions/workflows/ci.yml?query=is%3Asuccess), sign in to GitHub, download **app** under *Artifacts*, unzip it and install `app-debug.apk`.
 
@@ -67,7 +67,7 @@ Want the very latest changes? Every push is also built by GitHub Actions: open t
 
 **Design**
 - Plus Jakarta Sans typeface across the whole app, on the full Material 3 type scale
-- Floating, glassy, icons-only bottom dock: translucent surface, soft sheen, light-catching rim and shadow; content scrolls underneath it
+- Floating, icons-only bottom dock: opaque surface with a soft colour sheen in your accent colours, a fine rim and a shadow; content scrolls underneath it
 - Header (bold BetterTube wordmark) scrolls fully away with the content and returns when scrolling up
 - New feed cards: large rounded thumbnails, full-width titles, one quiet line with a small avatar, channel, views and age
 - Flat, outline-free chips; quiet empty states; one filled primary action per screen; everything on a 16dp grid
