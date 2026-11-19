@@ -132,6 +132,7 @@ class SabrMediaPeriod(
         selectNewStreams(
             selections, streams, streamResetFlags, positionUs, streamIndexToTrackGroupIndex
         )
+        deselectUnusedTrackTypes(streamIndexToTrackGroupIndex)
 
         // inform the server about when we changed the format
         val now = Instant.now().toEpochMilli()
@@ -262,6 +263,22 @@ class SabrMediaPeriod(
                 val stream = streams[i] as ChunkSampleStream<SabrChunkSource?>
                 stream.getChunkSource().updateTrackSelection(selection)
             }
+        }
+    }
+
+    /**
+     * Tells the [sabrClient] to stop requesting media for track types that no longer have a
+     * selection, e.g. video after the video track type got disabled for audio only mode.
+     * Without this the server would keep sending video data that is never played.
+     */
+    private fun deselectUnusedTrackTypes(streamIndexToTrackGroupIndex: IntArray) {
+        val selectedTrackTypes = streamIndexToTrackGroupIndex
+            .filter { it != C.INDEX_UNSET }
+            .map { trackGroupInfos[it].trackType }
+            .toSet()
+
+        for (trackType in listOf(C.TRACK_TYPE_VIDEO, C.TRACK_TYPE_AUDIO)) {
+            if (trackType !in selectedTrackTypes) sabrClient.deselectFormat(trackType)
         }
     }
 

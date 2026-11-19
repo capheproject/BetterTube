@@ -2,6 +2,7 @@ package com.github.libretube.player.parser
 
 import android.util.Log
 import androidx.annotation.OptIn
+import androidx.media3.common.C
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.upstream.DefaultBandwidthMeter
@@ -167,8 +168,15 @@ class SabrClient private constructor(
     private val dispatcher = Dispatchers.IO.limitedParallelism(1)
 
     /** Audio format video format */
+    @Volatile
     private var audioFormat: Representation? = null
-    /** Optional video format */
+    /**
+     * Optional video format.
+     *
+     * `null` when the video track is disabled (e.g. audio only mode), which makes the client
+     * request only audio data from the server.
+     */
+    @Volatile
     private var videoFormat: Representation? = null
 
     constructor(manifest: SabrManifest) : this(
@@ -273,6 +281,22 @@ class SabrClient private constructor(
             audioFormat = representation
         } else if (MimeTypes.isVideo(representation.format.containerMimeType)) {
             videoFormat = representation
+        }
+    }
+
+    /**
+     * Stops requesting media for the given track type.
+     *
+     * Must be called when the player releases the stream of a track type (e.g. when the video
+     * track gets disabled while switching to audio only mode during playback). Otherwise the
+     * previously selected format would still be advertised to the server, which would then keep
+     * sending (and the client keep buffering) data for a track that is never played.
+     */
+    @OptIn(UnstableApi::class)
+    fun deselectFormat(trackType: @C.TrackType Int) {
+        when (trackType) {
+            C.TRACK_TYPE_VIDEO -> videoFormat = null
+            C.TRACK_TYPE_AUDIO -> audioFormat = null
         }
     }
 
@@ -469,7 +493,12 @@ class SabrClient private constructor(
                     throw Exception("Header mismatch")
                 }
 
-                val format = initializedFormats[header.formatId.itag]!!
+                // the server may still send data for a format that has been deselected in the
+                // meantime (e.g. video after switching to audio only mode), simply drop it
+                val format = initializedFormats[header.formatId.itag] ?: run {
+                    Log.d(TAG, "processPart: Ignoring media for unselected format `${header.formatId.itag}`")
+                    return
+                }
 
                 if (format.downloadedSegments.containsKey(sequenceNumber)) {
                     Log.w(TAG, "processPart: Segment $sequenceNumber is already downloaded. Ignoring.")
@@ -511,7 +540,7 @@ class SabrClient private constructor(
                     throw Exception("Content length mismatch")
                 }
 
-                val format = initializedFormats[segment.header.itag]!!
+                val format = initializedFormats[segment.header.itag] ?: return
                 format.downloadedSegments[segment.sequenceNumber] = segment
 
                 if (segment.header.isInitSeg) {
