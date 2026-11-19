@@ -4,12 +4,7 @@ import com.github.libretube.util.TextUtils.toTimeInSeconds
 import com.github.libretube.util.TextUtils
 import com.github.libretube.ui.sheets.CommentsSheet
 import com.github.libretube.ui.models.CommentsViewModel
-import com.github.libretube.ui.dialogs.ShareDialog
-import com.github.libretube.ui.dialogs.AddToPlaylistDialog
-import com.github.libretube.obj.ShareData
 import com.github.libretube.helpers.IntentHelper
-import com.github.libretube.helpers.DownloadHelper
-import com.github.libretube.enums.ShareObjectType
 import androidx.core.net.toUri
 import androidx.media3.common.PlaybackException
 import android.annotation.SuppressLint
@@ -523,39 +518,9 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
     }
 
     /**
-     * The same actions as on the video page: share, save, download and comments.
+     * Comments, as on the video page (sharing, saving and downloading are in the overflow menu).
      */
     private fun setupVideoActions() {
-        // downloaded videos are already saved locally
-        binding.download.isGone = isOffline
-
-        binding.share.setOnClickListener {
-            val current = PlayingQueue.getCurrent() ?: return@setOnClickListener
-            ShareDialog().apply {
-                arguments = bundleOf(
-                    IntentData.id to current.url?.toID(),
-                    IntentData.shareObjectType to ShareObjectType.VIDEO,
-                    IntentData.shareData to ShareData(
-                        title = current.title,
-                        previewImageUrl = current.thumbnail,
-                        currentPosition = (playerController?.currentPosition ?: 0L) / 1000
-                    )
-                )
-            }.show(childFragmentManager, ShareDialog::class.java.name)
-        }
-
-        binding.save.setOnClickListener {
-            val current = PlayingQueue.getCurrent() ?: return@setOnClickListener
-            AddToPlaylistDialog().apply {
-                arguments = bundleOf(IntentData.videoInfo to current)
-            }.show(childFragmentManager, AddToPlaylistDialog::class.java.name)
-        }
-
-        binding.download.setOnClickListener {
-            val videoId = PlayingQueue.getCurrent()?.url?.toID() ?: return@setOnClickListener
-            DownloadHelper.startDownloadDialog(requireContext(), childFragmentManager, videoId)
-        }
-
         binding.commentsToggle.setOnClickListener {
             val current = PlayingQueue.getCurrent() ?: return@setOnClickListener
             val videoId = current.url?.toID() ?: return@setOnClickListener

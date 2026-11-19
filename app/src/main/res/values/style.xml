@@ -369,6 +369,21 @@
         <item name="android:insetRight">0dp</item>
     </style>
 
+    <!-- Compact pill in the audio player's top bar (Video, Chapters) -->
+    <style name="AudioPlayerTopPill" parent="SheenButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="android:minHeight">36dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">14dp</item>
+        <item name="iconSize">18dp</item>
+        <item name="iconPadding">6dp</item>
+        <item name="iconGravity">textStart</item>
+        <item name="android:textAppearance">?attr/textAppearanceLabelLarge</item>
+    </style>
+
     <style name="AudioPlayerQuickAction" parent="Widget.Material3.Button.TextButton.Icon">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
