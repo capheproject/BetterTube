@@ -73,7 +73,7 @@ class SabrMediaSource(
         override fun createMediaSource(mediaItem: MediaItem): SabrMediaSource {
             Assertions.checkNotNull<LocalConfiguration>(mediaItem.localConfiguration)
             val cmcdConfiguration = cmcdConfigurationFactory?.createCmcdConfiguration(mediaItem)
-            val sabrClient = SabrClient(manifest)
+            val sabrClient = SabrClient(manifest, trackTraffic = true)
 
             return SabrMediaSource(
                 mediaItem,

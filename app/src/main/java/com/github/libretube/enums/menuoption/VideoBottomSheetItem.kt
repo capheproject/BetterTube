@@ -48,6 +48,11 @@ sealed class VideoBottomSheetItem(
         drawableRes = R.drawable.ic_download,
     )
 
+    data object NetworkTraffic : VideoBottomSheetItem(
+        titleStringRes = R.string.network_traffic,
+        drawableRes = R.drawable.ic_signal,
+    )
+
     data object Share : VideoBottomSheetItem(
         titleStringRes = R.string.share,
         drawableRes = R.drawable.ic_share,

@@ -9,6 +9,7 @@ import androidx.media3.exoplayer.upstream.DefaultBandwidthMeter
 import com.github.libretube.LibreTubeApp
 import com.github.libretube.api.poToken.PoTokenGenerator
 import com.github.libretube.helpers.DisplayHelper
+import com.github.libretube.player.SabrTrafficStats
 import com.github.libretube.player.manifest.Representation
 import com.github.libretube.player.manifest.SabrManifest
 import com.github.libretube.ui.dialogs.ShareDialog
@@ -179,11 +180,27 @@ class SabrClient private constructor(
     @Volatile
     private var videoFormat: Representation? = null
 
-    constructor(manifest: SabrManifest) : this(
+    /**
+     * @param trackTraffic Whether to count the received media data in [SabrTrafficStats].
+     * Should only be enabled for playback (not downloads).
+     */
+    constructor(manifest: SabrManifest, trackTraffic: Boolean = false) : this(
         manifest.videoId,
         manifest.serverAbrStreamingUri.toString(),
         ByteString.copyFrom(manifest.videoPlaybackUstreamerConfig)
-    )
+    ) {
+        if (trackTraffic) {
+            audioItags = manifest.adaptationSets
+                .filter { it.type == C.TRACK_TYPE_AUDIO }
+                .flatMap { it.representations }
+                .mapNotNull { it?.stream?.itag }
+                .toSet()
+            SabrTrafficStats.reset(manifest.videoId)
+        }
+    }
+
+    /** Itags of all audio formats, only set when traffic is tracked. */
+    private var audioItags: Set<Int>? = null
 
     init {
         poTokenGenerator.getCachedWebClientPoToken()?.let {
@@ -495,6 +512,13 @@ class SabrClient private constructor(
 
                 // the server may still send data for a format that has been deselected in the
                 // meantime (e.g. video after switching to audio only mode), simply drop it
+                audioItags?.let { audioItags ->
+                    SabrTrafficStats.record(
+                        isAudio = header.formatId.itag in audioItags,
+                        bytes = header.contentLength
+                    )
+                }
+
                 val format = initializedFormats[header.formatId.itag] ?: run {
                     Log.d(TAG, "processPart: Ignoring media for unselected format `${header.formatId.itag}`")
                     return

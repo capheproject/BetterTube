@@ -2,6 +2,7 @@ package com.github.libretube.ui.sheets
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.os.bundleOf
 import com.github.libretube.R
 import com.github.libretube.constants.IntentData
 import com.github.libretube.databinding.DialogStatsBinding
@@ -26,5 +27,10 @@ class StatsSheet : ExpandedBottomSheet(R.layout.dialog_stats) {
         binding.videoInfo.setText(stats.videoInfo)
         binding.audioInfo.setText(stats.audioInfo)
         binding.videoQuality.setText(stats.videoQuality)
+        binding.networkTraffic.setOnClickListener {
+            TrafficStatsSheet()
+                .apply { arguments = bundleOf(IntentData.videoId to stats.videoId) }
+                .show(parentFragmentManager, TrafficStatsSheet::class.java.name)
+        }
     }
 }
