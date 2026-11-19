@@ -50,7 +50,8 @@
                     <androidx.cardview.widget.CardView
                         android:layout_width="0dp"
                         android:layout_height="0dp"
-                        android:layout_margin="8dp"
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_marginTop="8dp"
                         app:cardCornerRadius="@dimen/corner_thumbnail_large"
                         app:cardElevation="0dp"
                         app:layout_constraintDimensionRatio="16:9"
@@ -83,8 +84,7 @@
                                 android:layout_height="wrap_content"
                                 android:paddingHorizontal="6dp"
                                 android:paddingVertical="2dp"
-                                android:textColor="@color/duration_text_color"
-                                android:textSize="12sp"
+                                android:textAppearance="@style/DurationBadge"
                                 tools:text="05:36" />
 
                         </androidx.cardview.widget.CardView>
@@ -103,40 +103,37 @@
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:layout_marginStart="12dp"
-                        android:layout_marginEnd="8dp">
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="4dp">
 
                         <com.github.libretube.ui.views.ExpandableTextView
                             android:id="@+id/playlist_name"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:paddingVertical="2dp"
-                            android:textColor="?android:attr/textColorPrimary"
-                            android:textSize="20sp"
-                            android:textStyle="bold"
+                            android:textAppearance="@style/AudioPlayerTitle"
                             tools:text="Playlist name" />
 
                         <TextView
                             android:id="@+id/playlistInfo"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textStyle="bold"
+                            android:layout_marginTop="2dp"
+                            android:textAppearance="?attr/textAppearanceBodyMedium"
+                            android:textColor="?attr/colorOnSurfaceVariant"
                             tools:text="info" />
 
                     </LinearLayout>
 
-                    <com.google.android.material.button.MaterialButtonGroup
-                        style="@style/Widget.Material3.MaterialSplitButton"
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="4dp"
-                        android:gravity="center"
-                        android:paddingTop="0dp"
-                        android:paddingBottom="0dp">
+                        android:layout_marginEnd="8dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/sortBTN"
-                            style="?materialButtonTonalStyle"
+                            style="@style/MinimalTextButton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:visibility="gone"
@@ -147,13 +144,13 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/optionsMenu"
-                            style="?materialIconButtonFilledTonalStyle"
+                            style="@style/MinimalIconButton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
+                            android:contentDescription="@string/more_options"
                             app:icon="@drawable/ic_three_dots" />
 
-                    </com.google.android.material.button.MaterialButtonGroup>
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -161,20 +158,23 @@
                     android:id="@+id/playlistDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="2dp"
-                    android:padding="10dp" />
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="8dp"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
 
-                <com.google.android.material.button.MaterialButtonGroup
+                <!-- Primary action filled, secondary tonal -->
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="12dp"
-                    android:layout_marginVertical="10dp"
-                    android:orientation="horizontal"
-                    app:buttonSizeChange="@null">
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="8dp"
+                    android:orientation="horizontal">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/play_all"
-                        style="@style/Widget.Material3Expressive.Button.OutlinedButton"
+                        style="@style/Widget.Material3.Button.Icon"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -184,15 +184,16 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/bookmark"
-                        style="@style/Widget.Material3Expressive.Button"
+                        style="@style/Widget.Material3.Button.TonalButton.Icon"
                         android:layout_width="0dp"
+                        android:layout_marginStart="8dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:maxLines="1"
                         android:text="@string/bookmark"
                         app:icon="@drawable/ic_bookmark_outlined" />
 
-                </com.google.android.material.button.MaterialButtonGroup>
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/nothing_here"
@@ -203,18 +204,18 @@
                     android:visibility="gone">
 
                     <ImageView
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
+                        android:alpha="0.5"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_list" />
 
                     <TextView
+                        style="@style/EmptyStateText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:text="@string/emptyList"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
+                        android:text="@string/emptyList" />
                 </LinearLayout>
 
 

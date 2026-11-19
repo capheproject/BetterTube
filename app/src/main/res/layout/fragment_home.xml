@@ -201,20 +201,20 @@
         android:visibility="gone">
 
         <ImageView
+            android:alpha="0.5"
             android:id="@+id/listIV"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             android:layout_gravity="center"
             android:layout_marginBottom="16dp"
             android:src="@drawable/ic_list" />
 
         <TextView
+            style="@style/EmptyStateText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/emptyList"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:text="@string/emptyList" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/refresh_button"

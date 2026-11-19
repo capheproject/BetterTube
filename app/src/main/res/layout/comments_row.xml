@@ -15,9 +15,9 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/commentor_image"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_marginEnd="8dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="12dp"
             android:background="@android:color/darker_gray"
             app:shapeAppearance="@style/CircleImageView"
             tools:src="@mipmap/ic_launcher" />
@@ -41,14 +41,15 @@
                     android:maxLines="1"
                     android:textAlignment="viewStart"
                     android:textColor="@color/text_on_primary_or_default"
-                    android:textSize="12sp"
+                    android:textAppearance="?attr/textAppearanceLabelLarge"
                     tools:text="Octacat" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text=" • "
-                    android:textSize="12sp"
+                    android:textAppearance="?attr/textAppearanceLabelMedium"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     tools:ignore="HardcodedText" />
 
                 <TextView
@@ -58,8 +59,8 @@
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:textAlignment="viewStart"
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:textSize="12sp"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textAppearance="?attr/textAppearanceLabelMedium"
                     tools:text="10h ago" />
 
                 <ImageView
@@ -93,7 +94,8 @@
                 android:layout_marginBottom="8dp"
                 android:focusable="false"
                 android:textAlignment="viewStart"
-                android:textColor="?android:attr/textColorPrimary"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="?attr/colorOnSurface"
                 android:textIsSelectable="true"
                 tools:text="Comment Text" />
 
@@ -111,7 +113,9 @@
                     android:drawablePadding="6dp"
                     android:gravity="center_vertical"
                     android:includeFontPadding="false"
-                    android:textStyle="bold"
+                    android:drawableTint="?attr/colorOnSurfaceVariant"
+                    android:textAppearance="?attr/textAppearanceLabelMedium"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     app:drawableStartCompat="@drawable/ic_thumb_up"
                     app:drawableStartDimen="16dp"
                     tools:text="1.2k" />
@@ -141,7 +145,9 @@
                     android:drawablePadding="6dp"
                     android:gravity="center_vertical"
                     android:includeFontPadding="false"
-                    android:textStyle="bold"
+                    android:drawableTint="?attr/colorOnSurfaceVariant"
+                    android:textAppearance="?attr/textAppearanceLabelMedium"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:visibility="gone"
                     app:drawableStartCompat="@drawable/ic_comment"
                     app:drawableStartDimen="16dp"

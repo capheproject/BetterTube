@@ -22,19 +22,19 @@
         android:visibility="gone">
 
         <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:alpha="0.5"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             android:layout_gravity="center"
             android:layout_marginBottom="16dp"
             android:src="@drawable/ic_history" />
 
         <TextView
+            style="@style/EmptyStateText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/history_empty"
-            android:textAlignment="center"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textAlignment="center" />
 
     </LinearLayout>
 

@@ -17,6 +17,8 @@
         <item name="circularProgressIndicatorStyle">@style/Spinner</item>
         <item name="bottomNavigationStyle">@style/BottomNav</item>
         <item name="toolbarStyle">@style/AppToolbar</item>
+        <item name="chipStyle">@style/MinimalChip</item>
+        <item name="tabStyle">@style/MinimalTabs</item>
 
         <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
 

@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:orientation="horizontal"
-        android:layout_marginHorizontal="12dp">
+        android:layout_marginHorizontal="16dp">
 
         <com.google.android.material.chip.Chip
             android:id="@+id/player_sponsor_badge"
@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:orientation="vertical"
-        android:layout_marginHorizontal="12dp">
+        android:layout_marginHorizontal="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -50,9 +50,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
                 android:maxLines="2"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="18sp"
-                android:textStyle="bold"
+                android:textAppearance="@style/PlayerPageTitle"
                 tools:text="Video Title" />
 
             <ImageView
@@ -75,6 +73,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 android:textIsSelectable="true"
                 tools:text="10M views - 2 days ago " />
 
@@ -83,6 +83,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawablePadding="5dp"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 app:drawableStartCompat="@drawable/ic_like"
                 app:drawableStartDimen="12dp"
                 tools:text="4.2K" />
@@ -113,7 +115,7 @@
             android:id="@+id/meta_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="12dp"
+            android:layout_marginHorizontal="16dp"
             android:paddingVertical="8dp"
             android:visibility="gone"
             tools:text="Meta Info" />
@@ -143,7 +145,7 @@
             android:id="@+id/player_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="12dp"
+            android:layout_marginHorizontal="16dp"
             android:paddingVertical="8dp"
             android:textIsSelectable="true"
             tools:text="Description" />
@@ -152,7 +154,7 @@
             android:id="@+id/additional_video_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="12dp"
+            android:layout_marginHorizontal="16dp"
             android:paddingVertical="8dp"
             android:textIsSelectable="true"
             tools:text="Additional Info" />

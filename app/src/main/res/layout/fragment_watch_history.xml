@@ -15,19 +15,19 @@
         android:visibility="visible">
 
         <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:alpha="0.5"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             android:layout_marginBottom="16dp"
             android:src="@drawable/ic_history" />
 
         <TextView
+            style="@style/EmptyStateText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
             android:gravity="center"
-            android:text="@string/history_empty"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:text="@string/history_empty" />
     </LinearLayout>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout

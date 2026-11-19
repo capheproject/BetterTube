@@ -172,6 +172,8 @@ class ChannelFragment : Fragment(R.layout.fragment_channel) {
         }
 
         ImageHelper.loadImage(channel.bannerUrl, binding.channelBanner)
+        // don't leave an empty rounded box for channels without a banner
+        binding.channelBanner.isGone = channel.bannerUrl.isNullOrEmpty()
         ImageHelper.loadImage(channel.avatarUrl, binding.channelImage, true)
 
         binding.channelImage.setOnClickListener {

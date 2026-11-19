@@ -16,8 +16,10 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="10dp"
         android:layout_weight="1"
-        android:drawablePadding="15dp"
+        android:drawablePadding="16dp"
+        android:drawableTint="?attr/colorOnSurfaceVariant"
         android:textAlignment="viewStart"
+        android:textAppearance="?attr/textAppearanceBodyLarge"
         tools:drawableStartCompat="@drawable/ic_search"
         tools:text="Suggestion item" />
 
@@ -29,6 +31,7 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:padding="5dp"
         android:src="@drawable/ic_close"
+        app:tint="?attr/colorOnSurfaceVariant"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -41,6 +44,7 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:padding="5dp"
         android:src="@drawable/ic_arrow_up_left"
+        app:tint="?attr/colorOnSurfaceVariant"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:shapeAppearanceOverlay="@style/RoundedImageView" />
