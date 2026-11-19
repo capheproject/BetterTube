@@ -4,11 +4,8 @@ import android.content.Context
 import android.text.format.Formatter
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.view.isGone
-import androidx.core.view.isVisible
 import com.github.libretube.R
 import com.github.libretube.databinding.ViewDataUsageBinding
 import com.github.libretube.extensions.toID
@@ -16,11 +13,8 @@ import com.github.libretube.player.SabrTrafficStats
 import com.github.libretube.util.PlayingQueue
 
 /**
- * Subtle data usage indicator for the player screens.
- *
- * Shows a small pill with the data received for the playing video. Tapping it reveals an
- * inline breakdown of audio vs. video data (see [SabrTrafficStats]); tapping again hides it.
- * Used by both the video and the audio player, so the interaction is the same in both.
+ * Quiet data usage label for the player screens: a video or speaker icon (depending on the
+ * player) and the data received so far for the playing video (see [SabrTrafficStats]).
  */
 class DataUsageView @JvmOverloads constructor(
     context: Context,
@@ -35,37 +29,18 @@ class DataUsageView @JvmOverloads constructor(
         }
     }
 
+    /** What the hosting player plays; decides the icon. */
+    enum class Mode { VIDEO, AUDIO }
+
+    var mode: Mode = Mode.VIDEO
+        set(value) {
+            field = value
+            update()
+        }
+
     init {
         orientation = VERTICAL
-        binding.dataUsageChip.contentDescription =
-            context.getString(R.string.data_usage_toggle_description)
-        binding.dataUsageChip.setOnClickListener { toggle() }
-        binding.dataUsagePanel.setOnClickListener { toggle() }
         update()
-    }
-
-    private fun toggle() {
-        val panel = binding.dataUsagePanel
-        if (panel.isVisible) {
-            // hide instantly: animating the surrounding layout made views overlap
-            panel.animate().cancel()
-            panel.isGone = true
-        } else {
-            panel.alpha = 0f
-            panel.isVisible = true
-            panel.animate().alpha(1f).setDuration(150).start()
-        }
-        update()
-    }
-
-    /**
-     * Shows the breakdown panel in [container] instead of below the pill, so the pill can sit
-     * inline in a row (e.g. next to the view count) while the panel spans the full width.
-     */
-    fun movePanelTo(container: ViewGroup) {
-        val panel = binding.dataUsagePanel
-        (panel.parent as? ViewGroup)?.removeView(panel)
-        container.addView(panel)
     }
 
     override fun onAttachedToWindow() {
@@ -79,16 +54,7 @@ class DataUsageView @JvmOverloads constructor(
         super.onDetachedFromWindow()
     }
 
-    /** What the hosting player plays; decides the icon and how the breakdown is described. */
-    enum class Mode { VIDEO, AUDIO }
-
-    var mode: Mode = Mode.VIDEO
-        set(value) {
-            field = value
-            update()
-        }
-
-    private fun setChipIcon() {
+    private fun setIcon() {
         val size = (16 * resources.displayMetrics.density).toInt()
         val icon = AppCompatResources.getDrawable(
             context,
@@ -98,64 +64,25 @@ class DataUsageView @JvmOverloads constructor(
     }
 
     private fun update() {
-        setChipIcon()
+        setIcon()
         val stats = SabrTrafficStats
         val currentVideoId = PlayingQueue.getCurrent()?.url?.toID()
-        val modeLabel = context.getString(if (mode == Mode.VIDEO) R.string.video else R.string.audio)
 
         // the stats only cover SABR streams, other stream types aren't measured
         if (currentVideoId == null || stats.videoId != currentVideoId) {
             binding.dataUsageChip.text = context.getString(R.string.data_usage_not_measured_short)
             binding.dataUsageChip.contentDescription = context.getString(R.string.data_usage_unavailable)
-            binding.dataUsageStatus.text = context.getString(R.string.data_usage_unavailable)
-            binding.dataUsageRows.isGone = true
             return
         }
-        binding.dataUsageRows.isVisible = true
 
-        val audio = stats.audio
-        val video = stats.video
-        val total = audio + video
-        val totalText = Formatter.formatShortFileSize(context, total)
+        val totalText = Formatter.formatShortFileSize(context, stats.audio + stats.video)
+        val modeLabel = context.getString(if (mode == Mode.VIDEO) R.string.video else R.string.audio)
         binding.dataUsageChip.text = totalText
         binding.dataUsageChip.contentDescription =
             context.getString(R.string.data_usage_description, modeLabel, totalText)
-
-        // the breakdown only needs updating while it's shown
-        if (!binding.dataUsagePanel.isVisible) return
-
-        // Video arrives in bursts (the player buffers ahead), so a pause in video data doesn't
-        // mean audio only. Only the audio player can be audio only.
-        val now = System.currentTimeMillis()
-        val lastVideo = stats.lastVideoDataMs
-        val sinceVideoMs = now - (lastVideo.takeIf { it != 0L } ?: stats.sinceMs)
-        binding.dataUsageStatus.text = when {
-            total == 0L -> context.getString(R.string.data_usage_status_idle)
-            mode == Mode.VIDEO -> context.getString(R.string.data_usage_status_both)
-            lastVideo != 0L && sinceVideoMs < AUDIO_ONLY_THRESHOLD_MS ->
-                context.getString(R.string.data_usage_status_switching)
-            else -> context.getString(
-                R.string.data_usage_status_audio_only,
-                formatDuration(sinceVideoMs / 1000)
-            )
-        }
-        binding.dataUsageAudio.text = Formatter.formatShortFileSize(context, audio)
-        binding.dataUsageVideo.text = Formatter.formatShortFileSize(context, video)
-        val max = binding.dataUsageAudioBar.max
-        binding.dataUsageAudioBar.progress = if (total == 0L) 0 else (audio * max / total).toInt()
-        binding.dataUsageVideoBar.progress = if (total == 0L) 0 else (video * max / total).toInt()
-    }
-
-    private fun formatDuration(seconds: Long): String = if (seconds < 60) {
-        context.getString(R.string.data_usage_seconds, seconds)
-    } else {
-        context.getString(R.string.data_usage_minutes, seconds / 60)
     }
 
     companion object {
         private const val UPDATE_INTERVAL_MS = 1000L
-
-        /** Time without video data after which playback is considered audio only. */
-        private const val AUDIO_ONLY_THRESHOLD_MS = 10_000L
     }
 }

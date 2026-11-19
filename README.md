@@ -24,11 +24,12 @@ BetterTube keeps everything LibreTube does and focuses on two things: audio-only
 | | LibreTube | BetterTube |
 |---|---|---|
 | **Switching to audio-only mid-video** | Keeps downloading the video stream in the background, wasting data and memory | Stops requesting video right away and only downloads audio |
-| **Seeing what's downloaded** | Not possible in the app | A small data label in both players; tap it for an audio vs. video breakdown |
+| **Seeing what's downloaded** | Not possible in the app | A small data label in both players shows the data used so far |
 | **Opening a video** | Black screen with a spinner | The thumbnail you tapped stays in place and fades into the video |
 | **Audio player** | Rows of buttons; play button that resizes and shifts its neighbours | Minimal: round fixed-size play button, Chapters and Video at hand, the rest in ⋮, blurred-artwork backdrop |
-| **Navigation** | Full-width bottom bar | Floating, icons-only dock with a soft colour sheen; content flows underneath |
-| **Look and feel** | Material 3 Expressive defaults | Own design: Plus Jakarta Sans, flat cards on one 16dp grid, quiet secondary text |
+| **Navigation** | Full-width bottom bar | Floating, icons-only dock with a soft colour sheen and a glow on the active tab; content flows underneath |
+| **Look and feel** | Material 3 Expressive defaults | Own design: Plus Jakarta Sans, a darker tonal palette with accent gradients shared by the dock, mini player, chips and buttons |
+| **Library** | Separate sections and a floating + button | Your watch history as the main feed, with your playlists in a carousel on top |
 | **Motion** | Default fades | Screens rise in on emphasized easing, lists ease in item by item, cards respond to touch |
 | **Loading** | Spinners | Card-shaped placeholders that gently pulse |
 
@@ -42,7 +43,7 @@ BetterTube tells the server to stop sending video as soon as video is turned off
 ### 📊 See it for yourself: the data label
 
 Both players show a small label with the data used so far for the current video: a 🎬 video icon on the video page (next to the view count) and a 🔊 speaker icon in the audio player (between the timestamps).
-Tap it for an inline breakdown of **audio** vs. **video** data; tap again to hide it. After switching to audio-only, the breakdown confirms it, e.g. *"Audio only · no video data for 42 s"*, and the video number stops growing.
+After switching to audio-only, the number grows much more slowly, because only the audio is still being downloaded.
 
 ## Download
 
@@ -58,6 +59,16 @@ Want the very latest changes? Every push is also built by GitHub Actions: open t
 > - Builds from before 19 November 2026 used a different key each time: uninstall that version once (export a backup first), then install the new one.
 
 ## Changelog
+
+### 19 November 2026 (later): polish
+- One design language: the darker tone and soft accent gradient of the mini player now carry across the dock, chips, Subscribe / Play all / play buttons and the tonal buttons
+- Dock: the active tab glows instead of sitting in a pill
+- Library: your watch history is now the main feed, with a horizontal carousel of playlists (and bookmarks) on top; the + for new playlists moved next to the Playlists heading, away from the dock and mini player
+- Subscriptions: the filter row is hidden by default (Settings → Appearance → *Subscriptions toolbar* to show it)
+- Data label: no longer tappable, just shows the total
+- Audio player: the back chevron and ⋮ menu are the same size
+- LibreTube's update checker is turned off; Settings → *BetterTube releases* opens this repository's releases page
+
 
 ### 19 November 2026: the BetterTube redesign
 

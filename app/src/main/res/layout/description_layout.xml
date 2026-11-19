@@ -79,7 +79,7 @@
                 android:textIsSelectable="true"
                 tools:text="10M views - 2 days ago " />
 
-            <!-- Data usage pill, inline; its breakdown opens in data_usage_panel_container -->
+            <!-- Data used for the playing video (icon + total) -->
             <com.github.libretube.ui.views.DataUsageView
                 android:id="@+id/data_usage"
                 android:layout_width="wrap_content"
@@ -109,12 +109,6 @@
                 tools:text="1.3K" />
 
         </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/data_usage_panel_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
 
     </LinearLayout>
 

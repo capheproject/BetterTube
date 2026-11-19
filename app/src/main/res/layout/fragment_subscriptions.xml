@@ -71,8 +71,9 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
 
-                        <!-- Channel list on the left, filter/sort on the right -->
+                        <!-- Channel list on the left, filter/sort on the right (hidden unless enabled in settings) -->
                         <FrameLayout
+                            android:id="@+id/subscriptions_header"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:paddingHorizontal="8dp">

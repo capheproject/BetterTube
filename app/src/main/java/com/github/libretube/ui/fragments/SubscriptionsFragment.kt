@@ -5,11 +5,13 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
+import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.core.os.bundleOf
 import androidx.core.view.children
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -166,6 +168,14 @@ class SubscriptionsFragment : DynamicLayoutManagerFragment(R.layout.fragment_sub
         }
 
         binding.toggleSubs.isVisible = true
+
+        // the toolbar row (channel list, groups, filter) is optional and hidden by default
+        val showHeader = PreferenceHelper.getBoolean(PreferenceKeys.SHOW_SUBSCRIPTIONS_HEADER, false)
+        binding.subscriptionsHeader.isVisible = showHeader
+        // the loading placeholder sits below the toolbar row only when it's shown
+        binding.subProgress.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+            topMargin = ((if (showHeader) 56 else 8) * resources.displayMetrics.density).toInt()
+        }
 
         binding.toggleSubs.setOnClickListener {
             SubscriptionsBottomSheet()

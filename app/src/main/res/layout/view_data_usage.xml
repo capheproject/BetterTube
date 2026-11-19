@@ -5,12 +5,11 @@
     tools:orientation="vertical"
     tools:parentTag="android.widget.LinearLayout">
 
-    <!-- Subtle pill: total data used. Tap to show/hide the breakdown. -->
+    <!-- Data used for the current video: a video or speaker icon and the total -->
     <TextView
         android:id="@+id/data_usage_chip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/data_usage_chip_background"
         android:drawablePadding="3dp"
         android:gravity="center_vertical"
         android:minHeight="28dp"
@@ -18,96 +17,6 @@
         android:textAppearance="?attr/textAppearanceLabelMedium"
         android:textColor="?attr/colorOnSurfaceVariant"
         app:drawableTint="?attr/colorOnSurfaceVariant"
-        tools:text="21 MB · audio only" />
+        tools:text="21 MB" />
 
-    <!-- Inline breakdown, hidden by default -->
-    <LinearLayout
-        android:id="@+id/data_usage_panel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/data_usage_panel_background"
-        android:orientation="vertical"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="12dp"
-        android:visibility="gone"
-        tools:visibility="visible">
-
-        <TextView
-            android:id="@+id/data_usage_status"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceLabelLarge"
-            android:textColor="?attr/colorOnSurface"
-            tools:text="Audio only · no video data for 42 s" />
-
-        <LinearLayout
-            android:id="@+id/data_usage_rows"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:orientation="vertical">
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/audio"
-                    android:textAppearance="?attr/textAppearanceBodySmall"
-                    android:textColor="?attr/colorOnSurfaceVariant" />
-
-                <TextView
-                    android:id="@+id/data_usage_audio"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:textAppearance="?attr/textAppearanceBodySmall"
-                    android:textColor="?attr/colorOnSurfaceVariant"
-                    tools:text="3.1 MB" />
-            </FrameLayout>
-
-            <com.google.android.material.progressindicator.LinearProgressIndicator
-                android:id="@+id/data_usage_audio_bar"
-                style="@style/DataUsageBar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                tools:progress="15" />
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/video"
-                    android:textAppearance="?attr/textAppearanceBodySmall"
-                    android:textColor="?attr/colorOnSurfaceVariant" />
-
-                <TextView
-                    android:id="@+id/data_usage_video"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:textAppearance="?attr/textAppearanceBodySmall"
-                    android:textColor="?attr/colorOnSurfaceVariant"
-                    tools:text="18 MB" />
-            </FrameLayout>
-
-            <com.google.android.material.progressindicator.LinearProgressIndicator
-                android:id="@+id/data_usage_video_bar"
-                style="@style/DataUsageBar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                app:indicatorColor="?attr/colorTertiary"
-                tools:progress="85" />
-        </LinearLayout>
-
-    </LinearLayout>
 </merge>

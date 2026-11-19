@@ -51,6 +51,13 @@
             android:title="@string/home_tab_content"
             app:defaultValue="@array/homeTabItemsValues" />
 
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:icon="@drawable/ic_filter_sort"
+            android:key="show_subscriptions_header"
+            android:summary="@string/show_subscriptions_header_summary"
+            android:title="@string/show_subscriptions_header" />
+
         <ListPreference
             android:icon="@drawable/ic_grid"
             app:defaultValue="@integer/grid_items"

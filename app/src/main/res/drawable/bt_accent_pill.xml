@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- BetterTube primary action: accent colour flowing into a tertiary tint, with a soft top sheen -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="?attr/colorControlHighlight">
+    <item>
+        <layer-list>
+            <item>
+                <shape>
+                    <solid android:color="?attr/colorPrimary" />
+                    <corners android:radius="100dp" />
+                </shape>
+            </item>
+            <item>
+                <shape>
+                    <gradient
+                        android:angle="315"
+                        android:endColor="@color/bt_accent_wash"
+                        android:startColor="@android:color/transparent" />
+                    <corners android:radius="100dp" />
+                </shape>
+            </item>
+            <item>
+                <shape>
+                    <gradient
+                        android:angle="270"
+                        android:centerY="0.55"
+                        android:centerColor="@android:color/transparent"
+                        android:endColor="@android:color/transparent"
+                        android:startColor="@color/dock_sheen" />
+                    <corners android:radius="100dp" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+</ripple>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Top of the Library: playlists carousel (with create + sort), bookmarks, history title -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:orientation="horizontal"
+        android:paddingEnd="8dp"
+        tools:ignore="RtlSymmetry">
+
+        <TextView
+            style="@style/HomeCategoryTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:text="@string/playlists" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/sortTV"
+            style="@style/MinimalTextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:tooltipText="@string/tooltip_sort"
+            android:visibility="gone"
+            app:icon="@drawable/ic_sort"
+            app:iconGravity="textEnd"
+            tools:text="@string/creation_date"
+            tools:visibility="visible" />
+
+        <!-- Create playlist: in the header, never covered by the dock or mini player -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/create_playlist"
+            style="@style/MinimalIconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/createPlaylist"
+            android:tooltipText="@string/createPlaylist"
+            app:icon="@drawable/ic_add" />
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/playlists_carousel"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/library_carousel_height"
+        android:layout_marginTop="4dp"
+        android:clipToPadding="false"
+        android:paddingHorizontal="6dp" />
+
+    <TextView
+        android:id="@+id/nothing_here"
+        style="@style/EmptyStateText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp"
+        android:text="@string/no_playlists_yet"
+        android:textAppearance="?attr/textAppearanceBodyMedium"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/bookmarksContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            style="@style/HomeCategoryTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/bookmarks" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/bookmarks_carousel"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/library_carousel_height"
+            android:layout_marginTop="4dp"
+            android:clipToPadding="false"
+            android:paddingHorizontal="6dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/history_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:orientation="horizontal"
+        android:paddingEnd="8dp"
+        tools:ignore="RtlSymmetry">
+
+        <TextView
+            style="@style/HomeCategoryTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:text="@string/watch_history" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/downloads"
+            style="@style/MinimalIconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/downloads"
+            android:tooltipText="@string/downloads"
+            app:icon="@drawable/ic_download" />
+
+        <!-- full history: filters, clear, play all -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/watch_history"
+            style="@style/MinimalTextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/see_all" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/history_empty"
+        style="@style/EmptyStateText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp"
+        android:text="@string/history_empty"
+        android:textAppearance="?attr/textAppearanceBodyMedium"
+        android:visibility="gone" />
+
+</LinearLayout>

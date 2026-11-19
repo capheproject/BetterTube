@@ -149,7 +149,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:contentDescription="@string/more_options"
-                            app:icon="@drawable/ic_three_dots" />
+                            app:icon="@drawable/ic_more_vert" />
 
                     </LinearLayout>
 
@@ -175,7 +175,7 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/play_all"
-                        style="@style/Widget.Material3.Button.Icon"
+                        style="@style/AccentButton.Icon"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -185,7 +185,7 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/bookmark"
-                        style="@style/Widget.Material3.Button.TonalButton.Icon"
+                        style="@style/SheenButton.Icon"
                         android:layout_width="0dp"
                         android:layout_marginStart="8dp"
                         android:layout_height="wrap_content"

@@ -1,154 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Library: playlists (carousel) and bookmarks at the top, then the watch history feed -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?android:colorBackground"
-    tools:context=".ui.fragments.LibraryFragment">
+    android:background="?android:colorBackground">
 
     <com.github.libretube.ui.views.CustomSwipeToRefresh
         android:id="@+id/playlist_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.core.widget.NestedScrollView
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/library_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:clipToPadding="false"
+            android:layoutAnimation="@anim/layout_rise_in" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <!-- Compact shortcuts; if one is hidden the other takes the full width -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="12dp">
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/watch_history"
-                        style="@style/LibraryShortcut"
-                        android:text="@string/watch_history"
-                        app:icon="@drawable/ic_time_outlined"
-                        tools:text="a longer translated text version" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/downloads"
-                        style="@style/LibraryShortcut"
-                        android:text="@string/downloads"
-                        app:icon="@drawable/ic_download" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="bottom"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            style="@style/HomeCategoryTitle"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:maxLines="1"
-                            android:text="@string/playlists" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/sortTV"
-                            style="@style/Widget.Material3.Button.TextButton.Icon"
-                            android:textColor="?attr/colorOnSurfaceVariant"
-                            app:iconTint="?attr/colorOnSurfaceVariant"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="16dp"
-                            android:ellipsize="end"
-                            android:maxLines="1"
-                            android:paddingHorizontal="10dp"
-                            android:text="@string/creation_date"
-                            android:tooltipText="@string/tooltip_sort"
-                            app:icon="@drawable/ic_sort"
-                            app:iconGravity="textEnd" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/nothing_here"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginBottom="35dp"
-                        android:orientation="vertical"
-                        android:visibility="gone">
-
-                        <ImageView
-                            android:alpha="0.5"
-                            android:layout_width="64dp"
-                            android:layout_height="64dp"
-                            android:layout_gravity="center"
-                            android:layout_marginBottom="16dp"
-                            android:src="@drawable/ic_list" />
-
-                        <TextView
-                            style="@style/EmptyStateText"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="@string/emptyList" />
-                    </LinearLayout>
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/playlist_recView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:nestedScrollingEnabled="false" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/bookmarksContainer"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        style="@style/HomeCategoryTitle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/bookmarks" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/bookmarks_recView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:nestedScrollingEnabled="false" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </androidx.core.widget.NestedScrollView>
     </com.github.libretube.ui.views.CustomSwipeToRefresh>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/create_playlist"
-        android:tooltipText="@string/tooltip_create_playlist"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        app:backgroundTint="?attr/colorSecondary"
-        app:srcCompat="@drawable/ic_add"
-        app:tint="?android:attr/colorBackground" />
 
 </FrameLayout>

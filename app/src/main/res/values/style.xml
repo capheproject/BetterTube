@@ -63,7 +63,7 @@
 
     </style>
 
-    <style name="PlayerActionsButton" parent="@style/Widget.Material3Expressive.Button.TonalButton">
+    <style name="PlayerActionsButton" parent="SheenButton">
 
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">40dp</item>
@@ -228,7 +228,7 @@
         <item name="buttonBarNeutralButtonStyle">@style/Widget.Material3.Button.TextButton.Dialog</item>
     </style>
 
-    <style name="PositiveButton" parent="Widget.Material3.Button">
+    <style name="PositiveButton" parent="AccentButton">
         <item name="android:layout_marginStart">16dp</item>
     </style>
 
@@ -261,6 +261,7 @@
         <item name="itemPaddingBottom">12dp</item>
         <item name="itemActiveIndicatorStyle">@style/DockIndicator</item>
         <item name="itemIconTint">@color/dock_icon</item>
+        <item name="itemBackground">@drawable/dock_item_glow</item>
         <item name="itemRippleColor">@android:color/transparent</item>
         <item name="itemTextAppearanceActive">@style/BottomNavLabel</item>
         <item name="itemTextAppearanceInactive">@style/BottomNavLabel</item>
@@ -270,7 +271,8 @@
         <item name="android:width">56dp</item>
         <item name="android:height">40dp</item>
         <item name="shapeAppearance">@style/ShapeAppearance.Material3.Corner.Full</item>
-        <item name="android:color">?attr/colorSecondaryContainer</item>
+        <!-- no pill: the selected tab glows instead (see dock_item_glow) -->
+        <item name="android:color">@android:color/transparent</item>
     </style>
 
     <style name="BottomNavLabel" parent="TextAppearance.Material3.LabelMedium">
@@ -308,14 +310,6 @@
         <item name="android:textColor">@color/duration_text_color</item>
     </style>
 
-    <!-- Thin bars in the inline data usage breakdown -->
-    <style name="DataUsageBar" parent="Widget.Material3.LinearProgressIndicator">
-        <item name="trackThickness">4dp</item>
-        <item name="trackCornerRadius">2dp</item>
-        <item name="indicatorTrackGapSize">2dp</item>
-        <item name="trackStopIndicatorSize">0dp</item>
-        <item name="android:max">1000</item>
-    </style>
 
     <!-- Minimal audio player -->
     <style name="AudioPlayerArtwork">
@@ -352,10 +346,14 @@
 
     <style name="AudioPlayerTopButton" parent="Widget.Material3.Button.IconButton">
         <item name="iconTint">?attr/colorOnSurface</item>
+        <item name="iconSize">24dp</item>
     </style>
 
     <!-- Fixed-size round play/pause button -->
     <style name="AudioPlayerPlayButton" parent="Widget.Material3.Button.IconButton.Filled">
+        <item name="android:background">@drawable/bt_accent_circle</item>
+        <item name="backgroundTint">@null</item>
+        <item name="iconTint">?attr/colorOnPrimary</item>
         <item name="android:layout_width">72dp</item>
         <item name="android:layout_height">72dp</item>
         <item name="iconSize">34dp</item>
@@ -398,6 +396,32 @@
 
     <!-- ===== Minimal design system ===== -->
 
+    <!-- Primary action: the accent gradient shared with the mini player, dock and chips -->
+    <style name="AccentButton" parent="Widget.Material3.Button">
+        <item name="android:background">@drawable/bt_accent_pill</item>
+        <item name="backgroundTint">@null</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <item name="iconTint">?attr/colorOnPrimary</item>
+    </style>
+
+    <style name="AccentButton.Icon" parent="AccentButton">
+        <item name="iconPadding">8dp</item>
+        <item name="iconGravity">textStart</item>
+    </style>
+
+    <!-- Secondary action: darker tonal surface with the faint accent wash -->
+    <style name="SheenButton" parent="Widget.Material3.Button.TonalButton">
+        <item name="android:background">@drawable/bt_sheen_pill</item>
+        <item name="backgroundTint">@null</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="iconTint">?attr/colorPrimary</item>
+    </style>
+
+    <style name="SheenButton.Icon" parent="SheenButton">
+        <item name="iconPadding">8dp</item>
+        <item name="iconGravity">textStart</item>
+    </style>
+
     <!-- Flat filter chip: no outline, no elevation, no check mark; selection shown by colour -->
     <style name="MinimalChip" parent="Widget.Material3.Chip.Filter">
         <item name="android:layout_width">wrap_content</item>
@@ -405,6 +429,7 @@
         <item name="chipStrokeWidth">0dp</item>
         <item name="chipBackgroundColor">@color/minimal_chip_background</item>
         <item name="android:textColor">@color/minimal_chip_text</item>
+        <item name="chipIconTint">@color/minimal_chip_text</item>
         <item name="checkedIconVisible">false</item>
         <item name="chipCornerRadius">16dp</item>
         <item name="chipMinHeight">32dp</item>
@@ -452,7 +477,8 @@
         <item name="android:gravity">start|center_vertical</item>
         <item name="android:textAppearance">?attr/textAppearanceTitleSmall</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
-        <item name="backgroundTint">?attr/colorSurfaceContainer</item>
+        <item name="android:background">@drawable/bt_sheen_card</item>
+        <item name="backgroundTint">@null</item>
         <item name="cornerRadius">16dp</item>
         <item name="iconGravity">end</item>
         <item name="iconSize">18dp</item>

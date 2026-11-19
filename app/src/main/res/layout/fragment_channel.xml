@@ -103,7 +103,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/channel_subscribe"
-                            style="@style/Widget.Material3.Button"
+                            style="@style/AccentButton"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -125,7 +125,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:tooltipText="@string/misc"
-                            app:icon="@drawable/ic_three_dots" />
+                            app:icon="@drawable/ic_more_vert" />
 
                     </LinearLayout>
 

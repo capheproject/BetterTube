@@ -5,7 +5,7 @@
     <!-- opaque base -->
     <item>
         <shape>
-            <solid android:color="?attr/colorSurfaceContainerHigh" />
+            <solid android:color="?attr/colorSurfaceContainer" />
             <corners android:radius="32dp" />
         </shape>
     </item>

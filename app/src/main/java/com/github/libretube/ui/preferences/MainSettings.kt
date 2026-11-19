@@ -1,19 +1,19 @@
 package com.github.libretube.ui.preferences
 
 import android.os.Bundle
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import com.github.libretube.BuildConfig
 import com.github.libretube.R
+import com.github.libretube.helpers.IntentHelper
 import com.github.libretube.helpers.PreferenceHelper
 import com.github.libretube.ui.base.BasePreferenceFragment
 import com.github.libretube.ui.dialogs.ErrorDialog
-import com.github.libretube.util.UpdateChecker
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class MainSettings : BasePreferenceFragment() {
+    private companion object {
+        const val BETTERTUBE_RELEASES_URL = "https://github.com/capheproject/BetterTube/releases"
+    }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.settings, rootKey)
@@ -21,12 +21,9 @@ class MainSettings : BasePreferenceFragment() {
         val update = findPreference<Preference>("update")
         update?.summary = "v${BuildConfig.VERSION_NAME}"
 
-        // check app update manually
+        // BetterTube: open BetterTube's releases instead of LibreTube's update checker
         update?.setOnPreferenceClickListener {
-            lifecycleScope.launch(Dispatchers.IO) {
-                UpdateChecker(requireContext()).checkUpdate(true)
-            }
-
+            IntentHelper.openLinkFromHref(requireContext(), childFragmentManager, BETTERTUBE_RELEASES_URL)
             true
         }
 

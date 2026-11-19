@@ -36,9 +36,6 @@ class DescriptionLayout(
     private val videoTagsAdapter = VideoTagsAdapter()
 
     init {
-        // keep the data usage pill inline and open its breakdown below the views row
-        binding.dataUsage.movePanelTo(binding.dataUsagePanelContainer)
-
         binding.playerTitleLayout.setOnClickListener {
             toggleDescription()
         }
