@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fades the ambient backdrop into the surface towards the controls -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient
+        android:angle="270"
+        android:centerColor="@color/ambient_scrim_center"
+        android:endColor="?attr/colorSurfaceContainer"
+        android:startColor="@color/ambient_scrim_top" />
+</shape>

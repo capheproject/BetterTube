@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- BetterTube type scale: Material 3 roles set in Plus Jakarta Sans -->
+<resources>
+    <style name="TextAppearance.BT.DisplayLarge" parent="TextAppearance.Material3.DisplayLarge">
+        <item name="fontFamily">@font/jakarta_bold</item>
+        <item name="android:fontFamily">@font/jakarta_bold</item>
+        <item name="android:letterSpacing">-0.02</item>
+    </style>
+    <style name="TextAppearance.BT.DisplayMedium" parent="TextAppearance.Material3.DisplayMedium">
+        <item name="fontFamily">@font/jakarta_bold</item>
+        <item name="android:fontFamily">@font/jakarta_bold</item>
+        <item name="android:letterSpacing">-0.02</item>
+    </style>
+    <style name="TextAppearance.BT.DisplaySmall" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="fontFamily">@font/jakarta_bold</item>
+        <item name="android:fontFamily">@font/jakarta_bold</item>
+        <item name="android:letterSpacing">-0.015</item>
+    </style>
+    <style name="TextAppearance.BT.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="fontFamily">@font/jakarta_bold</item>
+        <item name="android:fontFamily">@font/jakarta_bold</item>
+        <item name="android:letterSpacing">-0.015</item>
+    </style>
+    <style name="TextAppearance.BT.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="fontFamily">@font/jakarta_bold</item>
+        <item name="android:fontFamily">@font/jakarta_bold</item>
+        <item name="android:letterSpacing">-0.01</item>
+    </style>
+    <style name="TextAppearance.BT.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="fontFamily">@font/jakarta_semibold</item>
+        <item name="android:fontFamily">@font/jakarta_semibold</item>
+        <item name="android:letterSpacing">-0.01</item>
+    </style>
+    <style name="TextAppearance.BT.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
+        <item name="fontFamily">@font/jakarta_semibold</item>
+        <item name="android:fontFamily">@font/jakarta_semibold</item>
+        <item name="android:letterSpacing">-0.01</item>
+    </style>
+    <style name="TextAppearance.BT.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
+        <item name="fontFamily">@font/jakarta_semibold</item>
+        <item name="android:fontFamily">@font/jakarta_semibold</item>
+        <item name="android:letterSpacing">-0.005</item>
+    </style>
+    <style name="TextAppearance.BT.TitleSmall" parent="TextAppearance.Material3.TitleSmall">
+        <item name="fontFamily">@font/jakarta_semibold</item>
+        <item name="android:fontFamily">@font/jakarta_semibold</item>
+    </style>
+    <style name="TextAppearance.BT.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
+        <item name="fontFamily">@font/jakarta_regular</item>
+        <item name="android:fontFamily">@font/jakarta_regular</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+    <style name="TextAppearance.BT.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
+        <item name="fontFamily">@font/jakarta_regular</item>
+        <item name="android:fontFamily">@font/jakarta_regular</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+    <style name="TextAppearance.BT.BodySmall" parent="TextAppearance.Material3.BodySmall">
+        <item name="fontFamily">@font/jakarta_regular</item>
+        <item name="android:fontFamily">@font/jakarta_regular</item>
+        <item name="android:letterSpacing">0.005</item>
+    </style>
+    <style name="TextAppearance.BT.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
+        <item name="fontFamily">@font/jakarta_semibold</item>
+        <item name="android:fontFamily">@font/jakarta_semibold</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+    <style name="TextAppearance.BT.LabelMedium" parent="TextAppearance.Material3.LabelMedium">
+        <item name="fontFamily">@font/jakarta_medium</item>
+        <item name="android:fontFamily">@font/jakarta_medium</item>
+        <item name="android:letterSpacing">0.01</item>
+    </style>
+    <style name="TextAppearance.BT.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
+        <item name="fontFamily">@font/jakarta_medium</item>
+        <item name="android:fontFamily">@font/jakarta_medium</item>
+        <item name="android:letterSpacing">0.01</item>
+    </style>
+
+    <!-- Plain TextViews: the family (with all weights) so textStyle="bold" picks the real bold -->
+    <style name="TextAppearance.BT.Default" parent="TextAppearance.AppCompat.Small">
+        <item name="fontFamily">@font/jakarta</item>
+        <item name="android:fontFamily">@font/jakarta</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+    <style name="TextAppearance.BT.Medium" parent="TextAppearance.AppCompat.Medium">
+        <item name="fontFamily">@font/jakarta</item>
+        <item name="android:fontFamily">@font/jakarta</item>
+    </style>
+    <style name="TextAppearance.BT.Large" parent="TextAppearance.AppCompat.Large">
+        <item name="fontFamily">@font/jakarta</item>
+        <item name="android:fontFamily">@font/jakarta</item>
+    </style>
+    <style name="TextAppearance.BT.ListItem" parent="TextAppearance.Material3.BodyLarge">
+        <item name="fontFamily">@font/jakarta</item>
+        <item name="android:fontFamily">@font/jakarta</item>
+    </style>
+
+    <!-- Default TextView style: only sets the appearance, so layouts can still override it -->
+    <style name="BT.TextView" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textAppearance">@style/TextAppearance.BT.Default</item>
+    </style>
+</resources>

@@ -3,7 +3,7 @@
 # BetterTube
 
 **A privacy-friendly YouTube client for Android, forked from [LibreTube](https://github.com/libre-tube/LibreTube).**<br>
-BetterTube keeps everything LibreTube does and focuses on two things: audio-only mode that really saves data, and a cleaner, more refined interface.
+BetterTube keeps everything LibreTube does and focuses on two things: audio-only mode that really saves data, and a calm, modern interface with its own typeface, a floating dock and fluid motion.
 
 [![GPL-v3](assets/widgets/license-widget.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 
@@ -16,7 +16,7 @@ BetterTube keeps everything LibreTube does and focuses on two things: audio-only
 <div align="center">
   <img src="assets/readme/bettertube-preview.png" width="90%" alt="BetterTube home feed in dark mode and the player page in light and dark mode">
   <br>
-  <sub>Rendered from the app's layouts. Coloured boxes stand in for thumbnails and channel pictures.</sub>
+  <sub>Rendered from the app's layouts: Home, video page, audio player (light) and search. Coloured boxes stand in for thumbnails and channel pictures.</sub>
 </div>
 
 ## What's different from LibreTube
@@ -27,7 +27,8 @@ BetterTube keeps everything LibreTube does and focuses on two things: audio-only
 | **Checking what's being downloaded** | Not possible in the app | Tap the data pill in the player to see audio vs. video data live |
 | **Audio player** | Rows of buttons; play button that resizes and shifts its neighbours | Minimal: fixed-size play button, Chapters and Video at hand, the rest in ⋮ |
 | **Loading indicator** | Shape-shifting "blob" in a filled circle | Slim round spinner in your accent colour |
-| **Look and feel** | Material 3 Expressive defaults | Refined Material 3: flatter cards, consistent spacing, lighter typography |
+| **Look and feel** | Material 3 Expressive defaults | Own design: Plus Jakarta Sans typeface, floating dock, flat cards on one 16dp grid |
+| **Motion** | Default fades | Screens rise in on emphasized easing, lists ease in item by item, cards respond to touch |
 
 ### 🎧 Audio-only mode that actually saves data
 
@@ -50,7 +51,13 @@ Switch to audio-only and the video number stops growing within a few seconds; th
 
 <br clear="right">
 
-### ✨ Refined interface
+### ✨ Design
+
+- **Typeface:** Plus Jakarta Sans throughout, on a full Material 3 type scale
+- **Floating dock:** a rounded, icons-only navigation bar that floats above the content
+- **Header:** the BetterTube wordmark scrolls away with the content and returns when you scroll up
+- **Motion:** new screens rise into place, lists ease in item by item, and every card and row gives a gentle press response
+- **Audio player ambience:** the artwork, blurred (Android 12+), tints the whole player
 
 - Slim, round-capped loading spinner (white when shown over video)
 - Slimmer bottom navigation bar on a soft tinted surface
@@ -107,5 +114,7 @@ git merge upstream/master
 BetterTube is built on [LibreTube](https://github.com/libre-tube/LibreTube) by Bnyro and the LibreTube contributors. Nearly all of the app is their work. If you find it useful, consider [supporting LibreTube](https://github.com/sponsors/Bnyro).
 
 App icons by [XelXen](https://github.com/XelXen) and [Margot Albert-Heuzey](https://margotdesign.ovh).
+
+[Plus Jakarta Sans](https://github.com/tokotype/PlusJakartaSans) by Tokotype, used under the SIL Open Font License 1.1 (see `app/src/main/assets/licenses/PlusJakartaSans-OFL.txt`).
 
 Like LibreTube, BetterTube is licensed under the [GNU General Public License v3.0](LICENSE).

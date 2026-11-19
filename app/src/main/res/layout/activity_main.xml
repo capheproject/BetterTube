@@ -48,15 +48,18 @@
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
+    <!-- Floating dock: inset from the edges, icons only -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dock_margin_horizontal"
+        android:layout_marginBottom="@dimen/dock_margin_bottom"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/bottom_menu"
-        app:labelVisibilityMode="selected" />
+        app:labelVisibilityMode="unlabeled"
+        app:menu="@menu/bottom_menu" />
 
 
     <FrameLayout

@@ -12,4 +12,9 @@
     <dimen name="corner_thumbnail">12dp</dimen>
     <dimen name="corner_thumbnail_large">20dp</dimen>
     <dimen name="corner_badge">6dp</dimen>
+
+    <!-- Floating bottom dock -->
+    <dimen name="dock_margin_horizontal">40dp</dimen>
+    <dimen name="dock_margin_bottom">12dp</dimen>
+    <dimen name="dock_height">64dp</dimen>
 </resources>

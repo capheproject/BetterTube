@@ -24,7 +24,9 @@ import androidx.core.view.children
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.get
 import androidx.core.view.isNotEmpty
+import androidx.core.view.marginBottom
 import androidx.core.view.size
+import androidx.core.view.updateLayoutParams
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -147,13 +149,10 @@ class MainActivity : AbstractPlayerHostActivity() {
                             paddingBottom
                         )
                     }
-                    with(binding.bottomNav) {
-                        setPadding(
-                            paddingLeft,
-                            paddingTop,
-                            paddingRight,
-                            systemBarInsets.bottom
-                        )
+                    // the dock floats: keep it clear of the system navigation bar
+                    binding.bottomNav.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                        bottomMargin = systemBarInsets.bottom +
+                            resources.getDimensionPixelSize(R.dimen.dock_margin_bottom)
                     }
                     binding.root.viewTreeObserver.removeOnGlobalLayoutListener(this)
                 }
@@ -167,13 +166,13 @@ class MainActivity : AbstractPlayerHostActivity() {
                 for (key in keyFrame.getKeyFramesForView(binding.bottomNav.id)) {
                     if (key.framePosition == 1) key.setValue(
                         Key.TRANSLATION_Y,
-                        binding.bottomNav.height
+                        binding.bottomNav.height + binding.bottomNav.marginBottom
                     )
                 }
                 for (key in keyFrame.getKeyFramesForView(binding.container.id)) {
                     if (key.framePosition == 100) key.setValue(
                         Key.TRANSLATION_Y,
-                        -binding.bottomNav.height
+                        -(binding.bottomNav.height + binding.bottomNav.marginBottom)
                     )
                 }
             }

@@ -116,6 +116,7 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/search_recycler"
+            android:layoutAnimation="@anim/layout_rise_in"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="motion_rise">24dp</dimen>
+    <integer name="motion_enter">300</integer>
+    <integer name="motion_exit">120</integer>
+</resources>

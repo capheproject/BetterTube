@@ -130,7 +130,8 @@
         <item name="paddingStart">5dp</item>
         <item name="paddingEnd">5dp</item>
         <item name="android:textSize">14sp</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">@font/jakarta_semibold</item>
+        <item name="fontFamily">@font/jakarta_semibold</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
 
@@ -161,6 +162,7 @@
         <item name="android:paddingVertical">8dp</item>
         <item name="android:background">@drawable/rounded_ripple</item>
         <item name="android:orientation">horizontal</item>
+        <item name="android:stateListAnimator">@animator/press_scale</item>
 
     </style>
 
@@ -187,7 +189,8 @@
         <item name="android:textAppearance">?attr/textAppearanceTitleMedium</item>
         <item name="android:textSize">18sp</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">@font/jakarta_semibold</item>
+        <item name="fontFamily">@font/jakarta_semibold</item>
         <item name="android:textAlignment">viewStart</item>
         <item name="android:paddingStart">16dp</item>
         <item name="android:paddingEnd">16dp</item>
@@ -246,17 +249,31 @@
 
     <!-- Slimmer bottom bar on a tonal surface -->
     <style name="BottomNav" parent="Widget.Material3.BottomNavigationView">
-        <item name="android:minHeight">64dp</item>
-        <item name="itemPaddingTop">8dp</item>
-        <item name="itemPaddingBottom">8dp</item>
-        <item name="backgroundTint">?android:attr/colorBackground</item>
+        <item name="android:minHeight">@dimen/dock_height</item>
+        <item name="android:background">@drawable/bottom_dock_background</item>
+        <item name="backgroundTint">@null</item>
         <item name="elevation">0dp</item>
+        <!-- the dock floats above the system bar: MainActivity applies the inset as a margin -->
+        <item name="paddingBottomSystemWindowInsets">false</item>
+        <item name="itemPaddingTop">12dp</item>
+        <item name="itemPaddingBottom">12dp</item>
+        <item name="itemActiveIndicatorStyle">@style/DockIndicator</item>
+        <item name="itemIconTint">@color/dock_icon</item>
+        <item name="itemRippleColor">@android:color/transparent</item>
         <item name="itemTextAppearanceActive">@style/BottomNavLabel</item>
         <item name="itemTextAppearanceInactive">@style/BottomNavLabel</item>
     </style>
 
+    <style name="DockIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:width">56dp</item>
+        <item name="android:height">40dp</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Material3.Corner.Full</item>
+        <item name="android:color">?attr/colorSecondaryContainer</item>
+    </style>
+
     <style name="BottomNavLabel" parent="TextAppearance.Material3.LabelMedium">
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">@font/jakarta_semibold</item>
+        <item name="fontFamily">@font/jakarta_semibold</item>
     </style>
 
     <style name="AppToolbar" parent="Widget.Material3.Toolbar">
@@ -264,23 +281,28 @@
     </style>
 
     <style name="AppToolbarTitle" parent="TextAppearance.Material3.TitleLarge">
-        <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:fontFamily">@font/jakarta_bold</item>
+        <item name="fontFamily">@font/jakarta_bold</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:letterSpacing">-0.03</item>
     </style>
 
     <!-- Titles of videos in lists and feeds -->
     <style name="VideoTitle" parent="TextAppearance.Material3.TitleMedium">
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">@font/jakarta_semibold</item>
+        <item name="fontFamily">@font/jakarta_semibold</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
 
     <style name="VideoTitle.Small" parent="TextAppearance.Material3.TitleSmall">
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">@font/jakarta_semibold</item>
+        <item name="fontFamily">@font/jakarta_semibold</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
 
     <style name="DurationBadge" parent="TextAppearance.Material3.LabelMedium">
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">@font/jakarta_semibold</item>
+        <item name="fontFamily">@font/jakarta_semibold</item>
         <item name="android:textColor">@color/duration_text_color</item>
     </style>
 
@@ -300,7 +322,8 @@
     </style>
 
     <style name="AudioPlayerTitle" parent="TextAppearance.Material3.TitleLarge">
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">@font/jakarta_semibold</item>
+        <item name="fontFamily">@font/jakarta_semibold</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
 
@@ -408,7 +431,8 @@
     <style name="PlayerPageTitle" parent="TextAppearance.Material3.TitleLarge">
         <item name="android:textSize">18sp</item>
         <item name="android:lineSpacingMultiplier">1.1</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">@font/jakarta_semibold</item>
+        <item name="fontFamily">@font/jakarta_semibold</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
 

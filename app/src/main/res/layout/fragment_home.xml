@@ -43,6 +43,7 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/featuredRV"
+                    android:layoutAnimation="@anim/layout_rise_in"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clipToPadding="false"
@@ -69,6 +70,7 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/watchingRV"
+                    android:layoutAnimation="@anim/layout_rise_in"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clipToPadding="false"
@@ -124,6 +126,7 @@
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/trendingRV"
+                        android:layoutAnimation="@anim/layout_rise_in"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:nestedScrollingEnabled="false"

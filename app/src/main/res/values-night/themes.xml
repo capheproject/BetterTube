@@ -18,6 +18,29 @@
         <item name="bottomNavigationStyle">@style/BottomNav</item>
         <item name="toolbarStyle">@style/AppToolbar</item>
         <item name="chipStyle">@style/MinimalChip</item>
+        <!-- BetterTube typography -->
+        <!-- default font for plain text views; explicit text appearances keep their own weight -->
+        <item name="android:textViewStyle">@style/BT.TextView</item>
+        <item name="android:textAppearance">@style/TextAppearance.BT.Default</item>
+        <item name="android:textAppearanceSmall">@style/TextAppearance.BT.Default</item>
+        <item name="android:textAppearanceMedium">@style/TextAppearance.BT.Medium</item>
+        <item name="android:textAppearanceLarge">@style/TextAppearance.BT.Large</item>
+        <item name="android:textAppearanceListItem">@style/TextAppearance.BT.ListItem</item>
+        <item name="textAppearanceDisplayLarge">@style/TextAppearance.BT.DisplayLarge</item>
+        <item name="textAppearanceDisplayMedium">@style/TextAppearance.BT.DisplayMedium</item>
+        <item name="textAppearanceDisplaySmall">@style/TextAppearance.BT.DisplaySmall</item>
+        <item name="textAppearanceHeadlineLarge">@style/TextAppearance.BT.HeadlineLarge</item>
+        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.BT.HeadlineMedium</item>
+        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.BT.HeadlineSmall</item>
+        <item name="textAppearanceTitleLarge">@style/TextAppearance.BT.TitleLarge</item>
+        <item name="textAppearanceTitleMedium">@style/TextAppearance.BT.TitleMedium</item>
+        <item name="textAppearanceTitleSmall">@style/TextAppearance.BT.TitleSmall</item>
+        <item name="textAppearanceBodyLarge">@style/TextAppearance.BT.BodyLarge</item>
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.BT.BodyMedium</item>
+        <item name="textAppearanceBodySmall">@style/TextAppearance.BT.BodySmall</item>
+        <item name="textAppearanceLabelLarge">@style/TextAppearance.BT.LabelLarge</item>
+        <item name="textAppearanceLabelMedium">@style/TextAppearance.BT.LabelMedium</item>
+        <item name="textAppearanceLabelSmall">@style/TextAppearance.BT.LabelSmall</item>
         <item name="tabStyle">@style/MinimalTabs</item>
 
         <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>

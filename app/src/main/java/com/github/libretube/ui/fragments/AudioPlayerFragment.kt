@@ -1,8 +1,12 @@
 package com.github.libretube.ui.fragments
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.RenderEffect
+import android.graphics.Shader
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -362,7 +366,28 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
             binding.miniPlayerThumbnail.setImageBitmap(bitmap)
             binding.thumbnail.isVisible = true
             binding.progress.isGone = true
+            showAmbientBackdrop(bitmap)
         }
+    }
+
+    /**
+     * Shows the artwork blurred behind the player, giving every video its own colours.
+     * Blurring needs Android 12; older versions show the artwork faintly instead.
+     */
+    private fun showAmbientBackdrop(bitmap: Bitmap?) {
+        val backdrop = _binding?.ambientBackdrop ?: return
+        if (bitmap == null) {
+            backdrop.animate().alpha(0f).setDuration(300).start()
+            return
+        }
+        backdrop.setImageBitmap(bitmap)
+        val targetAlpha = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            backdrop.setRenderEffect(RenderEffect.createBlurEffect(90f, 90f, Shader.TileMode.CLAMP))
+            0.9f
+        } else {
+            0.25f
+        }
+        backdrop.animate().alpha(targetAlpha).setDuration(600).start()
     }
 
     private fun initializeSeekBar() {
