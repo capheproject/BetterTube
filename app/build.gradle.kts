@@ -50,6 +50,14 @@ android {
     }
 
     signingConfigs {
+        // Shared debug key (not secret, see signing/README.md) so every debug/CI build is
+        // signed the same way and can be installed as an update over the previous one.
+        getByName("debug") {
+            storeFile = file("signing/bettertube-debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
         if (keystoreFileExists) {
             create("release") {
                 storeFile = keystoreProperties["storeFile"]?.let { file(it as String) }
@@ -74,6 +82,9 @@ android {
         getByName("debug") {
             isDebuggable = true
             applicationIdSuffix = ".debug"
+            signingConfig = signingConfigs.getByName("debug")
+            // e.g. "32.1-ci.13" for GitHub Actions run 13, shown in Android's app info
+            versionNameSuffix = System.getenv("GITHUB_RUN_NUMBER")?.let { "-ci.$it" } ?: "-dev"
             resValue("string", "app_name", "BetterTube")
         }
     }
