@@ -47,7 +47,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.coordinatorlayout.widget.CoordinatorLayout
+        <com.github.libretube.ui.views.NestedCoordinatorLayout
             android:id="@+id/sub_coordinator"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -85,14 +85,37 @@
                                 android:text="@string/subscriptions"
                                 app:icon="@drawable/ic_subscriptions" />
 
-                            <com.google.android.material.button.MaterialButton
-                                android:id="@+id/filter_sort"
-                                style="@style/MinimalIconButton"
+                            <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="end|center_vertical"
-                                android:contentDescription="@string/tooltip_filter"
-                                app:icon="@drawable/ic_filter_sort" />
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <!-- Channel group selector (replaces the row of chips) -->
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/group_selector"
+                                    style="@style/MinimalTextButton"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:contentDescription="@string/channel_groups"
+                                    android:maxWidth="180dp"
+                                    android:maxLines="1"
+                                    android:ellipsize="end"
+                                    android:text="@string/all"
+                                    app:icon="@drawable/ic_arrow_down"
+                                    app:iconGravity="end"
+                                    app:iconSize="18dp" />
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/filter_sort"
+                                    style="@style/MinimalIconButton"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:contentDescription="@string/tooltip_filter"
+                                    app:icon="@drawable/ic_filter_sort" />
+
+                            </LinearLayout>
 
                         </FrameLayout>
 
@@ -101,6 +124,7 @@
                             android:id="@+id/channel_groups_container"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:visibility="gone"
                             android:layout_marginBottom="4dp"
                             android:clipToPadding="false"
                             android:paddingHorizontal="16dp"
@@ -199,6 +223,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+        </com.github.libretube.ui.views.NestedCoordinatorLayout>
     </com.github.libretube.ui.views.CustomSwipeToRefresh>
 </RelativeLayout>

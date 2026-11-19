@@ -1,8 +1,6 @@
 package com.github.libretube.ui.views
 
 import android.content.Context
-import android.transition.AutoTransition
-import android.transition.TransitionManager
 import android.text.format.Formatter
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -46,11 +44,27 @@ class DataUsageView @JvmOverloads constructor(
     }
 
     private fun toggle() {
-        (parent as? ViewGroup)?.let {
-            TransitionManager.beginDelayedTransition(it, AutoTransition().setDuration(180))
+        val panel = binding.dataUsagePanel
+        if (panel.isVisible) {
+            // hide instantly: animating the surrounding layout made views overlap
+            panel.animate().cancel()
+            panel.isGone = true
+        } else {
+            panel.alpha = 0f
+            panel.isVisible = true
+            panel.animate().alpha(1f).setDuration(150).start()
         }
-        binding.dataUsagePanel.isVisible = !binding.dataUsagePanel.isVisible
         update()
+    }
+
+    /**
+     * Shows the breakdown panel in [container] instead of below the pill, so the pill can sit
+     * inline in a row (e.g. next to the view count) while the panel spans the full width.
+     */
+    fun movePanelTo(container: ViewGroup) {
+        val panel = binding.dataUsagePanel
+        (panel.parent as? ViewGroup)?.removeView(panel)
+        container.addView(panel)
     }
 
     override fun onAttachedToWindow() {

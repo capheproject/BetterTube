@@ -356,39 +356,6 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
         ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
     )
 
-    private var screenshotBitmap: Bitmap? = null
-    private val openScreenshotFile =
-        registerForActivityResult(ActivityResultContracts.CreateDocument("image/png")) { uri ->
-            if (uri == null) {
-                screenshotBitmap = null
-                return@registerForActivityResult
-            }
-
-            CoroutineScope(Dispatchers.IO).launch {
-                context?.contentResolver?.openOutputStream(uri)?.use { outputStream ->
-                    screenshotBitmap?.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-                }
-                screenshotBitmap = null
-
-                withContext(Dispatchers.Main) {
-                    Snackbar.make(
-                        requireView(),
-                        R.string.screenshot_saved,
-                        2500
-                    ).apply {
-                        setAction(R.string.share) {
-                            startActivity(Intent.createChooser(with(Intent()) {
-                                setAction(Intent.ACTION_SEND)
-                                setType("image/png")
-                                putExtra(Intent.EXTRA_STREAM, uri)
-                            }, null))
-                        }
-                        show()
-                    }
-                }
-            }
-        }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -716,13 +683,6 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
             switchToAudioMode()
         }
 
-        binding.relPlayerPip.isVisible = isPipAvailable()
-
-        binding.relPlayerPip.setOnClickListener {
-            PictureInPictureCompat.enterPictureInPictureMode(requireActivity(), pipParams)
-            isEnteringPiPMode = true
-        }
-
         binding.relatedRecView.layoutManager = LinearLayoutManager(
             context,
             if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -753,25 +713,6 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
             if (!this::streams.isInitialized) return@setOnClickListener
 
             DownloadHelper.startDownloadDialog(requireContext(), childFragmentManager, videoId)
-        }
-
-        binding.relPlayerScreenshot.setOnClickListener {
-            if (!this::streams.isInitialized) return@setOnClickListener
-            val surfaceView =
-                binding.player.videoSurfaceView as? SurfaceView ?: return@setOnClickListener
-
-            val bmp = Bitmap.createBitmap(
-                surfaceView.width,
-                surfaceView.height,
-                Bitmap.Config.ARGB_8888
-            )
-
-            PixelCopy.request(surfaceView, bmp, { _ ->
-                screenshotBitmap = bmp
-                val currentPosition =
-                    playerController.currentPosition.toFloat() / 1000
-                openScreenshotFile.launch("${streams.title}-${currentPosition}.png")
-            }, handler)
         }
 
         binding.playerChannel.setOnClickListener {

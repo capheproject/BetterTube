@@ -89,6 +89,23 @@ class SingleViewTouchableMotionLayout(context: Context, attributeSet: AttributeS
         swipeDownListener.add(listener)
     }
 
+    /** Whether the current gesture started outside the mini player while it was (partly) minimised. */
+    private var passThroughGesture = false
+
+    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+        if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+            viewToDetectTouch.getHitRect(viewRect)
+            // While the player is minimised or moving, only the mini player itself may react.
+            // Otherwise a strip of the hidden player page (e.g. its related videos) can stay
+            // touchable next to the mini player and taps there would switch to another video.
+            passThroughGesture =
+                progress > 0f && !viewRect.contains(event.x.toInt(), event.y.toInt())
+        }
+        // returning false lets the touch reach the screen behind the player
+        if (passThroughGesture) return false
+        return super.dispatchTouchEvent(event)
+    }
+
     override fun onInterceptTouchEvent(event: MotionEvent?): Boolean {
         when (event?.action) {
             MotionEvent.ACTION_DOWN -> {

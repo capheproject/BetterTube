@@ -366,6 +366,8 @@ class MainActivity : AbstractPlayerHostActivity() {
 
         // automatically set a different search icon in the playlists
         navController.addOnDestinationChangedListener { _, destination, _ ->
+            // always show the toolbar again when switching screens
+            binding.appBarLayout.setExpanded(true, false)
             currentSearchType = when (destination.id) {
                 R.id.downloadsFragment -> SearchType.DOWNLOADS
                 R.id.playlistFragment -> SearchType.PLAYLIST

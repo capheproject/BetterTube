@@ -78,6 +78,8 @@ class VideoCardsAdapter(private val columnWidthDp: Float? = null) :
                 root.updateLayoutParams {
                     width = columnWidthDp.dpToPx()
                 }
+                // in horizontal rows the next card's start margin already provides the gap
+                thumbnailcard.updateLayoutParams<ViewGroup.MarginLayoutParams> { marginEnd = 0 }
             }
             watchProgress.setWatchProgressLength(videoId, video.duration ?: 0L)
 

@@ -3,7 +3,9 @@ package com.github.libretube.ui.fragments
 import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.os.Bundle
+import android.view.Menu
 import android.view.View
+import android.widget.PopupMenu
 import androidx.core.os.bundleOf
 import androidx.core.view.children
 import androidx.core.view.isGone
@@ -173,6 +175,7 @@ class SubscriptionsFragment : DynamicLayoutManagerFragment(R.layout.fragment_sub
         binding.channelGroups.setOnCheckedStateChangeListener { group, _ ->
             selectedFilterGroup =
                 group.children.indexOfFirst { it.id == group.checkedChipId } - 1 // 0th index is "all" button
+            updateGroupSelector()
 
             lifecycleScope.launch {
                 showFeed(restoreScrollState = false)
@@ -182,6 +185,8 @@ class SubscriptionsFragment : DynamicLayoutManagerFragment(R.layout.fragment_sub
         viewModel.groups.observe(viewLifecycleOwner) {
             lifecycleScope.launch { initChannelGroups() }
         }
+
+        binding.groupSelector.setOnClickListener { showGroupMenu(it) }
 
         binding.editGroups.setOnClickListener {
             ChannelGroupsSheet().show(childFragmentManager, null)
@@ -315,6 +320,43 @@ class SubscriptionsFragment : DynamicLayoutManagerFragment(R.layout.fragment_sub
         // only show "ungrouped" chip category if there actually are any ungrouped subscriptions
         // not sure if it's worth loading them here
         binding.channelGroups.addView(binding.chipUngrouped)
+
+        updateGroupSelector()
+    }
+
+    /** Shows the selected channel group in the header's group selector. */
+    private fun updateGroupSelector() {
+        val binding = _binding ?: return
+        val checked = binding.channelGroups.children
+            .firstOrNull { it.id == binding.channelGroups.checkedChipId } as? Chip
+        binding.groupSelector.text = checked?.text ?: getString(R.string.all)
+    }
+
+    /**
+     * Lists the channel groups (backed by the hidden chip group) plus "Edit groups".
+     * Picking one checks the matching chip, which applies the filter as before.
+     */
+    private fun showGroupMenu(anchor: View) {
+        val binding = _binding ?: return
+        val chips = binding.channelGroups.children.filterIsInstance<Chip>().toList()
+        PopupMenu(requireContext(), anchor).apply {
+            chips.forEachIndexed { index, chip ->
+                menu.add(Menu.NONE, index, index, chip.text).apply {
+                    isCheckable = true
+                    isChecked = chip.id == binding.channelGroups.checkedChipId
+                }
+            }
+            menu.setGroupCheckable(Menu.NONE, true, true)
+            menu.add(Menu.NONE, EDIT_GROUPS_MENU_ID, chips.size, R.string.tooltip_edit_groups)
+            setOnMenuItemClickListener { item ->
+                if (item.itemId == EDIT_GROUPS_MENU_ID) {
+                    ChannelGroupsSheet().show(childFragmentManager, null)
+                } else {
+                    chips.getOrNull(item.itemId)?.let { binding.channelGroups.check(it.id) }
+                }
+                true
+            }
+        }.show()
     }
 
     private fun List<StreamItem>.filterByGroup(groupIndex: Int): List<StreamItem> {
@@ -396,6 +438,7 @@ class SubscriptionsFragment : DynamicLayoutManagerFragment(R.layout.fragment_sub
     }
 
     companion object {
+        private const val EDIT_GROUPS_MENU_ID = 10_000
         private const val FILTER_GROUP_UNGROUPED = -2
         private const val FILTER_GROUP_ALL = -1
     }
