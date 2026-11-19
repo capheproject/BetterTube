@@ -52,7 +52,9 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: app
-          path: app/build/outputs/apk/debug/app-debug-signed.apk
+          # fall back to the debug-signed APK when no release signing key is configured (e.g. forks)
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
 
   release-nightly:
     if: github.ref_name == 'master'
