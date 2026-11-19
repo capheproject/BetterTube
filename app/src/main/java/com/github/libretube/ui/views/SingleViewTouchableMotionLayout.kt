@@ -103,7 +103,11 @@ class SingleViewTouchableMotionLayout(context: Context, attributeSet: AttributeS
         }
         // returning false lets the touch reach the screen behind the player
         if (passThroughGesture) return false
-        return super.dispatchTouchEvent(event)
+        super.dispatchTouchEvent(event)
+        // Touches on the player itself never fall through to the screen behind it, even where
+        // nothing in the player reacts (e.g. on the data label): otherwise a video card behind
+        // the open audio player could be tapped and start playing in the video player.
+        return true
     }
 
     override fun onInterceptTouchEvent(event: MotionEvent?): Boolean {
