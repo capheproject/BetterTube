@@ -1,174 +1,109 @@
 <div align="center">
-  <img src="assets/banners/gh-banner.png" width="auto" height="auto" alt="LibreTube">
+
+# BetterTube
+
+**A privacy-friendly YouTube client for Android, forked from [LibreTube](https://github.com/libre-tube/LibreTube).**<br>
+BetterTube keeps everything LibreTube does and focuses on two things: audio-only mode that really saves data, and a cleaner, more refined interface.
 
 [![GPL-v3](assets/widgets/license-widget.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
-</div><div align="center" style="width:100%; display:flex; justify-content:space-between;">
-
-[![Matrix](assets/widgets/mat-widget.svg)](https://matrix.to/#/#LibreTube:matrix.org)
-[![Mastodon](assets/widgets/mast-widget.svg)](https://fosstodon.org/@libretube)
-[![Lemmy](assets/widgets/lemmy-widget.svg)](https://feddit.rocks/c/libretube)
 
 </div>
 
-> **Note** <br>
-> We don't accept feature or bug requests on these platforms. Kindly submit requests only on GitHub.
+> [!IMPORTANT]
+> BetterTube is an independent fork and is **not affiliated with or endorsed by the LibreTube team**.
+> Please report BetterTube problems [here](../../issues), not to LibreTube.
 
-</div><div align="center" style="width:100%; display:flex; justify-content:space-between;">
-
-[<img src="assets/badges/fdrload.png" alt="Get it on F-Droid" width="30%">](https://f-droid.org/en/packages/com.github.libretube/)
-[<img src="assets/badges/izzyload.png" alt="Get it on IzzyOnDroid" width="30%">](https://apt.izzysoft.de/fdroid/index/apk/com.github.libretube)<br/>
-[<img src="assets/badges/ghload.png" alt="Get it on GitHub" width="30%">](https://github.com/libre-tube/LibreTube/releases/latest)
-[<img src="assets/badges/ghload-nightly.png" alt="Get it on GitHub (Nightly)" width="30%">](https://github.com/libre-tube/LibreTube/releases/tag/nightly)
-
+<div align="center">
+  <img src="assets/readme/bettertube-preview.png" width="90%" alt="BetterTube home feed in dark mode and the player page in light and dark mode">
+  <br>
+  <sub>Rendered from the app's layouts. Coloured boxes stand in for thumbnails and channel pictures.</sub>
 </div>
 
-> **Note about Nightly builds** <br>
-> Nightly builds include features/fixes before the official release. Therefore, they are generally less stable than normal releases. Use nightly builds at your own risk.
+## What's different from LibreTube
 
-<details>
-  <summary>📜️ Credits</summary>
+| | LibreTube | BetterTube |
+|---|---|---|
+| **Switching to audio-only mid-video** | Keeps downloading the video stream in the background, wasting data and memory | Stops requesting video right away and only downloads audio |
+| **Checking what's being downloaded** | Not possible in the app | Live **Network traffic** readout of audio vs. video data |
+| **Loading indicator** | Shape-shifting "blob" in a filled circle | Slim round spinner in your accent colour |
+| **Look and feel** | Material 3 Expressive defaults | Refined Material 3: flatter cards, consistent spacing, lighter typography |
 
-<sub>Readme Design and Banners by [XelXen](https://github.com/XelXen)</sub> <br>
-<sub>Readme Screenshots by [ARBoyGo](https://github.com/ARBoyGo)</sub> <br>
-<sub>Readme Emoji is from [openmoji](https://openmoji.org)</sub>
+### 🎧 Audio-only mode that actually saves data
 
-  <summary>Icons</summary>
+Most YouTube videos are now streamed with a protocol called SABR, where the app tells YouTube's server which audio and video streams it wants.
+In LibreTube, if you start a video and then switch to audio-only, the app keeps telling the server it still wants video. The server keeps sending it, and the app quietly downloads and stores video it never plays.
 
-<sub>[Default App Icon](https://github.com/libre-tube/LibreTube/blob/master/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png) by [XelXen](https://github.com/XelXen)</sub> <br>
-<sub>[Boosted Bird](https://github.com/libre-tube/LibreTube/blob/master/app/src/main/res/mipmap-xxxhdpi/ic_bird_round.png) by [Margot Albert-Heuzey](https://margotdesign.ovh)</sub>
+BetterTube tells the server to stop sending video as soon as video is turned off, and safely ignores any video data that was already on its way. Switching back to video works as before.
 
-</details>
+### 📊 See it for yourself: Network traffic
 
-<h2 align="left">
-<sub>
-<img  src="assets/readme/about.svg"
-      height="30"
-      width="30">
-</sub>
-About
-</h2>
+<img src="assets/readme/bettertube-traffic.png" width="320" align="right" alt="Network traffic sheet showing audio only status">
 
-YouTube has an extremely invasive [privacy policy](https://support.google.com/youtube/answer/10364219) which relies on using user data in unethical ways. They store a lot of your personal data - ranging from ideas, music taste, content, political opinions, and much more than you think.
+While a video is playing, open **⋮ → Network traffic** (also under *Stats for nerds* in the player). It shows, live:
 
-LibreTube aims at improving the users' privacy by being independent from Google and bypassing their data collection as much as possible. The app only sends the minimum amount of data necessary to ensure that the app works, e.g. it only loads the YouTube-video you want to play without tracking your behavior when using the app.
+- how much **audio** and **video** data has been received for the current video
+- how long ago the last video data arrived
+- a status line such as *"Audio only: no video data for 42 s"*
 
-If you have questions or need help, please make sure to read the [FAQ](https://libre-tube.github.io/#faq) before asking for help at the community channels. The [Matrix room](https://matrix.to/#/#LibreTube:matrix.org) is considered as the main communication channel, all other forums or social media accounts are maintained by volunteers from the community but not the developer(s).
+Switch to audio-only and the video counter stops growing within a few seconds.
 
-<h2 align="left">
-<sub>
-<img  src="assets/readme/phone.svg"
-      height="30"
-      width="30">
-</sub>
-Screenshots
-</h2>
+<br clear="right">
 
-<div style="width:100%; display:flex; justify-content:space-between;">
+### ✨ Refined interface
 
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/Screenshot_1.jpg" width=19% alt="Home">](fastlane/metadata/android/en-US/images/phoneScreenshots/Screenshot_1.jpg)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/Screenshot_2.jpg" width=19% alt="Home">](fastlane/metadata/android/en-US/images/phoneScreenshots/Screenshot_2.jpg)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/Screenshot_3.jpg" width=19% alt="Subscriptions">](fastlane/metadata/android/en-US/images/phoneScreenshots/Screenshot_3.jpg)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/Screenshot_4.jpg" width=19% alt="Library">](fastlane/metadata/android/en-US/images/phoneScreenshots/Screenshot_4.jpg)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/Screenshot_9.jpg" width=19% alt="Channel Overview">](fastlane/metadata/android/en-US/images/phoneScreenshots/Screenshot_9.jpg)
+- Slim, round-capped loading spinner (white when shown over video)
+- Slimmer bottom navigation bar on a soft tinted surface
+- Feed cards with wider margins, rounder 20dp thumbnails and no drop shadows
+- List rows aligned to the same 16dp margin, medium-weight titles, softer secondary text
+- Compact pill buttons and a tidier channel row on the player page
+- Watch-progress bar follows your chosen accent colour
+- Works in light and dark mode with all of LibreTube's colour themes
 
-* More screenshots can be found [here](https://github.com/libre-tube/LibreTube/blob/master/SCREEN_SHOT.md)
+## Download
 
-</div>
+There are no official releases yet. Every push is built automatically by GitHub Actions:
 
-<h2 align="left">
-<sub>
-<img  src="assets/readme/feature.svg"
-      height="30"
-      width="30">
-</sub>
-Features
-</h2>
+1. Open the [latest successful build](../../actions/workflows/ci.yml?query=is%3Asuccess) and sign in to GitHub.
+2. Under **Artifacts**, download **app** (a zip file).
+3. Unzip it and install `app-debug.apk`. Android may ask you to allow installs from your browser or file manager.
 
-- [x] No Ads or Tracking
-- [x] Subscriptions
-- [x] Subscription Groups
-- [x] User Playlists
-- [x] Playlist Bookmarks
-- [x] Watch/Search History
-- [x] Downloads
-- [x] Background playback
-- [x] User Accounts via [Piped](https://github.com/TeamPiped/Piped) (optional)
-- [x] [SponsorBlock](https://sponsor.ajay.app/) - skip sponsored segments in videos
-- [x] [ReturnYouTubeDislike](https://www.returnyoutubedislike.com/) - provides video dislike statistics
-- [x] [DeArrow](https://dearrow.ajay.app/) - provides better titles and thumbnails
+> [!NOTE]
+> These are debug builds. They install as **BetterTube** alongside the official LibreTube app instead of replacing it.
 
-<h2 align="left">
-<sub>
-<img  src="assets/readme/community.svg"
-      height="30"
-      width="30">
-</sub>
-Contributing
-</h2>
+## Everything else from LibreTube
 
-For information on how to contribute, please check the [contribution guide](./CONTRIBUTING.md).
+BetterTube includes all of LibreTube's features:
 
-<h2 align="left">
-<sub>
-<img  src="assets/readme/donate.svg"
-      height="30"
-      width="30">
-</sub>
-Donate
-</h2>
+- No ads or tracking
+- Subscriptions and subscription groups
+- Playlists, playlist bookmarks and watch/search history
+- Downloads and background playback
+- Optional accounts via [Piped](https://github.com/TeamPiped/Piped)
+- [SponsorBlock](https://sponsor.ajay.app/), [Return YouTube Dislike](https://www.returnyoutubedislike.com/) and [DeArrow](https://dearrow.ajay.app/)
 
-Donations can be made at:
-* <https://github.com/sponsors/Bnyro>
-* <https://liberapay.com/Bnyro>
-* Monero (XMR): 47jAx7jMFo5iqy9VgDH98qL1bSK4kr6Pxi7HKWcRwsxbVYJdjxJtyrwXeAUa5MutvcQUmWMBfvAKnPAutDHvWEymUgLm5v8
-* Ethereum (ETH): 0x599909f54CdC18B997Be8F032341d1Fb14BF4F39
+For questions about these features, see LibreTube's [FAQ](https://libre-tube.github.io/#faq).
 
-Contributions in any form are welcome!
+## Building from source
 
-<h2 align="left">
-📝 Translations
-</h2>
+Requirements: JDK 17 and the Android SDK (platform 36).
 
-<a href="https://hosted.weblate.org/projects/libretube/#languages">
-<img src="https://hosted.weblate.org/widgets/libretube/-/287x66-grey.png" alt="Translation status" />
-</a>
+```sh
+./gradlew assembleDebug
+# APK: app/build/outputs/apk/debug/app-debug.apk
+```
 
-<h2 align="left">
-<sub>
-<img  src="assets/readme/ltvnp.svg"
-      height="30"
-      width="30">
-</sub>
-Differences to NewPipe
-</h2>
+### Keeping up with LibreTube
 
-LibreTube's main difference to NewPipe is that it has a much stronger focus on user experience. LibreTube uses the modern [Material 3 Expressive](https://m3.material.io) design, supports external APIs such as SponsorBlock, ReturnYouTubeDislike, or DeArrow, and allows you to synchronize your user data across devices, e.g. via Piped. <!-- TODO: replace with LibreTube sync server -->
+```sh
+git remote add upstream https://github.com/libre-tube/LibreTube.git
+git fetch upstream master
+git merge upstream/master
+```
 
-While LibreTube only supports content from YouTube, NewPipe also allows the use of other platforms like SoundCloud, PeerTube, Bandcamp and media.ccc.de.
+## Credits and license
 
-Both, LibreTube and NewPipe, are great clients for watching YouTube videos. There's no general answer about which one is better, just try them both and see which one fits you best.
+BetterTube is built on [LibreTube](https://github.com/libre-tube/LibreTube) by Bnyro and the LibreTube contributors. Nearly all of the app is their work. If you find it useful, consider [supporting LibreTube](https://github.com/sponsors/Bnyro).
 
-<h2 align="left">
-<sub>
-<img  src="assets/readme/privacy.svg"
-      height="30"
-      width="30">
-</sub>
-Privacy Policy and Disclaimer
-</h2>
+App icons by [XelXen](https://github.com/XelXen) and [Margot Albert-Heuzey](https://margotdesign.ovh).
 
-
-LibreTube aims to protect the privacy of its users. [Our Privacy Policy](/PRIVACY_POLICY.md) gives detailed information on which data the app stores in order to work, how it is being used, and how the project protects your personal information. It is recommended to read the privacy policy of LibreTube as well as the privacy policy of the instance you have chosen inside the app.
-
-## License
-[![GNU GPLv3 Image](https://www.gnu.org/graphics/gplv3-127x51.png)](http://www.gnu.org/licenses/gpl-3.0.en.html)
-
-LibreTube is [Free Software](https://en.wikipedia.org/wiki/Free_software): You can use, study, share and modify it at your will. The app can be redistributed and/or modified under the terms of the
-[GNU General Public License version 3 or later](https://www.gnu.org/licenses/gpl.html) published by the
-[Free Software Foundation](https://www.fsf.org/).
-
-<div align="right">
-<table><td>
-<a href="#start-of-content">↥ Scroll to top</a>
-</td></table>
-</div>
+Like LibreTube, BetterTube is licensed under the [GNU General Public License v3.0](LICENSE).
