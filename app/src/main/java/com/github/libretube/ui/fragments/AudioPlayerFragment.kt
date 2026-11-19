@@ -1,5 +1,6 @@
 package com.github.libretube.ui.fragments
 
+import androidx.media3.common.PlaybackException
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -188,6 +189,14 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
                     )
                 }
                 .show(childFragmentManager)
+        }
+
+        binding.playbackError.playbackRetry.setOnClickListener {
+            binding.playbackError.root.isGone = true
+            playerController?.sendCustomCommand(
+                AbstractPlayerService.runPlayerActionCommand,
+                bundleOf(PlayerCommand.RETRY_PLAYBACK.name to true)
+            )
         }
 
         binding.miniPlayerClose.setOnClickListener {
@@ -449,6 +458,17 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
 
     private fun handleServiceConnection() {
         playerController?.addListener(object : Player.Listener {
+            override fun onPlayerError(error: PlaybackException) {
+                super.onPlayerError(error)
+                // the service retries on its own; Retry continues from the same position now
+                _binding?.playbackError?.root?.isVisible = true
+            }
+
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                super.onPlaybackStateChanged(playbackState)
+                if (playbackState != Player.STATE_IDLE) _binding?.playbackError?.root?.isGone = true
+            }
+
             override fun onIsPlayingChanged(isPlaying: Boolean) {
                 super.onIsPlayingChanged(isPlaying)
 

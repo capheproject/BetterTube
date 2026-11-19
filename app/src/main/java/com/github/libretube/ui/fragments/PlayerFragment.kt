@@ -257,6 +257,9 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
         }
 
         override fun onPlaybackStateChanged(playbackState: Int) {
+            // playback recovered (automatically or via Retry)
+            if (playbackState != Player.STATE_IDLE) _binding?.player?.hidePlaybackError()
+
             // set the playback speed to one if having reached the end of a livestream
             if (playbackState == Player.STATE_BUFFERING && streams.isLive &&
                 playerController.duration - playerController.currentPosition < 700
@@ -344,10 +347,13 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
         override fun onPlayerError(error: PlaybackException) {
             super.onPlayerError(error)
             _binding?.player?.hideLoadingThumbnail()
-            try {
-                playerController.play()
-            } catch (e: Exception) {
-                e.printStackTrace()
+            // the service retries on its own; this lets the user retry right away, from the
+            // same position, instead of having to close and reopen the video
+            _binding?.player?.showPlaybackError {
+                playerController.sendCustomCommand(
+                    AbstractPlayerService.runPlayerActionCommand,
+                    bundleOf(PlayerCommand.RETRY_PLAYBACK.name to true)
+                )
             }
         }
 

@@ -12,6 +12,7 @@ import android.os.Looper
 import android.text.format.DateUtils
 import android.util.AttributeSet
 import android.view.KeyEvent
+import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.Window
 import android.widget.FrameLayout
@@ -45,6 +46,7 @@ import com.github.libretube.constants.PreferenceKeys
 import com.github.libretube.databinding.CustomExoPlayerViewTemplateBinding
 import com.github.libretube.databinding.DoubleTapOverlayBinding
 import com.github.libretube.databinding.ExoStyledPlayerControlViewBinding
+import com.github.libretube.databinding.ViewPlaybackErrorBinding
 import com.github.libretube.databinding.PlayerGestureControlsViewBinding
 import com.github.libretube.enums.PlayerCommand
 import com.github.libretube.enums.menuoption.ResizeBottomSheetItem
@@ -1182,6 +1184,31 @@ class CustomExoPlayerView(
             .setDuration(LOADING_THUMBNAIL_FADE_MS)
             .withEndAction { view.isGone = true }
             .start()
+    }
+
+    private var playbackErrorBinding: ViewPlaybackErrorBinding? = null
+
+    /**
+     * Shows a "Playback interrupted" message with a Retry button on top of the video.
+     * The service keeps the position, so retrying continues where playback stopped.
+     */
+    fun showPlaybackError(onRetry: () -> Unit) {
+        val errorBinding = playbackErrorBinding
+            ?: ViewPlaybackErrorBinding.inflate(LayoutInflater.from(context), this, false).also {
+                // added last, so it sits above the controls and receives the taps
+                addView(it.root)
+                playbackErrorBinding = it
+            }
+        errorBinding.playbackRetry.setOnClickListener {
+            hidePlaybackError()
+            onRetry()
+        }
+        errorBinding.root.bringToFront()
+        errorBinding.root.isVisible = true
+    }
+
+    fun hidePlaybackError() {
+        playbackErrorBinding?.root?.isGone = true
     }
 
     fun isFullscreen() = commonPlayerViewModel?.isFullscreen?.value ?: false

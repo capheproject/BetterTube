@@ -67,6 +67,7 @@ Want the very latest changes? Every push is also built by GitHub Actions: open t
 - Subscriptions: the filter row is hidden by default (Settings → Appearance → *Subscriptions toolbar* to show it)
 - Data label: no longer tappable, just shows the total
 - Audio player: the back chevron and ⋮ menu are the same size
+- Playback errors no longer close the player: BetterTube retries automatically with a fresh stream at the same position, and a **Retry** button appears on the video (and in the audio player) if that doesn't work
 - Fixed the app crashing when opening the Library tab (v0.1.2-preview)
 - Fixed taps on the open player (e.g. on the data label) reaching the screen behind it and starting a video
 - LibreTube's update checker is turned off; Settings → *BetterTube releases* opens this repository's releases page

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Shown over the player after a playback error: a short message and a Retry button that
+     continues from the same position -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/playback_error"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@drawable/playback_error_background"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingHorizontal="20dp"
+    android:paddingTop="14dp"
+    android:paddingBottom="12dp"
+    android:visibility="gone">
+
+    <TextView
+        android:id="@+id/playback_error_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/playback_interrupted"
+        android:textAppearance="?attr/textAppearanceTitleSmall"
+        android:textColor="@android:color/white" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/playback_retry"
+        style="@style/AccentButton.Icon"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:text="@string/retry"
+        android:textAppearance="?attr/textAppearanceLabelLarge"
+        app:icon="@drawable/ic_refresh"
+        xmlns:app="http://schemas.android.com/apk/res-auto" />
+
+</LinearLayout>

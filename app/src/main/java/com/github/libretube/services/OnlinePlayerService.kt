@@ -2,11 +2,13 @@ package com.github.libretube.services
 
 import android.net.Uri
 import android.os.Bundle
+import android.os.SystemClock
 import android.util.Log
 import androidx.core.net.toUri
 import androidx.media3.common.C
 import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
 import androidx.media3.common.MediaItem.SubtitleConfiguration
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.Player
@@ -44,6 +46,7 @@ import com.github.libretube.util.YoutubeHlsPlaylistParser
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -80,7 +83,9 @@ open class OnlinePlayerService : AbstractPlayerService() {
                 }
 
                 Player.STATE_IDLE -> {
-                    onDestroy()
+                    // a playback error also leaves the player idle: keep the service (and the
+                    // position) alive so that playback can be recovered instead of closing it
+                    if (exoPlayer?.playerError == null) onDestroy()
                 }
 
                 Player.STATE_BUFFERING -> {}
@@ -207,8 +212,63 @@ open class OnlinePlayerService : AbstractPlayerService() {
         }.getOrElse { emptyList() }
     }
 
+    /** Times of recent playback errors, to limit automatic retries. */
+    private val recentErrorTimes = ArrayDeque<Long>()
+    private var recoveryJob: Job? = null
+
+    override fun onPlaybackError(error: PlaybackException): Boolean {
+        val now = SystemClock.elapsedRealtime()
+        while (recentErrorTimes.isNotEmpty() && now - recentErrorTimes.first() > ERROR_WINDOW_MS) {
+            recentErrorTimes.removeFirst()
+        }
+        recentErrorTimes.addLast(now)
+        if (recentErrorTimes.size > MAX_AUTO_RETRIES) return false
+
+        Log.w(TAG(), "playback error (${error.errorCodeName}), retry ${recentErrorTimes.size}", error)
+        recoverPlayback(delayMs = RETRY_DELAY_MS * recentErrorTimes.size)
+        return true
+    }
+
+    override fun retryPlayback() {
+        recentErrorTimes.clear()
+        recoverPlayback(delayMs = 0)
+    }
+
+    /**
+     * Reloads the current video at the position it stopped at. Stream URLs expire and SABR
+     * sessions can break, so fresh stream info is fetched before playback is prepared again.
+     */
+    private fun recoverPlayback(delayMs: Long) {
+        val failedVideoId = videoId
+        val positionMs = exoPlayer?.currentPosition ?: 0L
+
+        recoveryJob?.cancel()
+        recoveryJob = scope.launch {
+            delay(delayMs)
+            val freshStreams = withContext(Dispatchers.IO) {
+                runCatching {
+                    MediaServiceRepository.instance.getStreams(failedVideoId).let {
+                        DeArrowUtil.deArrowStreams(it, failedVideoId)
+                    }
+                }.getOrNull()
+            }
+            // the user moved on to another video in the meantime
+            if (videoId != failedVideoId) return@launch
+            if (freshStreams != null) streams = freshStreams
+
+            setStreamSource()
+            exoPlayer?.apply {
+                seekTo(positionMs)
+                playWhenReady = true
+                prepare()
+            }
+        }
+    }
+
     override fun navigateVideo(videoId: String) {
         this.streams = null
+        recoveryJob?.cancel()
+        recentErrorTimes.clear()
 
         super.navigateVideo(videoId)
     }
@@ -336,4 +396,10 @@ open class OnlinePlayerService : AbstractPlayerService() {
             .setSubtitleConfigurations(getSubtitleConfigs())
             .setMetadata(streams, videoId)
             .build()
+
+    companion object {
+        private const val MAX_AUTO_RETRIES = 3
+        private const val ERROR_WINDOW_MS = 2 * 60 * 1000L
+        private const val RETRY_DELAY_MS = 1000L
+    }
 }

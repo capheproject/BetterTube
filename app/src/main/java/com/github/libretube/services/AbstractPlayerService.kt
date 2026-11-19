@@ -88,8 +88,8 @@ abstract class AbstractPlayerService : MediaLibraryService(), MediaLibrarySessio
         }
 
         override fun onPlayerError(error: PlaybackException) {
-            // show a toast on errors
-            toastFromMainThread(error.localizedMessage.orEmpty())
+            // try to recover on our own first; only tell the user when that isn't possible
+            if (!onPlaybackError(error)) toastFromMainThread(error.localizedMessage.orEmpty())
         }
 
         override fun onPlaybackStateChanged(playbackState: Int) {
@@ -205,6 +205,8 @@ abstract class AbstractPlayerService : MediaLibraryService(), MediaLibrarySessio
                 }
                 updateNotification()
             }
+
+            args.containsKey(PlayerCommand.RETRY_PLAYBACK.name) -> retryPlayback()
 
             args.containsKey(PlayerCommand.SET_SB_AUTO_SKIP_ENABLED.name) -> {
                 sponsorBlockAutoSkip = args.getBoolean(PlayerCommand.SET_SB_AUTO_SKIP_ENABLED.name)
@@ -338,6 +340,20 @@ abstract class AbstractPlayerService : MediaLibraryService(), MediaLibrarySessio
     }
 
     abstract val isOfflinePlayer: Boolean
+
+    /**
+     * Called when playback fails. Returns true if the service is recovering on its own
+     * (the error is then not shown as a toast).
+     */
+    open fun onPlaybackError(error: PlaybackException): Boolean = false
+
+    /** Retry after a playback error, continuing from the current position. */
+    open fun retryPlayback() {
+        exoPlayer?.apply {
+            playWhenReady = true
+            prepare()
+        }
+    }
     var isAudioOnlyPlayer: Boolean = false
 
     val watchPositionsEnabled

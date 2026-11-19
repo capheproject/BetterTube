@@ -138,6 +138,10 @@
                 android:layout_gravity="center"
                 android:indeterminate="true" />
 
+            <include
+                android:id="@+id/playback_error"
+                layout="@layout/view_playback_error" />
+
         </FrameLayout>
 
         <!-- Title and channel -->
