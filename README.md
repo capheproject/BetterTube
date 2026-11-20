@@ -14,7 +14,7 @@ BetterTube keeps everything LibreTube does and focuses on two things: audio-only
 > Please report BetterTube problems [here](../../issues), not to LibreTube.
 
 <div align="center">
-  <img src="assets/readme/bettertube-home.jpg" width="320" alt="BetterTube's Home screen in dark mode: Continue watching and Playlists rows of large rounded thumbnails, the mini player card and the floating dock at the bottom">
+  <img src="assets/readme/bettertube-home-v2.jpg" width="320" alt="BetterTube's Home screen in dark mode: Continue watching and Playlists rows of large rounded thumbnails, the mini player card and the floating dock at the bottom">
   <br>
   <sub>Home on a real phone, with the floating dock.</sub>
 </div>
