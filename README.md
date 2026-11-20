@@ -30,7 +30,7 @@ Everything else LibreTube offers is still there.
 
 **[Download the latest release](../../releases)**: grab `BetterTube-<version>.apk` under *Assets* and open it on your phone. Android may ask you to allow installs from your browser or file manager.
 
-The current release is a **preview** (`v0.1.9-preview`), signed with BetterTube's public debug key: only install BetterTube updates from this repository.
+The current release is a **preview** (`v0.1.10-preview`), signed with BetterTube's public debug key: only install BetterTube updates from this repository.
 
 Want the very latest changes? Every push is also built by GitHub Actions: open the [latest successful build](../../actions/workflows/ci.yml?query=is%3Asuccess), sign in to GitHub, download **app** under *Artifacts*, unzip it and install `app-debug.apk`.
 
@@ -40,6 +40,11 @@ Want the very latest changes? Every push is also built by GitHub Actions: open t
 > - Builds from before 19 November 2026 used a different key each time: uninstall that version once (export a backup first), then install the new one.
 
 ## Changelog
+
+### 20 November 2026 (evening): audio mode memory
+- BetterTube remembers audio mode: after switching to audio, new videos also start as audio until you switch back to video (Settings → General → *Remember audio mode*, on by default)
+- Audio player: a thicker, easier-to-grab progress bar; tapping the artwork no longer pauses
+- Fixed a grey block following the minimised video player and hiding what's behind it
 
 ### 20 November 2026 (later): fixes
 - Switching modes now works the same way in both directions: an **Audio** pill on the video (next to fullscreen) and a **Video** pill on the artwork; the Audio button left the action row, so Share, Save and Download fit without scrolling

@@ -334,13 +334,15 @@
     </style>
 
     <!-- Thin progress bar with a slim thumb -->
+    <!-- Chunky, easy to grab progress bar for the audio player -->
     <style name="AudioPlayerSlider" parent="Widget.Material3.Slider">
-        <item name="trackHeight">4dp</item>
-        <item name="thumbWidth">4dp</item>
-        <item name="thumbHeight">20dp</item>
-        <item name="thumbTrackGapSize">4dp</item>
+        <item name="trackHeight">12dp</item>
+        <item name="thumbWidth">6dp</item>
+        <item name="thumbHeight">32dp</item>
+        <item name="thumbTrackGapSize">5dp</item>
         <item name="trackStopIndicatorSize">0dp</item>
-        <item name="trackInsideCornerSize">2dp</item>
+        <item name="trackInsideCornerSize">3dp</item>
+        <item name="trackCornerSize">6dp</item>
         <item name="tickVisibilityMode">hidden</item>
     </style>
 

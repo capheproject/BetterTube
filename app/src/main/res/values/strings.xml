@@ -585,6 +585,8 @@
     <string name="play_pause">Play or pause</string>
     <string name="video_options_more">Share, save &amp; download</string>
     <string name="description">Description</string>
+    <string name="remember_player_mode">Remember audio mode</string>
+    <string name="remember_player_mode_summary">After switching to audio, new videos also start as audio until you switch back to video</string>
     <string name="playback_interrupted">Playback interrupted</string>
     <string name="show_subscriptions_header">Subscriptions toolbar</string>
     <string name="show_subscriptions_header_summary">Show the channel list, group selector and filter at the top of Subscriptions</string>

@@ -1,5 +1,6 @@
 package com.github.libretube.ui.fragments
 
+import com.github.libretube.helpers.PlayerModeMemory
 import androidx.core.view.updateLayoutParams
 import androidx.constraintlayout.widget.ConstraintLayout
 import android.content.res.Configuration
@@ -284,6 +285,7 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
     }
 
     fun switchToVideoMode(videoId: String) {
+        PlayerModeMemory.remember(audio = false)
         playerController?.sendCustomCommand(
             AbstractPlayerService.runPlayerActionCommand,
             bundleOf(PlayerCommand.TOGGLE_AUDIO_ONLY_MODE.name to false)
@@ -538,9 +540,8 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
         _binding = null
     }
 
-    override fun onSingleTap() {
-        playerController?.togglePlayPauseState()
-    }
+    // tapping the artwork does nothing (the play button is right below); swipes and long press stay
+    override fun onSingleTap() = Unit
 
     /**
      * Comments, as on the video page (sharing, saving and downloading are in the overflow menu).

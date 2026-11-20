@@ -1,5 +1,6 @@
 package com.github.libretube.ui.fragments
 
+import com.github.libretube.helpers.PlayerModeMemory
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
@@ -127,6 +128,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
     /** Opened by switching from the audio player (see [initializeTransitionLayout]). */
     private var openedFromAudio = false
     private var isSwitchingMode = false
+    private var isFadingInFromAudio = false
     private var _binding: FragmentPlayerBinding? = null
     val binding get() = _binding!!
 
@@ -415,16 +417,22 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
         }
         if (switchedFromAudio) {
             // the artwork stays where it was in the audio player and fades into the video once
-            // its first frame arrives; the video page's details rise in underneath
+            // its first frame arrives; the video page's details rise in underneath (started a
+            // moment later, once the player has settled in its open state)
             binding.player.postDelayed({ _binding?.player?.hideLoadingThumbnail() }, SWITCH_THUMBNAIL_TIMEOUT_MS)
+            isFadingInFromAudio = true
             binding.playerScrollView.alpha = 0f
             binding.playerScrollView.translationY = MODE_SWITCH_RISE_DP * resources.displayMetrics.density
-            binding.playerScrollView.animate()
-                .alpha(1f)
-                .translationY(0f)
-                .setDuration(MODE_SWITCH_IN_MS)
-                .setInterpolator(android.view.animation.DecelerateInterpolator())
-                .start()
+            binding.playerScrollView.postDelayed({
+                val scrollView = _binding?.playerScrollView ?: return@postDelayed
+                scrollView.animate()
+                    .alpha(1f)
+                    .translationY(0f)
+                    .setDuration(MODE_SWITCH_IN_MS)
+                    .setInterpolator(android.view.animation.DecelerateInterpolator())
+                    .withEndAction { isFadingInFromAudio = false }
+                    .start()
+            }, MODE_SWITCH_SETTLE_MS)
         }
         isOffline = playerData.isOffline
         playlistId = playerData.playlistId
@@ -626,6 +634,12 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
                 baseActivity.setPlayerContainerProgress(progress.absoluteValue)
                 MiniPlayerShape.apply(binding.mainContainer, progress.absoluteValue)
                 updateStatusBarStrip(progress.absoluteValue)
+                // the details panel fades away while minimising, so no grey block is left
+                // under the mini player card
+                if (progress.absoluteValue > 0.02f && !isFadingInFromAudio) {
+                    binding.playerScrollView.isVisible = true
+                    binding.playerScrollView.alpha = 1f - progress.absoluteValue
+                }
                 disableController()
                 commonPlayerViewModel.setSheetExpand(false)
                 transitionEndId = endId
@@ -638,6 +652,8 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
                 if (currentId == transitionStartId) {
                     MiniPlayerShape.apply(binding.mainContainer, 0f)
                     updateStatusBarStrip(0f)
+                    binding.playerScrollView.isVisible = true
+                    if (!isFadingInFromAudio) binding.playerScrollView.alpha = 1f
                     commonPlayerViewModel.isMiniPlayerVisible.value = false
                     // re-enable captions
                     binding.player.updateCurrentSubtitle(viewModel.currentCaptionId)
@@ -650,6 +666,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
                     baseActivity.clearSearchViewFocus()
                 } else if (currentId == transitionEndId) {
                     MiniPlayerShape.apply(binding.mainContainer, 1f)
+                    binding.playerScrollView.isInvisible = true
                     commonPlayerViewModel.isMiniPlayerVisible.value = true
                     // disable captions temporarily
                     binding.player.updateCurrentSubtitle(null)
@@ -816,6 +833,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
     }
 
     private fun startAudioMode() {
+        PlayerModeMemory.remember(audio = true)
         playerController.sendCustomCommand(
             AbstractPlayerService.runPlayerActionCommand,
             bundleOf(PlayerCommand.TOGGLE_AUDIO_ONLY_MODE.name to true)
@@ -1530,5 +1548,6 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
         private const val MODE_SWITCH_IN_MS = 320L
         private const val MODE_SWITCH_RISE_DP = 16
         private const val SWITCH_THUMBNAIL_TIMEOUT_MS = 6000L
+        private const val MODE_SWITCH_SETTLE_MS = 80L
     }
 }

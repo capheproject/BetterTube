@@ -85,6 +85,8 @@ object NavigationHelper {
         if (attachedToRunningPlayer) return
 
         val audioOnlyMode = PreferenceHelper.getBoolean(PreferenceKeys.AUDIO_ONLY_MODE, false)
+        // keep the mode the user last switched to (audio stays audio when opening another video)
+        val rememberedAudio = !playerData.isOffline && !forceVideo && PlayerModeMemory.prefersAudio
         val attachedToRunningAudioPlayer = activity.runOnAudioPlayerFragment {
             // can only continue using player if in same mode (online/offline)
             // otherwise, recreate the player
@@ -93,7 +95,7 @@ object NavigationHelper {
             PlayingQueue.clearAfterCurrent()
             this.playNextVideo(playerData.videoId.toID())
 
-            if (!audioOnlyPlayerRequested && !audioOnlyMode) {
+            if (!audioOnlyPlayerRequested && !audioOnlyMode && !rememberedAudio) {
                 // switch to video only player
                 this.switchToVideoMode(playerData.videoId.toID())
             } else {
@@ -105,12 +107,17 @@ object NavigationHelper {
         }
         if (attachedToRunningAudioPlayer) return
 
-        if (audioOnlyPlayerRequested || (audioOnlyMode && !forceVideo)) {
+        if (audioOnlyPlayerRequested || (audioOnlyMode && !forceVideo) || rememberedAudio) {
             // in contrast to the video player, the audio player doesn't start a media service on
             // its own!
             BackgroundHelper.playOnBackground(context, playerData)
 
-            openAudioPlayerFragment(context, offlinePlayer = playerData.isOffline, minimizeByDefault = true)
+            openAudioPlayerFragment(
+                context,
+                offlinePlayer = playerData.isOffline,
+                // a remembered audio mode opens the player like tapping a video does
+                minimizeByDefault = !rememberedAudio || audioOnlyPlayerRequested || audioOnlyMode
+            )
         } else {
             openVideoPlayerFragment(
                 context,
