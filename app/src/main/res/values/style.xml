@@ -194,10 +194,12 @@
         <item name="android:textAlignment">viewStart</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:drawablePadding">2dp</item>
+        <!-- no extra font padding, so the chevron centres on the letters, not on the line box -->
+        <item name="android:includeFontPadding">false</item>
         <item name="android:paddingStart">16dp</item>
         <item name="android:paddingEnd">16dp</item>
-        <item name="android:paddingTop">8dp</item>
-        <item name="android:paddingBottom">2dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">6dp</item>
 
     </style>
 

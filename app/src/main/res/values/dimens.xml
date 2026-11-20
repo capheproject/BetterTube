@@ -17,6 +17,7 @@
     <dimen name="dock_margin_horizontal">40dp</dimen>
     <dimen name="dock_margin_bottom">24dp</dimen>
     <dimen name="dock_height">64dp</dimen>
+    <dimen name="bottom_fade_height">112dp</dimen>
 
     <!-- Floating mini player card -->
     <dimen name="mini_player_height">64dp</dimen>

@@ -30,7 +30,7 @@ Everything else LibreTube offers is still there.
 
 **[Download the latest release](../../releases)**: grab `BetterTube-<version>.apk` under *Assets* and open it on your phone. Android may ask you to allow installs from your browser or file manager.
 
-The current release is a **preview** (`v0.1.8-preview`), signed with BetterTube's public debug key: only install BetterTube updates from this repository.
+The current release is a **preview** (`v0.1.9-preview`), signed with BetterTube's public debug key: only install BetterTube updates from this repository.
 
 Want the very latest changes? Every push is also built by GitHub Actions: open the [latest successful build](../../actions/workflows/ci.yml?query=is%3Asuccess), sign in to GitHub, download **app** under *Artifacts*, unzip it and install `app-debug.apk`.
 
@@ -40,6 +40,14 @@ Want the very latest changes? Every push is also built by GitHub Actions: open t
 > - Builds from before 19 November 2026 used a different key each time: uninstall that version once (export a backup first), then install the new one.
 
 ## Changelog
+
+### 20 November 2026 (later): fixes
+- Switching modes now works the same way in both directions: an **Audio** pill on the video (next to fullscreen) and a **Video** pill on the artwork; the Audio button left the action row, so Share, Save and Download fit without scrolling
+- Audio player: controls sit higher and centred; the description opens as a panel on top instead of reserving empty space
+- Fixed a sliver of the header showing above the video after switching from audio; the video page now opens in place when switching
+- Section chevrons are vertically centred on their headings; the separator dot is visible again
+- Content fades out softly behind the floating dock and mini player
+- Landscape: the audio player's artwork stays a banner so the controls remain visible; double taps on the mode switch are ignored
 
 ### 20 November 2026: refinements
 - Audio player uses the video page's layout: the artwork sits exactly where the video goes, tap the title for the description, the current chapter appears under the title, a **Video** pill sits on the artwork, and switching between audio and video is a smooth transition that keeps the picture in place

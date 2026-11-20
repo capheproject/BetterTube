@@ -298,7 +298,16 @@
             <LinearLayout
                 android:id="@id/exo_basic_controls"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+
+                <!-- Switch to audio only: the same pill the audio player shows for video -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/audio_mode"
+                    style="@style/AudioPlayerVideoPill"
+                    android:layout_marginEnd="4dp"
+                    android:text="@string/audio"
+                    app:icon="@drawable/ic_headphones" />
 
                 <ImageButton
                     android:id="@+id/fullscreen"

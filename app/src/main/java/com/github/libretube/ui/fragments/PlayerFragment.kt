@@ -124,6 +124,9 @@ import kotlin.math.absoluteValue
 
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback {
+    /** Opened by switching from the audio player (see [initializeTransitionLayout]). */
+    private var openedFromAudio = false
+    private var isSwitchingMode = false
     private var _binding: FragmentPlayerBinding? = null
     val binding get() = _binding!!
 
@@ -405,6 +408,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
         playerData.videoId?.let { videoId = it }
         // continue from the tapped thumbnail instead of a black screen while loading
         val switchedFromAudio = requireArguments().getBoolean(IntentData.switchedPlayerMode)
+        openedFromAudio = switchedFromAudio
         requireArguments().putBoolean(IntentData.switchedPlayerMode, false)
         if (requireArguments().getBoolean(IntentData.alreadyStarted).not() || switchedFromAudio) {
             showLoadingThumbnail(videoId)
@@ -589,6 +593,21 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
     }
 
     @SuppressLint("ClickableViewAccessibility")
+    /**
+     * The strip under the status bar, above the video, belongs to the video page while it's
+     * open; otherwise the screen behind (e.g. the header) shows through it.
+     */
+    private fun updateStatusBarStrip(progress: Float) {
+        val binding = _binding ?: return
+        if (progress == 0f) {
+            binding.playerMotionLayout.setBackgroundColor(
+                ThemeHelper.getThemeColor(requireContext(), android.R.attr.colorBackground)
+            )
+        } else {
+            binding.playerMotionLayout.background = null
+        }
+    }
+
     private fun initializeTransitionLayout() {
         baseActivity.setPlayerContainerProgress(0f)
 
@@ -606,6 +625,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
 
                 baseActivity.setPlayerContainerProgress(progress.absoluteValue)
                 MiniPlayerShape.apply(binding.mainContainer, progress.absoluteValue)
+                updateStatusBarStrip(progress.absoluteValue)
                 disableController()
                 commonPlayerViewModel.setSheetExpand(false)
                 transitionEndId = endId
@@ -617,6 +637,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
 
                 if (currentId == transitionStartId) {
                     MiniPlayerShape.apply(binding.mainContainer, 0f)
+                    updateStatusBarStrip(0f)
                     commonPlayerViewModel.isMiniPlayerVisible.value = false
                     // re-enable captions
                     binding.player.updateCurrentSubtitle(viewModel.currentCaptionId)
@@ -651,7 +672,15 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
                 }
             }
 
-        binding.playerMotionLayout.progress = 1F
+        if (openedFromAudio) {
+            // switched from the audio player: open in place (the picture is already where the
+            // video goes) instead of growing out of the mini player
+            openedFromAudio = false
+            updateStatusBarStrip(0f)
+            binding.playerMotionLayout.progress = 0.01f
+        } else {
+            binding.playerMotionLayout.progress = 1F
+        }
         binding.playerMotionLayout.transitionToStart()
 
         val activity = requireActivity()
@@ -716,7 +745,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
             newShareDialog.show(childFragmentManager, ShareDialog::class.java.name)
         }
 
-        binding.relPlayerBackground.setOnClickListener {
+        binding.player.binding.audioMode.setOnClickListener {
             // start the background mode
             switchToAudioMode()
         }
@@ -774,6 +803,9 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
      * in place, and the audio player opens with the same picture in the same spot.
      */
     fun switchToAudioMode() {
+        // ignore repeated taps while the switch is already under way
+        if (isSwitchingMode) return
+        isSwitchingMode = true
         if (this::streams.isInitialized) ThumbnailHints.put(videoId, streams.thumbnailUrl)
         binding.playerScrollView.animate()
             .alpha(0f)

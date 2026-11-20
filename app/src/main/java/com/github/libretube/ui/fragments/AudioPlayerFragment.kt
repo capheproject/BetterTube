@@ -1,5 +1,8 @@
 package com.github.libretube.ui.fragments
 
+import androidx.core.view.updateLayoutParams
+import androidx.constraintlayout.widget.ConstraintLayout
+import android.content.res.Configuration
 import com.github.libretube.util.ThumbnailHints
 import com.github.libretube.ui.views.DescriptionLayout
 import com.github.libretube.api.obj.Streams
@@ -95,6 +98,7 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
     private val viewModel: CommonPlayerViewModel by activityViewModels()
     private val chaptersModel: ChaptersViewModel by activityViewModels()
     private val commentsViewModel: CommentsViewModel by activityViewModels()
+    private var isSwitchingMode = false
 
     // for the transition
     private var transitionStartId = 0
@@ -147,6 +151,7 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
         }
 
         initializeTransitionLayout()
+        limitArtworkHeightInLandscape()
 
         // like on the video page: tap the title for the description, long press to copy it
         binding.titleLayout.setOnClickListener { toggleDescription() }
@@ -178,6 +183,9 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
         binding.openVideo.setOnClickListener {
             val current = PlayingQueue.getCurrent()
             val currentId = current?.url?.toID() ?: return@setOnClickListener
+            // ignore repeated taps while the switch is already under way
+            if (isSwitchingMode) return@setOnClickListener
+            isSwitchingMode = true
             // the video page opens with this exact picture in the same place
             ThumbnailHints.put(currentId, current.thumbnail, binding.thumbnail)
             animateAudioOnlyViews(show = false) { switchToVideoMode(currentId) }
@@ -349,7 +357,8 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
             // switched from the video page: the picture is already in place, only the
             // audio controls rise in
             arguments?.putBoolean(IntentData.switchedPlayerMode, false)
-            binding.playerMotionLayout.progress = 0f
+            binding.playerMotionLayout.progress = 0.01f
+            binding.playerMotionLayout.transitionToStart()
             animateAudioOnlyViews(show = true)
         } else if (arguments?.getBoolean(IntentData.minimizeByDefault, false) != true) {
             binding.playerMotionLayout.progress = 1f
@@ -653,6 +662,23 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
         binding.volumeTextView.text = "${bar.progress.normalize(0, bar.max, 0, 100)}"
     }
 
+    /** In landscape a full-width 16:9 artwork would fill the screen: keep it a banner. */
+    private fun limitArtworkHeightInLandscape(config: Configuration = resources.configuration) {
+        val isLandscape = config.orientation == Configuration.ORIENTATION_LANDSCAPE
+        binding.thumbnail.updateLayoutParams<ConstraintLayout.LayoutParams> {
+            matchConstraintMaxHeight = if (isLandscape) {
+                (config.screenHeightDp * resources.displayMetrics.density * LANDSCAPE_ARTWORK_MAX_HEIGHT).toInt()
+            } else {
+                0
+            }
+        }
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        if (_binding != null) limitArtworkHeightInLandscape(newConfig)
+    }
+
     private fun toggleDescription() {
         setDescriptionExpanded(!binding.descriptionScroll.isVisible)
     }
@@ -751,6 +777,7 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
 
     companion object {
         private const val COMMENTS_SHEET_HEIGHT = 0.75f
+        private const val LANDSCAPE_ARTWORK_MAX_HEIGHT = 0.3f
         private const val DESCRIPTION_ANIMATION_MS = 220L
         private const val RISE_DISTANCE_DP = 16
         private const val MODE_SWITCH_OUT_MS = 140L

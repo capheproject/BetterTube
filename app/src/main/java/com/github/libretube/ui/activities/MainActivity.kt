@@ -164,6 +164,10 @@ class MainActivity : AbstractPlayerHostActivity() {
                         bottomMargin = systemBarInsets.bottom +
                             resources.getDimensionPixelSize(R.dimen.dock_margin_bottom)
                     }
+                    binding.bottomFade.updateLayoutParams<ViewGroup.LayoutParams> {
+                        height = systemBarInsets.bottom +
+                            resources.getDimensionPixelSize(R.dimen.bottom_fade_height)
+                    }
                     binding.root.viewTreeObserver.removeOnGlobalLayoutListener(this)
                 }
             })

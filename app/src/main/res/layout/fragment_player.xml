@@ -51,12 +51,6 @@
                         app:icon="@drawable/ic_share" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/relPlayer_background"
-                        style="@style/PlayerActionsButton"
-                        android:text="@string/audio"
-                        app:icon="@drawable/ic_headphones" />
-
-                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/relPlayer_save"
                         style="@style/PlayerActionsButton"
                         android:text="@string/save"

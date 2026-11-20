@@ -59,6 +59,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Fade behind the floating dock and mini player (height set in MainActivity) -->
+    <View
+        android:id="@+id/bottom_fade"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/bottom_fade_height"
+        android:background="@drawable/bottom_fade"
+        android:importantForAccessibility="no"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <!-- Floating dock: inset from the edges, icons only -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"

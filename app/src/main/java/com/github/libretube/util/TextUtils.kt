@@ -194,7 +194,7 @@ object TextUtils {
             if (index > 0) {
                 val start = builder.length
                 builder.append(QUIET_DOT)
-                builder.setSpan(RelativeSizeSpan(0.8f), start, builder.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                builder.setSpan(RelativeSizeSpan(0.75f), start, builder.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 builder.setSpan(ForegroundColorSpan(dotColor), start, builder.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
             builder.append(part)
@@ -202,8 +202,8 @@ object TextUtils {
         return builder
     }
 
-    private const val QUIET_DOT = " · "
-    private const val QUIET_DOT_ALPHA = 0x99
+    private const val QUIET_DOT = " • "
+    private const val QUIET_DOT_ALPHA = 0xB3
 
     /**
      * Timestamp of the current time which doesn't use any forbidden characters for file names like ':'
