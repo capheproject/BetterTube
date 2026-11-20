@@ -163,6 +163,11 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
         initializeTransitionLayout()
         limitArtworkHeightInLandscape()
 
+        // the description scrolls on its own: it must not hand its scroll to the player's
+        // swipe-to-minimise (set here, not in XML: NestedScrollView crashes when it's set while
+        // inflating)
+        binding.descriptionScroll.isNestedScrollingEnabled = false
+
         // fine grain keeps the large gradients smooth; the play button glows in the accent colour
         binding.grain.background = ArtworkColors.grain(requireContext())
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
