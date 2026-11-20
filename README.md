@@ -30,16 +30,21 @@ Everything else LibreTube offers is still there.
 
 **[Download the latest release](../../releases)**: grab `BetterTube-<version>.apk` under *Assets* and open it on your phone. Android may ask you to allow installs from your browser or file manager.
 
-The current release is a **preview** (`v0.1.12-preview`), signed with BetterTube's public debug key: only install BetterTube updates from this repository.
+Releases from **v0.2.0** on are optimised release builds, signed with BetterTube's private key. They install as **BetterTube** next to the official LibreTube app and update in place from one release to the next.
 
-Want the very latest changes? Every push is also built by GitHub Actions: open the [latest successful build](../../actions/workflows/ci.yml?query=is%3Asuccess), sign in to GitHub, download **app** under *Artifacts*, unzip it and install `app-debug.apk`.
+> [!IMPORTANT]
+> **Coming from a preview (v0.1.x)?** v0.2.0 is a separate app from the earlier previews, so it can't update them. Move over once:
+> 1. In the old BetterTube: Settings → Backup and restore → **Backup**, and save the file.
+> 2. Install v0.2.0 (it appears as a second BetterTube icon).
+> 3. In the new BetterTube: Settings → Backup and restore → **Restore**, and pick the backup.
+> 4. Uninstall the old BetterTube.
 
-> [!NOTE]
-> - These are debug builds. They install as **BetterTube** alongside the official LibreTube app instead of replacing it.
-> - All builds are signed with the same key, so a new build installs as an **update** and keeps your data. The build number is shown in Android's app info (e.g. version `32.1-ci.14`).
-> - Builds from before 19 November 2026 used a different key each time: uninstall that version once (export a backup first), then install the new one.
+Want the very latest changes? Every push is also built by GitHub Actions: open the [latest successful build](../../actions/workflows/ci.yml?query=is%3Asuccess), sign in to GitHub, download **app** under *Artifacts*, unzip it and install `app-debug.apk`. These test builds are debug builds signed with a public key: they install as a separate app from the releases and update each other in place.
 
 ## Changelog
+
+### v0.2.0: first signed release
+- Optimised release build (about half the size, faster), signed with BetterTube's private key; see *Download* for moving over from a preview
 
 ### 20 November 2026 (night): richer players, Watch later, faster
 - Audio player: deep colours taken from each video's artwork (smooth, no banding), a lit gradient play button and progress bar in the same colours, bigger and better spaced controls, swipe down on the artwork to minimise, placeholders while loading
