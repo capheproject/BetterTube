@@ -1,6 +1,13 @@
 package com.github.libretube.util
 
 import android.content.Context
+import android.graphics.Color
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
+import androidx.core.graphics.ColorUtils
+import com.google.android.material.color.MaterialColors
 import android.icu.text.RelativeDateTimeFormatter
 import android.net.Uri
 import android.text.format.DateUtils
@@ -136,15 +143,67 @@ object TextUtils {
         return "${context.packageName}/${BuildConfig.VERSION_NAME}"
     }
 
-    fun formatViewsString(context: Context, views: Long, uploaded: Long, uploader: String? = null): String {
+    /**
+     * Channel, views and age for video lists, e.g. "Channel · 30K views · 7h", with a small,
+     * muted separator. Ages are abbreviated so they aren't cut off (see [formatRelativeDateShort]).
+     */
+    fun formatViewsString(context: Context, views: Long, uploaded: Long, uploader: String? = null): CharSequence {
         val viewsString = views.takeIf { it != -1L }?.formatShort()?.let {
             context.getString(R.string.view_count, it)
         }
         val uploadDate = uploaded.takeIf { it > 0 }?.let {
-            formatRelativeDate(it)
+            formatRelativeDateShort(it)
         }
-        return listOfNotNull(uploader, viewsString, uploadDate).joinToString(SEPARATOR)
+        return joinWithQuietDots(context, listOfNotNull(uploader, viewsString, uploadDate))
     }
+
+    /**
+     * Short age of a past date: now, 5m, 7h, 3d, 2w, 4mo, 1y. Future dates (upcoming videos)
+     * keep the full wording, e.g. "in 2 days".
+     */
+    fun formatRelativeDateShort(unixTime: Long): CharSequence {
+        val elapsedMs = System.currentTimeMillis() - unixTime
+        if (elapsedMs < 0) return formatRelativeDate(unixTime)
+
+        val minutes = elapsedMs / 60_000
+        val hours = minutes / 60
+        val days = hours / 24
+        return when {
+            minutes < 1 -> "now"
+            hours < 1 -> "${minutes}m"
+            days < 1 -> "${hours}h"
+            days < 7 -> "${days}d"
+            days < 30 -> "${days / 7}w"
+            days < 365 -> "${(days / 30).coerceAtLeast(1)}mo"
+            else -> "${days / 365}y"
+        }
+    }
+
+    /** Joins [parts] with a small, muted middle dot. */
+    fun joinWithQuietDots(context: Context, parts: List<CharSequence>): CharSequence {
+        val dotColor = ColorUtils.setAlphaComponent(
+            MaterialColors.getColor(
+                context,
+                com.google.android.material.R.attr.colorOnSurfaceVariant,
+                Color.GRAY
+            ),
+            QUIET_DOT_ALPHA
+        )
+        val builder = SpannableStringBuilder()
+        parts.forEachIndexed { index, part ->
+            if (index > 0) {
+                val start = builder.length
+                builder.append(QUIET_DOT)
+                builder.setSpan(RelativeSizeSpan(0.8f), start, builder.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                builder.setSpan(ForegroundColorSpan(dotColor), start, builder.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
+            builder.append(part)
+        }
+        return builder
+    }
+
+    private const val QUIET_DOT = " · "
+    private const val QUIET_DOT_ALPHA = 0x99
 
     /**
      * Timestamp of the current time which doesn't use any forbidden characters for file names like ':'

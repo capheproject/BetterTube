@@ -8,21 +8,37 @@
     android:orientation="vertical"
     android:paddingBottom="4dp">
 
+    <!-- Playlists, a small + pill right next to it, sort on the right -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="bottom"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:paddingTop="6dp"
         android:paddingEnd="8dp"
         tools:ignore="RtlSymmetry">
 
         <TextView
             style="@style/HomeCategoryTitle"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:maxLines="1"
+            android:paddingTop="0dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="0dp"
             android:text="@string/playlists" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/create_playlist"
+            style="@style/SmallAddPill"
+            android:contentDescription="@string/createPlaylist"
+            android:tooltipText="@string/createPlaylist"
+            app:icon="@drawable/ic_add" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/sortTV"
@@ -36,16 +52,6 @@
             app:iconGravity="textEnd"
             tools:text="@string/creation_date"
             tools:visibility="visible" />
-
-        <!-- Create playlist: in the header, never covered by the dock or mini player -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/create_playlist"
-            style="@style/MinimalIconButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/createPlaylist"
-            android:tooltipText="@string/createPlaylist"
-            app:icon="@drawable/ic_add" />
 
     </LinearLayout>
 

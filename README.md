@@ -30,7 +30,7 @@ Everything else LibreTube offers is still there.
 
 **[Download the latest release](../../releases)**: grab `BetterTube-<version>.apk` under *Assets* and open it on your phone. Android may ask you to allow installs from your browser or file manager.
 
-The current release is a **preview** (`v0.1.7-preview`), signed with BetterTube's public debug key: only install BetterTube updates from this repository.
+The current release is a **preview** (`v0.1.8-preview`), signed with BetterTube's public debug key: only install BetterTube updates from this repository.
 
 Want the very latest changes? Every push is also built by GitHub Actions: open the [latest successful build](../../actions/workflows/ci.yml?query=is%3Asuccess), sign in to GitHub, download **app** under *Artifacts*, unzip it and install `app-debug.apk`.
 
@@ -41,6 +41,14 @@ Want the very latest changes? Every push is also built by GitHub Actions: open t
 
 ## Changelog
 
+### 20 November 2026: refinements
+- Audio player uses the video page's layout: the artwork sits exactly where the video goes, tap the title for the description, the current chapter appears under the title, a **Video** pill sits on the artwork, and switching between audio and video is a smooth transition that keeps the picture in place
+- Video lists: short ages (7h, 3d, 2w), smaller and quieter channel/views/age, a smaller separator dot
+- Home: smaller section headings with a subtle chevron, tighter spacing between sections
+- Floating dock sits a bit higher above the screen edge
+- Library: a small + pill next to "Playlists", sorting on the right
+- One standard search icon everywhere (also in Downloads and playlists)
+
 ### 19 November 2026 (later): polish
 - One design language: the darker tone and soft accent gradient of the mini player now carry across the dock, chips, Subscribe / Play all / play buttons and the tonal buttons
 - Dock: the active tab glows instead of sitting in a pill
@@ -48,7 +56,6 @@ Want the very latest changes? Every push is also built by GitHub Actions: open t
 - Subscriptions: the filter row is hidden by default (Settings → Appearance → *Subscriptions toolbar* to show it)
 - Data label: no longer tappable, just shows the total
 - Audio player: the back chevron and ⋮ menu are the same size
-- Audio player: a Video pill (and Chapters, when the video has them) at the top above the artwork, more room for the controls, and the same Comments row as the video page; share, save and download live in ⋮
 - Playback errors no longer close the player: BetterTube retries automatically with a fresh stream at the same position, and a **Retry** button appears on the video (and in the audio player) if that doesn't work
 - Fixed the app crashing when opening the Library tab (v0.1.2-preview)
 - Fixed taps on the open player (e.g. on the data label) reaching the screen behind it and starting a video

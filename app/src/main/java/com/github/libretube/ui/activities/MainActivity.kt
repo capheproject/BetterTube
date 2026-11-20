@@ -399,13 +399,8 @@ class MainActivity : AbstractPlayerHostActivity() {
             if (currentSearchType != SearchType.DOWNLOADS) downloadViewModel.setQuery(null)
             if (currentSearchType != SearchType.PLAYLIST) playlistViewModel.setQuery(null)
 
-            val searchIconResource = when (currentSearchType) {
-                SearchType.DOWNLOADS -> R.drawable.ic_download_search
-                SearchType.PLAYLIST -> R.drawable.ic_playlist_search
-                SearchType.ONLINE -> R.drawable.ic_search
-            }
-
-            searchItem.setIcon(searchIconResource)
+            // the same search icon everywhere; the search box hint says what is searched
+            searchItem.setIcon(R.drawable.ic_search)
         }
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {

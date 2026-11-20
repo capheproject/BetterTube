@@ -1,5 +1,10 @@
 package com.github.libretube.ui.fragments
 
+import com.github.libretube.util.ThumbnailHints
+import com.github.libretube.ui.views.DescriptionLayout
+import com.github.libretube.api.obj.Streams
+import android.view.animation.DecelerateInterpolator
+import android.widget.ImageView
 import com.github.libretube.util.TextUtils.toTimeInSeconds
 import com.github.libretube.util.TextUtils
 import com.github.libretube.ui.sheets.CommentsSheet
@@ -143,11 +148,9 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
 
         initializeTransitionLayout()
 
-        // select the title TV in order for it to automatically scroll
-        binding.title.isSelected = true
-        binding.uploader.isSelected = true
-
-        binding.title.setOnLongClickListener {
+        // like on the video page: tap the title for the description, long press to copy it
+        binding.titleLayout.setOnClickListener { toggleDescription() }
+        binding.titleLayout.setOnLongClickListener {
             ClipboardHelper.save(requireContext(), text = binding.title.text.toString())
             true
         }
@@ -173,8 +176,11 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
             )
         }
         binding.openVideo.setOnClickListener {
-            val currentId = PlayingQueue.getCurrent()?.url?.toID()
-            switchToVideoMode(currentId ?: return@setOnClickListener)
+            val current = PlayingQueue.getCurrent()
+            val currentId = current?.url?.toID() ?: return@setOnClickListener
+            // the video page opens with this exact picture in the same place
+            ThumbnailHints.put(currentId, current.thumbnail, binding.thumbnail)
+            animateAudioOnlyViews(show = false) { switchToVideoMode(currentId) }
         }
 
         childFragmentManager.setFragmentResultListener(
@@ -184,11 +190,10 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
             playerController?.seekTo(bundle.getLong(IntentData.currentPosition))
         }
 
-        chaptersModel.chaptersLiveData.observe(viewLifecycleOwner) { chapters ->
-            _binding?.openChapters?.isVisible = !chapters.isNullOrEmpty()
-        }
+        chaptersModel.chaptersLiveData.observe(viewLifecycleOwner) { updateChapterName() }
+        chaptersModel.currentChapterIndex.observe(viewLifecycleOwner) { updateChapterName() }
 
-        binding.openChapters.setOnClickListener {
+        binding.chapterName.setOnClickListener {
             ChaptersBottomSheet()
                 .apply {
                     arguments = bundleOf(
@@ -284,7 +289,8 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
                 videoId = videoId,
                 isOffline = isOffline
             ),
-            alreadyStarted = true
+            alreadyStarted = true,
+            switchedFromAudio = true
         )
     }
 
@@ -339,7 +345,13 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
             }
         })
 
-        if (arguments?.getBoolean(IntentData.minimizeByDefault, false) != true) {
+        if (arguments?.getBoolean(IntentData.switchedPlayerMode, false) == true) {
+            // switched from the video page: the picture is already in place, only the
+            // audio controls rise in
+            arguments?.putBoolean(IntentData.switchedPlayerMode, false)
+            binding.playerMotionLayout.progress = 0f
+            animateAudioOnlyViews(show = true)
+        } else if (arguments?.getBoolean(IntentData.minimizeByDefault, false) != true) {
             binding.playerMotionLayout.progress = 1f
             binding.playerMotionLayout.transitionToStart()
         } else {
@@ -357,11 +369,12 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
         binding.title.text = metadata.title
         binding.miniPlayerTitle.text = metadata.title
 
-        binding.uploader.text = metadata.artist
-        binding.uploader.setOnClickListener {
-            val uploaderId = metadata.composer?.toString() ?: return@setOnClickListener
-            NavigationHelper.navigateChannel(requireContext(), uploaderId)
-        }
+        val description = metadata.extras?.getString(IntentData.streams)?.let {
+            runCatching { JsonHelper.json.decodeFromString<Streams>(it).description }.getOrNull()
+        }.orEmpty()
+        DescriptionLayout.bindDescription(binding.description, description, ::handleDescriptionLink)
+        binding.descriptionArrow.isVisible = description.isNotBlank()
+        if (description.isBlank()) setDescriptionExpanded(false)
 
         metadata.artworkUri?.let { updateThumbnailAsync(it) }
 
@@ -371,6 +384,7 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
     private fun updateThumbnailAsync(thumbnailUri: Uri) {
         if (DataSaverMode.isEnabled(requireContext()) && !isOffline) {
             binding.progress.isVisible = false
+            binding.thumbnail.scaleType = ImageView.ScaleType.CENTER_INSIDE
             binding.thumbnail.setImageResource(R.drawable.ic_launcher_monochrome)
             val primaryColor = ThemeHelper.getThemeColor(
                 requireContext(),
@@ -380,17 +394,19 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
             return
         }
 
-        binding.progress.isVisible = true
-        binding.thumbnail.isGone = true
-        // reset color filter if data saver mode got toggled or conditions for it changed
+        // the artwork keeps its 16:9 slot while loading; show the picture the user came from
+        // (e.g. the video page) right away if we have it
+        binding.thumbnail.scaleType = ImageView.ScaleType.CENTER_CROP
         binding.thumbnail.setColorFilter(Color.TRANSPARENT)
+        val hint = ThumbnailHints.get(PlayingQueue.getCurrent()?.url?.toID())?.image
+        binding.thumbnail.setImageDrawable(hint?.newDrawable(resources)?.mutate())
+        binding.progress.isVisible = hint == null
 
         lifecycleScope.launch {
             val binding = _binding ?: return@launch
             val bitmap = ImageHelper.getImage(requireContext(), thumbnailUri)
             binding.thumbnail.setImageBitmap(bitmap)
             binding.miniPlayerThumbnail.setImageBitmap(bitmap)
-            binding.thumbnail.isVisible = true
             binding.progress.isGone = true
             showAmbientBackdrop(bitmap)
         }
@@ -637,6 +653,90 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
         binding.volumeTextView.text = "${bar.progress.normalize(0, bar.max, 0, 100)}"
     }
 
+    private fun toggleDescription() {
+        setDescriptionExpanded(!binding.descriptionScroll.isVisible)
+    }
+
+    /**
+     * Opens the description in the space under the title (it scrolls there), so the
+     * controls and the comments row stay where they are.
+     */
+    private fun setDescriptionExpanded(expanded: Boolean) {
+        val binding = _binding ?: return
+        if (expanded && binding.description.text.isNullOrBlank()) return
+        binding.descriptionArrow.animate()
+            .rotation(if (expanded) 180f else 0f)
+            .setDuration(DESCRIPTION_ANIMATION_MS)
+            .start()
+        binding.title.maxLines = if (expanded) Int.MAX_VALUE else 2
+        if (expanded) {
+            binding.descriptionScroll.scrollTo(0, 0)
+            binding.descriptionScroll.alpha = 0f
+            binding.descriptionScroll.translationY = -RISE_DISTANCE_DP * resources.displayMetrics.density
+            binding.descriptionScroll.isVisible = true
+            binding.descriptionScroll.animate()
+                .alpha(1f)
+                .translationY(0f)
+                .setDuration(DESCRIPTION_ANIMATION_MS)
+                .setInterpolator(DecelerateInterpolator())
+                .start()
+        } else {
+            binding.descriptionScroll.animate().cancel()
+            binding.descriptionScroll.isGone = true
+        }
+    }
+
+    /** Timestamps in the description seek within this video, other links open as usual. */
+    private fun handleDescriptionLink(link: String) {
+        val uri = link.toUri()
+        val linkedVideoId = TextUtils.getVideoIdFromUri(uri)
+        val time = uri.getQueryParameter("t")?.toTimeInSeconds()
+        if (linkedVideoId == PlayingQueue.getCurrent()?.url?.toID() && time != null) {
+            playerController?.seekTo(time * 1000)
+        } else {
+            IntentHelper.openLinkFromHref(requireContext(), childFragmentManager, link)
+        }
+    }
+
+    /** The current chapter under the title; only shown when the video has chapters. */
+    private fun updateChapterName() {
+        val binding = _binding ?: return
+        val chapters = chaptersModel.chaptersLiveData.value.orEmpty()
+        binding.chapterName.isVisible = chapters.isNotEmpty()
+        if (chapters.isEmpty()) return
+        val index = chaptersModel.currentChapterIndex.value ?: 0
+        binding.chapterName.text = chapters.getOrNull(index)?.title ?: getString(R.string.chapters)
+    }
+
+    /**
+     * The parts that only the audio player has (everything under the artwork except the
+     * comments row). Hiding them before switching to the video page, and showing them after
+     * switching from it, makes the two modes feel like one screen with the picture swapped.
+     */
+    private fun animateAudioOnlyViews(show: Boolean, onEnd: () -> Unit = {}) {
+        val binding = _binding ?: return onEnd()
+        val views = listOf(
+            binding.openVideo, binding.titleLayout, binding.chapterName, binding.descriptionScroll,
+            binding.timeBar, binding.timesRow, binding.transportRow
+        )
+        val distance = RISE_DISTANCE_DP * resources.displayMetrics.density
+        views.forEachIndexed { index, view ->
+            view.animate().cancel()
+            if (show) {
+                view.alpha = 0f
+                view.translationY = distance
+            }
+            view.animate()
+                .alpha(if (show) 1f else 0f)
+                .translationY(if (show) 0f else distance / 2)
+                .setStartDelay(if (show) MODE_SWITCH_STAGGER_MS * index else 0L)
+                .setDuration(if (show) MODE_SWITCH_IN_MS else MODE_SWITCH_OUT_MS)
+                .setInterpolator(DecelerateInterpolator())
+                .apply { if (index == views.lastIndex) withEndAction(onEnd) }
+                .start()
+        }
+    }
+
     private fun updateChapterIndex() {
         if (_binding == null) return
         handler.postDelayed(this::updateChapterIndex, 100)
@@ -651,5 +751,10 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
 
     companion object {
         private const val COMMENTS_SHEET_HEIGHT = 0.75f
+        private const val DESCRIPTION_ANIMATION_MS = 220L
+        private const val RISE_DISTANCE_DP = 16
+        private const val MODE_SWITCH_OUT_MS = 140L
+        private const val MODE_SWITCH_IN_MS = 320L
+        private const val MODE_SWITCH_STAGGER_MS = 25L
     }
 }

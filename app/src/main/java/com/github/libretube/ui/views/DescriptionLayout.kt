@@ -6,6 +6,7 @@ import android.text.util.Linkify
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.core.text.method.LinkMovementMethodCompat
 import androidx.core.text.parseAsHtml
 import androidx.core.view.isGone
@@ -66,7 +67,7 @@ class DescriptionLayout(
         val views = streams.views.formatShort()
         val date = TextUtils.formatRelativeDate(streams.uploaded ?: -1L)
         binding.run {
-            playerViewsInfo.text = context.getString(R.string.normal_views, views, TextUtils.SEPARATOR + date)
+            playerViewsInfo.text = TextUtils.joinWithQuietDots(context, listOf(context.getString(R.string.view_count, views), date))
 
             textLike.text = streams.likes.formatShort()
             textDislike.isVisible = streams.dislikes >= 0
@@ -122,17 +123,7 @@ class DescriptionLayout(
      * Set up the description text with video links and timestamps
      */
     private fun setupDescription(description: String) {
-        val descTextView = binding.playerDescription
-        // detect whether the description is html formatted
-        if (description.contains("<") && description.contains(">")) {
-            descTextView.movementMethod = LinkMovementMethodCompat.getInstance()
-            descTextView.text = description.replace("</a>", "</a> ")
-                .parseAsHtml(tagHandler = HtmlParser(LinkHandler(handleLink)))
-        } else {
-            // Links can be present as plain text
-            descTextView.autoLinkMask = Linkify.WEB_URLS
-            descTextView.text = description
-        }
+        bindDescription(binding.playerDescription, description, handleLink)
     }
 
     private fun toggleDescription() {
@@ -142,14 +133,14 @@ class DescriptionLayout(
         if (!isNewStateExpanded) {
             // show a short version of the view count and date
             val formattedDate = TextUtils.formatRelativeDate(streams.uploaded ?: -1L)
-            binding.playerViewsInfo.text = context.getString(R.string.normal_views, streams.views.formatShort(),  TextUtils.SEPARATOR + formattedDate)
+            binding.playerViewsInfo.text = TextUtils.joinWithQuietDots(context, listOf(context.getString(R.string.view_count, streams.views.formatShort()), formattedDate))
 
             // limit the title height to two lines
             binding.playerTitle.maxLines = 2
         } else {
             // show the full view count and upload date
             val formattedDate = streams.uploadTimestamp?.let { TextUtils.localizeInstant(it) }.orEmpty()
-            binding.playerViewsInfo.text = context.getString(R.string.normal_views, "%,d".format(streams.views),  TextUtils.SEPARATOR + formattedDate)
+            binding.playerViewsInfo.text = TextUtils.joinWithQuietDots(context, listOf(context.getString(R.string.view_count, "%,d".format(streams.views)), formattedDate))
 
             // show the whole title
             binding.playerTitle.maxLines = Int.MAX_VALUE
@@ -165,6 +156,23 @@ class DescriptionLayout(
     }
 
     companion object {
+        /**
+         * Shows a video description with working links and timestamps
+         * (shared by the video page and the audio player).
+         */
+        fun bindDescription(descTextView: TextView, description: String, handleLink: (String) -> Unit) {
+            // detect whether the description is html formatted
+            if (description.contains("<") && description.contains(">")) {
+                descTextView.movementMethod = LinkMovementMethodCompat.getInstance()
+                descTextView.text = description.replace("</a>", "</a> ")
+                    .parseAsHtml(tagHandler = HtmlParser(LinkHandler(handleLink)))
+            } else {
+                // Links can be present as plain text
+                descTextView.autoLinkMask = Linkify.WEB_URLS
+                descTextView.text = description
+            }
+        }
+
         private const val ANIMATION_DURATION = 250L
         private const val SB_SPONSOR_CATEGORY = "sponsor_category"
     }

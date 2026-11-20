@@ -135,13 +135,15 @@ object NavigationHelper {
     fun openAudioPlayerFragment(
         context: Context,
         offlinePlayer: Boolean = false,
-        minimizeByDefault: Boolean = false
+        minimizeByDefault: Boolean = false,
+        switchedFromVideo: Boolean = false
     ) {
         val activity = ContextHelper.unwrapActivity<BaseActivity>(context)
         activity.supportFragmentManager.commitNow {
             val args = bundleOf(
                 IntentData.minimizeByDefault to minimizeByDefault,
-                IntentData.offlinePlayer to offlinePlayer
+                IntentData.offlinePlayer to offlinePlayer,
+                IntentData.switchedPlayerMode to switchedFromVideo
             )
             replace<AudioPlayerFragment>(R.id.container, args = args)
         }
@@ -154,12 +156,14 @@ object NavigationHelper {
         context: Context,
         playerData: PlayerData,
         alreadyStarted: Boolean = false,
+        switchedFromAudio: Boolean = false,
     ) {
         val activity = ContextHelper.unwrapActivity<BaseActivity>(context)
 
         val bundle = bundleOf(
             IntentData.playerData to playerData,
             IntentData.alreadyStarted to alreadyStarted,
+            IntentData.switchedPlayerMode to switchedFromAudio,
         )
         activity.supportFragmentManager.commitNow {
             replace<PlayerFragment>(R.id.container, args = bundle)

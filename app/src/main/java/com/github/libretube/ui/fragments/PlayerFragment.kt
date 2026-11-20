@@ -404,7 +404,24 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
         val playerData = requireArguments().parcelable<PlayerData>(IntentData.playerData)!!
         playerData.videoId?.let { videoId = it }
         // continue from the tapped thumbnail instead of a black screen while loading
-        if (requireArguments().getBoolean(IntentData.alreadyStarted).not()) showLoadingThumbnail(videoId)
+        val switchedFromAudio = requireArguments().getBoolean(IntentData.switchedPlayerMode)
+        requireArguments().putBoolean(IntentData.switchedPlayerMode, false)
+        if (requireArguments().getBoolean(IntentData.alreadyStarted).not() || switchedFromAudio) {
+            showLoadingThumbnail(videoId)
+        }
+        if (switchedFromAudio) {
+            // the artwork stays where it was in the audio player and fades into the video once
+            // its first frame arrives; the video page's details rise in underneath
+            binding.player.postDelayed({ _binding?.player?.hideLoadingThumbnail() }, SWITCH_THUMBNAIL_TIMEOUT_MS)
+            binding.playerScrollView.alpha = 0f
+            binding.playerScrollView.translationY = MODE_SWITCH_RISE_DP * resources.displayMetrics.density
+            binding.playerScrollView.animate()
+                .alpha(1f)
+                .translationY(0f)
+                .setDuration(MODE_SWITCH_IN_MS)
+                .setInterpolator(android.view.animation.DecelerateInterpolator())
+                .start()
+        }
         isOffline = playerData.isOffline
         playlistId = playerData.playlistId
         channelId = playerData.channelId
@@ -752,7 +769,21 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
         chaptersViewModel.maxSheetHeightPx = maxHeight
     }
 
+    /**
+     * Switches to the audio player: the video page's details fade away while the picture stays
+     * in place, and the audio player opens with the same picture in the same spot.
+     */
     fun switchToAudioMode() {
+        if (this::streams.isInitialized) ThumbnailHints.put(videoId, streams.thumbnailUrl)
+        binding.playerScrollView.animate()
+            .alpha(0f)
+            .translationY(MODE_SWITCH_RISE_DP / 2f * resources.displayMetrics.density)
+            .setDuration(MODE_SWITCH_OUT_MS)
+            .withEndAction { if (_binding != null) startAudioMode() }
+            .start()
+    }
+
+    private fun startAudioMode() {
         playerController.sendCustomCommand(
             AbstractPlayerService.runPlayerActionCommand,
             bundleOf(PlayerCommand.TOGGLE_AUDIO_ONLY_MODE.name to true)
@@ -771,7 +802,11 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
         playerController.release()
         killPlayerFragment()
 
-        NavigationHelper.openAudioPlayerFragment(requireContext(), offlinePlayer = isOffline)
+        NavigationHelper.openAudioPlayerFragment(
+            requireContext(),
+            offlinePlayer = isOffline,
+            switchedFromVideo = true
+        )
     }
 
     private fun updateFullscreenOrientation() {
@@ -1456,5 +1491,12 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
 
     override fun isVideoLive(): Boolean {
         return ::streams.isInitialized && streams.isLive
+    }
+
+    companion object {
+        private const val MODE_SWITCH_OUT_MS = 140L
+        private const val MODE_SWITCH_IN_MS = 320L
+        private const val MODE_SWITCH_RISE_DP = 16
+        private const val SWITCH_THUMBNAIL_TIMEOUT_MS = 6000L
     }
 }

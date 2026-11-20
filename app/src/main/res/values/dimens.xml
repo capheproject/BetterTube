@@ -15,7 +15,7 @@
 
     <!-- Floating bottom dock -->
     <dimen name="dock_margin_horizontal">40dp</dimen>
-    <dimen name="dock_margin_bottom">12dp</dimen>
+    <dimen name="dock_margin_bottom">24dp</dimen>
     <dimen name="dock_height">64dp</dimen>
 
     <!-- Floating mini player card -->

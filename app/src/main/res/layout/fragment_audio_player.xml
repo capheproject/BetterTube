@@ -51,78 +51,79 @@
         app:layout_constraintStart_toStartOf="@id/audio_player_container"
         app:layout_constraintTop_toTopOf="@id/audio_player_container">
 
-        <!-- Top bar: minimize, switch to video (and chapters), overflow -->
-        <FrameLayout
+        <!-- Artwork in the same 16:9 slot as the video, with the top buttons floating on it,
+             so switching between audio and video keeps the picture in place -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/artwork_frame"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="8dp"
-            android:paddingVertical="8dp">
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/thumbnail"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@android:color/black"
+                android:contentDescription="@null"
+                android:scaleType="centerCrop"
+                app:layout_constraintDimensionRatio="16:9"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@tools:sample/backgrounds/scenic" />
+
+            <!-- keeps the floating buttons visible on bright artwork -->
+            <View
+                android:layout_width="0dp"
+                android:layout_height="88dp"
+                android:background="@drawable/audio_artwork_top_scrim"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/thumbnail" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/minimize_player"
-                style="@style/AudioPlayerTopButton"
+                style="@style/AudioPlayerOverlayButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="start|center_vertical"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
                 android:contentDescription="@string/minimize"
-                app:icon="@drawable/ic_arrow_down" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="horizontal">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/open_video"
-                    style="@style/AudioPlayerTopPill"
-                    android:text="@string/video"
-                    app:icon="@drawable/ic_video" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/open_chapters"
-                    style="@style/AudioPlayerTopPill"
-                    android:layout_marginStart="8dp"
-                    android:text="@string/chapters"
-                    android:visibility="gone"
-                    app:icon="@drawable/ic_frame" />
-
-            </LinearLayout>
+                app:icon="@drawable/ic_arrow_down"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/thumbnail" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/show_more"
-                style="@style/AudioPlayerTopButton"
+                style="@style/AudioPlayerOverlayButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end|center_vertical"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
                 android:contentDescription="@string/more_options"
-                app:icon="@drawable/ic_more_vert" />
+                app:icon="@drawable/ic_more_vert"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/thumbnail" />
 
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/thumbnail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginHorizontal="24dp"
-                android:layout_marginVertical="8dp"
-                android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
-                app:shapeAppearanceOverlay="@style/AudioPlayerArtwork"
-                tools:src="@tools:sample/backgrounds/scenic" />
+            <!-- Switch back to video: on the picture it turns on -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/open_video"
+                style="@style/AudioPlayerVideoPill"
+                android:layout_marginEnd="12dp"
+                android:layout_marginBottom="12dp"
+                android:text="@string/video"
+                app:icon="@drawable/ic_video"
+                app:layout_constraintBottom_toBottomOf="@id/thumbnail"
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <LinearLayout
                 android:id="@+id/volumeControls"
                 android:layout_width="42dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:background="@drawable/controls_layout_bg"
+                app:layout_constraintBottom_toBottomOf="@id/thumbnail"
+                app:layout_constraintEnd_toEndOf="@id/thumbnail"
+                app:layout_constraintStart_toStartOf="@id/thumbnail"
+                app:layout_constraintTop_toTopOf="@id/thumbnail"
                 android:orientation="vertical"
                 android:visibility="gone"
                 tools:ignore="RtlHardcoded">
@@ -157,44 +158,103 @@
                 style="@style/Spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:indeterminate="true" />
+                android:indeterminate="true"
+                app:layout_constraintBottom_toBottomOf="@id/thumbnail"
+                app:layout_constraintEnd_toEndOf="@id/thumbnail"
+                app:layout_constraintStart_toStartOf="@id/thumbnail"
+                app:layout_constraintTop_toTopOf="@id/thumbnail" />
 
             <include
                 android:id="@+id/playback_error"
-                layout="@layout/view_playback_error" />
+                layout="@layout/view_playback_error"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="@id/thumbnail"
+                app:layout_constraintEnd_toEndOf="@id/thumbnail"
+                app:layout_constraintStart_toStartOf="@id/thumbnail"
+                app:layout_constraintTop_toTopOf="@id/thumbnail" />
 
-        </FrameLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- Title and channel -->
+        <!-- Title: tap to show the description, like on the video page -->
         <LinearLayout
+            android:id="@+id/title_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:orientation="vertical"
-            android:paddingHorizontal="24dp">
+            android:background="?attr/selectableItemBackground"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="6dp">
 
             <TextView
                 android:id="@+id/title"
-                style="@style/TextViewMarquee"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="2"
                 android:textAlignment="viewStart"
-                android:textAppearance="@style/AudioPlayerTitle"
-                tools:text="Mushrooms for Mind &amp; Immune System" />
+                android:textAppearance="@style/PlayerPageTitle"
+                tools:text="Mushrooms for Mind &amp; Immune System | Paul Stamets" />
 
-            <TextView
-                android:id="@+id/uploader"
-                style="@style/TextViewMarquee"
-                android:layout_width="match_parent"
+            <ImageView
+                android:id="@+id/description_arrow"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:textAlignment="viewStart"
-                android:textAppearance="?attr/textAppearanceBodyLarge"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                tools:text="Andrew Huberman" />
+                android:contentDescription="@string/description"
+                android:src="@drawable/ic_arrow_down"
+                app:tint="?attr/colorOnSurfaceVariant" />
 
         </LinearLayout>
+
+        <!-- Current chapter (only when the video has chapters); opens the chapter list -->
+        <TextView
+            android:id="@+id/chapter_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:drawablePadding="2dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="4dp"
+            android:textAppearance="@style/VideoMeta"
+            android:visibility="gone"
+            app:drawableEndCompat="@drawable/ic_heading_chevron"
+            tools:text="Chapter 3: Mushrooms and the brain"
+            tools:visibility="visible" />
+
+        <!-- Open space; the description opens here and scrolls, the controls stay in place -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/description_scroll"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fadingEdgeLength="24dp"
+                android:requiresFadingEdge="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textIsSelectable="true" />
+
+            </androidx.core.widget.NestedScrollView>
+
+        </FrameLayout>
 
         <!-- Progress -->
         <com.google.android.material.slider.Slider
@@ -206,8 +266,9 @@
             android:layout_marginTop="12dp"
             app:labelBehavior="gone" />
 
-        <!-- Times on the sides, data usage pill in the middle (tap to expand) -->
+        <!-- Times on the sides, data usage in the middle -->
         <FrameLayout
+            android:id="@+id/times_row"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingHorizontal="24dp">
@@ -242,6 +303,7 @@
 
         <!-- Transport: fixed sizes so nothing shifts when pressed -->
         <LinearLayout
+            android:id="@+id/transport_row"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"

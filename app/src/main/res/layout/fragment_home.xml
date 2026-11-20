@@ -37,7 +37,7 @@
                     <TextView
                         style="@style/HomeCategoryTitle"
                         android:text="@string/featured"
-                        app:drawableEndCompat="@drawable/ic_arrow_right" />
+                        app:drawableEndCompat="@drawable/ic_heading_chevron" />
 
                 </LinearLayout>
 
@@ -64,7 +64,7 @@
                     <TextView
                         style="@style/HomeCategoryTitle"
                         android:text="@string/continue_watching"
-                        app:drawableEndCompat="@drawable/ic_arrow_right" />
+                        app:drawableEndCompat="@drawable/ic_heading_chevron" />
 
                 </LinearLayout>
 
@@ -92,7 +92,7 @@
                         style="@style/HomeCategoryTitle"
                         android:background="@null"
                         android:text="@string/trending"
-                        app:drawableEndCompat="@drawable/ic_arrow_right" />
+                        app:drawableEndCompat="@drawable/ic_heading_chevron" />
 
                     <View
                         android:layout_width="0dp"
@@ -148,7 +148,7 @@
                     <TextView
                         style="@style/HomeCategoryTitle"
                         android:text="@string/bookmarks"
-                        app:drawableEndCompat="@drawable/ic_arrow_right" />
+                        app:drawableEndCompat="@drawable/ic_heading_chevron" />
 
                 </LinearLayout>
 
@@ -174,7 +174,7 @@
                     <TextView
                         style="@style/HomeCategoryTitle"
                         android:text="@string/playlists"
-                        app:drawableEndCompat="@drawable/ic_arrow_right" />
+                        app:drawableEndCompat="@drawable/ic_heading_chevron" />
 
                 </LinearLayout>
 
