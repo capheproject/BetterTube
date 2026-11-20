@@ -21,29 +21,10 @@ BetterTube keeps everything LibreTube does and focuses on two things: audio-only
 
 ## What's different from LibreTube
 
-| | LibreTube | BetterTube |
-|---|---|---|
-| **Switching to audio-only mid-video** | Keeps downloading the video stream in the background, wasting data and memory | Stops requesting video right away and only downloads audio |
-| **Seeing what's downloaded** | Not possible in the app | A small data label in both players shows the data used so far |
-| **Opening a video** | Black screen with a spinner | The thumbnail you tapped stays in place and fades into the video |
-| **Audio player** | Rows of buttons; play button that resizes and shifts its neighbours | Minimal: Video and Chapters pills at the top, round fixed-size play button, Comments like on the video page, everything else in ⋮; blurred-artwork backdrop |
-| **Navigation** | Full-width bottom bar | Floating, icons-only dock with a soft colour sheen and a glow on the active tab; content flows underneath |
-| **Look and feel** | Material 3 Expressive defaults | Own design: Plus Jakarta Sans, a darker tonal palette with accent gradients shared by the dock, mini player, chips and buttons |
-| **Library** | Separate sections and a floating + button | Your watch history as the main feed, with your playlists in a carousel on top |
-| **Motion** | Default fades | Screens rise in on emphasized easing, lists ease in item by item, cards respond to touch |
-| **Loading** | Spinners | Card-shaped placeholders that gently pulse |
+- **Audio-only mode actually saves data.** In LibreTube, switching to audio-only mid-video keeps downloading the video stream in the background. BetterTube stops it right away and only downloads the audio. A small label in the player shows the data used, so you can see the difference.
+- **A complete visual redesign.** A calmer, modern look throughout: its own typeface, a floating dock, a minimal audio player, smoother motion and a cleaner layout on every screen.
 
-### 🎧 Audio-only mode that actually saves data
-
-Most YouTube videos are now streamed with a protocol called SABR, where the app tells YouTube's server which audio and video streams it wants.
-In LibreTube, if you start a video and then switch to audio-only, the app keeps telling the server it still wants video. The server keeps sending it, and the app quietly downloads and stores video it never plays.
-
-BetterTube tells the server to stop sending video as soon as video is turned off, and safely ignores any video data that was already on its way. Switching back to video works as before.
-
-### 📊 See it for yourself: the data label
-
-Both players show a small label with the data used so far for the current video: a 🎬 video icon on the video page (next to the view count) and a 🔊 speaker icon in the audio player (between the timestamps).
-After switching to audio-only, the number grows much more slowly, because only the audio is still being downloaded.
+Everything else LibreTube offers is still there.
 
 ## Download
 
