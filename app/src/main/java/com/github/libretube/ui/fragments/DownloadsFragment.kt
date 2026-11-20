@@ -138,6 +138,9 @@ class DownloadsFragment : Fragment(R.layout.fragment_downloads) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.downloadsPager.adapter = DownloadsFragmentAdapter(this)
+        // the sub-tabs (Videos / Audio / Playlists) switch by tapping their labels only, so a
+        // sideways swipe always moves between the main tabs
+        binding.downloadsPager.isUserInputEnabled = false
 
         TabLayoutMediator(binding.tabLayout, binding.downloadsPager) { tab, position ->
             tab.text = when (position) {

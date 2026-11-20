@@ -6,7 +6,7 @@
         android:id="@+id/mini_player_transition"
         motion:constraintSetEnd="@+id/end"
         motion:constraintSetStart="@id/start"
-        motion:duration="300"
+        motion:duration="200"
         motion:motionInterpolator="easeInOut">
         <KeyFrameSet>
             <!-- the audio screen fades out early; only the artwork travels into the mini player -->
@@ -19,10 +19,7 @@
                 motion:framePosition="90"
                 motion:motionTarget="@+id/miniPlayerControls" />
         </KeyFrameSet>
-        <OnClick
-            motion:clickAction="toggle"
-            motion:duration="300"
-            motion:targetId="@+id/miniPlayerControls" />
+        <!-- tapping the mini player expands it (in code, at the video player's speed) -->
         <!-- swipe down on the artwork to minimise (see SingleViewTouchableMotionLayout) -->
         <OnSwipe
             motion:dragDirection="dragDown"
@@ -54,10 +51,12 @@
 
     <ConstraintSet android:id="@+id/end">
         <!-- artwork: shrunk into the mini player's thumbnail spot, flush left in the card -->
+        <!-- exactly the card's height (the frame also holds the 88dp top gradient, which would
+             otherwise make it taller than the card and centred off it); clipped in code -->
         <Constraint
             android:id="@+id/artwork_frame"
             android:layout_width="@dimen/mini_player_thumbnail_width"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             motion:layout_constraintBottom_toBottomOf="@id/audio_player_container"
             motion:layout_constraintStart_toStartOf="@id/audio_player_container"
             motion:layout_constraintTop_toTopOf="@id/audio_player_container" />

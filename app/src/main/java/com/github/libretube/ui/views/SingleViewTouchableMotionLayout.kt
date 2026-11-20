@@ -131,13 +131,18 @@ class SingleViewTouchableMotionLayout(context: Context, attributeSet: AttributeS
 
                 if (isAudioPlayer) {
                     // audio player: like the video, a downward swipe on the artwork minimises it
-                    // (only while expanded; elsewhere, e.g. in the description, touches stay
-                    // with the content)
-                    val artwork = audioSwipeArea ?: return false
-                    if (progress != 0f) return false
-                    artwork.getGlobalVisibleRect(viewRect)
-                    val origin = IntArray(2).also { getLocationOnScreen(it) }
-                    viewRect.offset(-origin[0], -origin[1])
+                    // (elsewhere, e.g. in the description, touches stay with the content); when
+                    // minimised, the whole mini player card can be swiped up
+                    when (progress) {
+                        0f -> {
+                            val artwork = audioSwipeArea ?: return false
+                            artwork.getGlobalVisibleRect(viewRect)
+                            val origin = IntArray(2).also { getLocationOnScreen(it) }
+                            viewRect.offset(-origin[0], -origin[1])
+                        }
+                        1f -> viewToDetectTouch.getHitRect(viewRect)
+                        else -> return false
+                    }
                 } else {
                     viewToDetectTouch.getHitRect(viewRect)
                 }
@@ -148,11 +153,14 @@ class SingleViewTouchableMotionLayout(context: Context, attributeSet: AttributeS
             }
 
             MotionEvent.ACTION_MOVE -> {
-                if (!startedMinimized && !shouldInterceptTouchEvent && isTouchDownInsideHitArea) {
+                if (!shouldInterceptTouchEvent && isTouchDownInsideHitArea) {
                     val deltaY = event.y - touchInitialY
 
-                    // swipe down detected
-                    if (deltaY > scaledTouchSlop) {
+                    // swipe down on the expanded player, or swipe up on the mini player (which
+                    // pulls it back open, even when the drag starts on one of its buttons)
+                    if ((!startedMinimized && deltaY > scaledTouchSlop) ||
+                        (startedMinimized && deltaY < -scaledTouchSlop)
+                    ) {
                         // start intercepting and consume the event ourselves in onTouchEvent()
                         shouldInterceptTouchEvent = true
 

@@ -218,7 +218,16 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
         binding.minimizePlayer.setOnClickListener {
             // the screen around the player follows the transition's progress; moving it up front
             // made the expanded player jump before it started to shrink
+            binding.playerMotionLayout.setTransitionDuration(COLLAPSE_MS)
             binding.playerMotionLayout.transitionToEnd()
+        }
+
+        // tapping the mini player expands it, as quickly as the video player does
+        binding.miniPlayerControls.setOnClickListener {
+            if (binding.playerMotionLayout.progress > 0f) {
+                binding.playerMotionLayout.setTransitionDuration(EXPAND_MS)
+                binding.playerMotionLayout.transitionToStart()
+            }
         }
 
         binding.rewindBTN.setOnClickListener {
@@ -312,6 +321,7 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
         val onBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 binding.audioPlayerContainer.isClickable = false
+                binding.playerMotionLayout.setTransitionDuration(COLLAPSE_MS)
                 binding.playerMotionLayout.transitionToEnd()
                 activity.requestOrientationChange()
             }
@@ -962,6 +972,10 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
 
     companion object {
         private const val COMMENTS_SHEET_HEIGHT = 0.75f
+
+        // the same speeds as the video player
+        private const val EXPAND_MS = 160
+        private const val COLLAPSE_MS = 200
         private const val ARTWORK_OVERLAY_FADE_SPEED = 3f
         private const val TIME_PLACEHOLDER = "0:00"
         private const val ARTWORK_COLOR_FADE_MS = 500

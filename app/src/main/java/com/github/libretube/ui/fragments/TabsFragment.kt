@@ -84,7 +84,11 @@ class TabsFragment : Fragment(R.layout.fragment_tabs) {
     private fun keepSidewaysScrollersOwnSwipes(root: View) {
         fun visit(view: View) {
             when (view) {
-                is RecyclerView -> if (view.layoutManager?.canScrollHorizontally() == true && view.id != R.id.tabs_pager) {
+                is RecyclerView -> if (view.layoutManager?.canScrollHorizontally() == true &&
+                    view.id != R.id.tabs_pager &&
+                    // a nested pager with swiping turned off (Downloads' sub-tabs) leaves swipes to the tabs
+                    (view.parent as? ViewPager2)?.isUserInputEnabled != false
+                ) {
                     view.addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
                         override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
                             if (e.actionMasked == MotionEvent.ACTION_DOWN) {

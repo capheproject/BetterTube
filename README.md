@@ -43,6 +43,12 @@ Want the very latest changes? Every push is also built by GitHub Actions: open t
 
 ## Changelog
 
+### v0.3.1
+- Swipe up on the mini player (audio or video) to open the player again
+- Audio mini player opens and closes as quickly as the video one
+- Downloads: sideways swipes move between the main tabs; tap the sub-tabs to switch
+- Fixed: the audio mini player's artwork stuck out above the bar
+
 ### v0.3.0
 - Swipe between tabs: the next tab slides in under your finger, already loaded, and snaps into place
 - Seven vivid accent colours (Electric blue, Neon violet, Hot pink, Sunset orange, Lime, Aqua, Crimson), readable in light and dark mode
