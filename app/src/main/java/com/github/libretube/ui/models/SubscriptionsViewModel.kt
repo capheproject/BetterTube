@@ -27,6 +27,9 @@ class SubscriptionsViewModel : ViewModel() {
 
     var subFeedRecyclerViewState: Parcelable? = null
 
+    /** The list last shown in the feed, so returning to the tab shows it instantly. */
+    var lastShownFeed: List<StreamItem>? = null
+
     val groups = MutableLiveData<List<SubscriptionGroup>>()
     var groupToEdit: SubscriptionGroup? = null
 

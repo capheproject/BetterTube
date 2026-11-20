@@ -1,5 +1,7 @@
 package com.github.libretube.ui.fragments
 
+import com.github.libretube.ui.models.LibraryViewModel
+import androidx.fragment.app.activityViewModels
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -7,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ConcatAdapter
@@ -54,7 +55,9 @@ class LibraryFragment : DynamicLayoutManagerFragment(R.layout.fragment_library) 
     private var _header: LibraryHeaderBinding? = null
     private val header get() = _header!!
 
-    private val historyModel: WatchHistoryModel by viewModels()
+    // activity scope: the history stays loaded while switching tabs
+    private val historyModel: WatchHistoryModel by activityViewModels()
+    private val libraryModel: LibraryViewModel by activityViewModels()
 
     private val playlistsAdapter = CarouselPlaylistAdapter(PlaylistType.PRIVATE)
     private val bookmarksAdapter = CarouselPlaylistAdapter(PlaylistType.PUBLIC)
@@ -104,15 +107,25 @@ class LibraryFragment : DynamicLayoutManagerFragment(R.layout.fragment_library) 
 
         binding.playlistRefresh.isEnabled = true
         binding.playlistRefresh.setOnRefreshListener {
-            fetchPlaylists()
+            fetchPlaylists(showSpinner = true)
             fetchBookmarks()
+            if (watchHistoryEnabled) historyModel.refresh()
         }
+
+        // returning to the tab: show what was there right away (no loading, no list entrance)
+        val cachedPlaylists = libraryModel.playlists
+        if (cachedPlaylists != null) {
+            binding.libraryList.layoutAnimation = null
+            showPlaylists(cachedPlaylists)
+        }
+        libraryModel.bookmarks?.let(::showBookmarks)
     }
 
     override fun onResume() {
         super.onResume()
-        // also picks up playlists created, renamed or deleted elsewhere
-        fetchPlaylists()
+        // quietly picks up playlists created, renamed or deleted elsewhere (no spinner: the
+        // content that's already shown stays until the update arrives)
+        fetchPlaylists(showSpinner = libraryModel.playlists == null)
         fetchBookmarks()
     }
 
@@ -182,8 +195,8 @@ class LibraryFragment : DynamicLayoutManagerFragment(R.layout.fragment_library) 
         }
     }
 
-    private fun fetchPlaylists() {
-        _binding?.playlistRefresh?.isRefreshing = true
+    private fun fetchPlaylists(showSpinner: Boolean = false) {
+        if (showSpinner) _binding?.playlistRefresh?.isRefreshing = true
         lifecycleScope.launch {
             val playlists = try {
                 withContext(Dispatchers.IO) { PlaylistsHelper.getPlaylists() }
@@ -195,14 +208,26 @@ class LibraryFragment : DynamicLayoutManagerFragment(R.layout.fragment_library) 
             }
 
             _binding?.playlistRefresh?.isRefreshing = false
-            val header = _header ?: return@launch
-            header.nothingHere.isVisible = playlists.isEmpty()
-            header.playlistsCarousel.isGone = playlists.isEmpty()
-            header.sortTV.isVisible = playlists.isNotEmpty()
-            playlistsAdapter.submitList(playlists.map {
+            val items = playlists.map {
                 CarouselPlaylist(id = it.id!!, title = it.name, thumbnail = it.thumbnail)
-            })
+            }
+            libraryModel.playlists = items
+            showPlaylists(items)
         }
+    }
+
+    private fun showPlaylists(playlists: List<CarouselPlaylist>) {
+        val header = _header ?: return
+        header.nothingHere.isVisible = playlists.isEmpty()
+        header.playlistsCarousel.isGone = playlists.isEmpty()
+        header.sortTV.isVisible = playlists.isNotEmpty()
+        playlistsAdapter.submitList(playlists)
+    }
+
+    private fun showBookmarks(bookmarks: List<CarouselPlaylist>) {
+        val header = _header ?: return
+        header.bookmarksContainer.isVisible = bookmarks.isNotEmpty()
+        bookmarksAdapter.submitList(bookmarks)
     }
 
     private fun fetchBookmarks() {
@@ -216,11 +241,11 @@ class LibraryFragment : DynamicLayoutManagerFragment(R.layout.fragment_library) 
                 return@launch
             }
 
-            val header = _header ?: return@launch
-            header.bookmarksContainer.isVisible = bookmarks.isNotEmpty()
-            bookmarksAdapter.submitList(bookmarks.map {
+            val items = bookmarks.map {
                 CarouselPlaylist(id = it.playlistId, title = it.playlistName, thumbnail = it.thumbnailUrl)
-            })
+            }
+            libraryModel.bookmarks = items
+            showBookmarks(items)
         }
     }
 

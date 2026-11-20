@@ -45,7 +45,7 @@ Want the very latest changes? Every push is also built by GitHub Actions: open t
 - Audio player: deep colours taken from each video's artwork (smooth, no banding), a lit gradient play button and progress bar in the same colours, bigger and better spaced controls, swipe down on the artwork to minimise, placeholders while loading
 - The mini player and the video page pick up a hint of the video's colours
 - One-tap **Watch later**: on the video page, in the audio player's ⋮ menu and in every video's options; pick your playlist once (Settings → General → *Watch later playlist*), with Undo
-- Faster feel: tabs switch with a quick fade and keep their state; quicker list entrance
+- Faster feel: tabs switch with a quick fade and keep their content: coming back to Home, Subscriptions or Library shows what was there instantly (no loading); new content comes when you pull to refresh
 - Light haptics when switching audio/video, adding to Watch later and scrubbing
 - Fixed: links shared from other apps (e.g. the YouTube app) now open even when BetterTube is already open; smooth collapse into the mini player (no jump); heading chevrons centred; smaller Comments icon
 - Links in the app (About, Help) now point to BetterTube's GitHub page

@@ -100,7 +100,20 @@ class SubscriptionsFragment : DynamicLayoutManagerFragment(R.layout.fragment_sub
         }
 
         binding.subRefresh.isEnabled = true
-        binding.subProgress.isVisible = true
+
+        // returning to the tab: show the last list right away (no placeholder, no list
+        // entrance), it's refreshed quietly below; new content only comes on pull to refresh
+        val cachedFeed = viewModel.lastShownFeed
+        if (viewModel.videoFeed.value != null && cachedFeed != null) {
+            binding.subFeed.layoutAnimation = null
+            binding.subProgress.isGone = true
+            binding.subFeed.isVisible = true
+            feedAdapter.submitList(cachedFeed) {
+                binding.subFeed.layoutManager?.onRestoreInstanceState(viewModel.subFeedRecyclerViewState)
+            }
+        } else {
+            binding.subProgress.isVisible = true
+        }
 
         if (viewModel.videoFeed.value == null) {
             viewModel.fetchFeed(requireContext(), FeedRefresh.Automatically)
@@ -427,6 +440,7 @@ class SubscriptionsFragment : DynamicLayoutManagerFragment(R.layout.fragment_sub
 
         binding.subRefresh.isRefreshing = false
 
+        viewModel.lastShownFeed = sortedFeed
         feedAdapter.submitList(sortedFeed) {
             if (restoreScrollState) {
                 // manually restore the previous feed state

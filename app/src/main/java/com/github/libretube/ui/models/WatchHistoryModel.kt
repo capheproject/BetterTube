@@ -58,6 +58,14 @@ class WatchHistoryModel : ViewModel() {
         }
     }
 
+    /** Reloads the history from the start (pull to refresh). */
+    fun refresh() {
+        fetchJob?.cancel()
+        nextHistoryPage = WatchHistoryPage.First
+        _filteredWatchHistory.value = emptyList()
+        fetchNextPage()
+    }
+
     fun fetchNextPage() {
         if (nextHistoryPage == WatchHistoryPage.AllLoaded) return
         if (fetchJob?.isActive == true) return

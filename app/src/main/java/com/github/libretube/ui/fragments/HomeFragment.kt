@@ -52,6 +52,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         _binding = FragmentHomeBinding.bind(view)
         super.onViewCreated(view, savedInstanceState)
 
+        // returning to the tab with content already loaded: show it as it was, without
+        // replaying the list entrance
+        if (homeViewModel.loadedSuccessfully.value == true) {
+            listOf(binding.trendingRV, binding.featuredRV, binding.watchingRV).forEach {
+                it.layoutAnimation = null
+            }
+        }
+
         binding.bookmarksRV.layoutManager = CarouselLayoutManager(UncontainedCarouselStrategy())
         binding.playlistsRV.layoutManager = CarouselLayoutManager(UncontainedCarouselStrategy())
 
