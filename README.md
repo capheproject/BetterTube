@@ -14,9 +14,9 @@ BetterTube keeps everything LibreTube does and focuses on two things: audio-only
 > Please report BetterTube problems [here](../../issues), not to LibreTube.
 
 <div align="center">
-  <img src="assets/readme/bettertube-preview.png" width="90%" alt="BetterTube: Home with the floating dock, the video page, Subscriptions in light mode and Search">
+  <img src="assets/readme/bettertube-home.jpg" width="320" alt="BetterTube's Home screen in dark mode: Featured and Continue watching rows of large rounded thumbnails, with the floating dock at the bottom">
   <br>
-  <sub>Rendered from the app's layouts: Home, video page, Subscriptions (light) and Search. Coloured boxes stand in for thumbnails and channel pictures.</sub>
+  <sub>Home on a real phone, with the floating dock.</sub>
 </div>
 
 ## What's different from LibreTube
