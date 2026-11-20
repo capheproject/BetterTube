@@ -406,4 +406,6 @@
     <!-- Floating dock (light) -->
     <color name="dock_sheen">#80FFFFFF</color>
     <color name="dock_edge">#14000000</color>
+    <color name="mini_player_rim">#24000000</color>
+    <color name="mini_player_sheen">#1AFFFFFF</color>
 </resources>

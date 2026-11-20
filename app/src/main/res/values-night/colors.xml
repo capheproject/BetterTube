@@ -4,4 +4,6 @@
     <!-- Floating dock (dark) -->
     <color name="dock_sheen">#1AFFFFFF</color>
     <color name="dock_edge">#24FFFFFF</color>
+    <color name="mini_player_rim">#3DFFFFFF</color>
+    <color name="mini_player_sheen">#14FFFFFF</color>
 </resources>

@@ -160,7 +160,9 @@
                     android:clipToPadding="false"
                     android:nestedScrollingEnabled="false"
                     android:visibility="gone"
-                    app:layoutManager="com.google.android.material.carousel.CarouselLayoutManager" />
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="10dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
                 <LinearLayout
                     android:id="@+id/playlistsTV"
@@ -186,7 +188,9 @@
                     android:clipToPadding="false"
                     android:nestedScrollingEnabled="false"
                     android:visibility="gone"
-                    app:layoutManager="com.google.android.material.carousel.CarouselLayoutManager" />
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="10dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
             </LinearLayout>
 

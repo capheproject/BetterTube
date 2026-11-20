@@ -214,4 +214,18 @@
         app:layout_constraintStart_toEndOf="@+id/player"
         app:layout_constraintTop_toTopOf="@+id/play_imageView" />
 
+    <!-- Fine rim around the mini player card, so it stands out from dark backgrounds
+         (alpha follows the minimise progress, set in code) -->
+    <View
+        android:id="@+id/mini_rim"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:alpha="0"
+        android:background="@drawable/mini_player_rim"
+        android:importantForAccessibility="no"
+        app:layout_constraintBottom_toBottomOf="@id/main_container"
+        app:layout_constraintEnd_toEndOf="@id/main_container"
+        app:layout_constraintStart_toStartOf="@id/main_container"
+        app:layout_constraintTop_toTopOf="@id/main_container" />
+
 </com.github.libretube.ui.views.SingleViewTouchableMotionLayout>

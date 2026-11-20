@@ -34,6 +34,13 @@
             app:key="icon_change"
             app:title="@string/app_icon" />
 
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:icon="@drawable/ic_color"
+            android:summary="@string/player_colors_from_video_summary"
+            android:title="@string/player_colors_from_video"
+            app:key="player_colors_from_video" />
+
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/layout">

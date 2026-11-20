@@ -1,5 +1,7 @@
 package com.github.libretube.ui.fragments
 
+import com.github.libretube.helpers.PreferenceHelper
+import com.github.libretube.constants.PreferenceKeys
 import com.github.libretube.helpers.WatchLater
 import com.google.android.material.slider.Slider
 import com.github.libretube.helpers.Haptics
@@ -162,6 +164,8 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
 
         initializeTransitionLayout()
         limitArtworkHeightInLandscape()
+        // the mini player's thumbnail sits flush at the card's left edge: round its left corners
+        MiniPlayerShape.applyLeftCorners(binding.miniPlayerThumbnail, 1f)
 
         // the description scrolls on its own: it must not hand its scroll to the player's
         // swipe-to-minimise (set here, not in XML: NestedScrollView crashes when it's set while
@@ -365,18 +369,27 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
                 progress: Float
             ) {
                 activity.setPlayerContainerProgress(progress.absoluteValue)
-                _binding?.let { MiniPlayerShape.apply(it.audioPlayerContainer, progress.absoluteValue) }
+                _binding?.let {
+                    MiniPlayerShape.apply(it.audioPlayerContainer, progress.absoluteValue)
+                    it.miniRim.alpha = progress.absoluteValue
+                }
                 transitionEndId = endId
                 transitionStartId = startId
             }
 
             override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
                 if (currentId == transitionEndId) {
-                    _binding?.let { MiniPlayerShape.apply(it.audioPlayerContainer, 1f) }
+                    _binding?.let {
+                        MiniPlayerShape.apply(it.audioPlayerContainer, 1f)
+                        it.miniRim.alpha = 1f
+                    }
                     viewModel.isMiniPlayerVisible.value = true
                     activity.minimizePlayerContainerLayout()
                 } else if (currentId == transitionStartId) {
-                    _binding?.let { MiniPlayerShape.apply(it.audioPlayerContainer, 0f) }
+                    _binding?.let {
+                        MiniPlayerShape.apply(it.audioPlayerContainer, 0f)
+                        it.miniRim.alpha = 0f
+                    }
                     viewModel.isMiniPlayerVisible.value = false
                     activity.maximizePlayerContainerLayout()
                 }
@@ -485,7 +498,11 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
             val scrim = binding.ambientScrim
             val wash = ArtworkColors.playerWash(requireContext(), vibrant)
 
-            // the controls take the artwork's colour too, so everything belongs together
+            // the controls take the artwork's colour too (unless turned off in the settings)
+            if (!PreferenceHelper.getBoolean(PreferenceKeys.PLAYER_COLORS_FROM_VIDEO, true)) {
+                scrim.background = wash
+                return@launch
+            }
             val accent = ArtworkColors.accent(requireContext(), vibrant)
             binding.playPause.background = ArtworkColors.playButton(requireContext(), accent)
             binding.playPause.iconTint = ColorStateList.valueOf(accent.onAccent)

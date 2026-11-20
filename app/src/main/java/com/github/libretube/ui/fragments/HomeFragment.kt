@@ -27,9 +27,6 @@ import com.github.libretube.ui.adapters.VideoCardsAdapter
 import com.github.libretube.ui.models.HomeViewModel
 import com.github.libretube.ui.models.SubscriptionsViewModel
 import com.github.libretube.ui.models.TrendsViewModel
-import com.google.android.material.carousel.CarouselLayoutManager
-import com.google.android.material.carousel.CarouselSnapHelper
-import com.google.android.material.carousel.UncontainedCarouselStrategy
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 
@@ -60,14 +57,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             }
         }
 
-        binding.bookmarksRV.layoutManager = CarouselLayoutManager(UncontainedCarouselStrategy())
-        binding.playlistsRV.layoutManager = CarouselLayoutManager(UncontainedCarouselStrategy())
-
-        val bookmarksSnapHelper = CarouselSnapHelper()
-        bookmarksSnapHelper.attachToRecyclerView(binding.bookmarksRV)
-
-        val playlistsSnapHelper = CarouselSnapHelper()
-        playlistsSnapHelper.attachToRecyclerView(binding.playlistsRV)
+        // plain horizontal rows (set in the layout): no carousel parallax
 
         binding.trendingRV.adapter = trendingAdapter
         binding.featuredRV.adapter = feedAdapter

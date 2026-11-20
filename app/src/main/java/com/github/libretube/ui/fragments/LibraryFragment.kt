@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.libretube.R
 import com.github.libretube.api.PlaylistsHelper
@@ -37,9 +38,6 @@ import com.github.libretube.ui.dialogs.CreatePlaylistDialog.Companion.CREATE_PLA
 import com.github.libretube.ui.extensions.addOnBottomReachedListener
 import com.github.libretube.ui.models.WatchHistoryModel
 import com.github.libretube.ui.sheets.BaseBottomSheet
-import com.google.android.material.carousel.CarouselLayoutManager
-import com.google.android.material.carousel.CarouselSnapHelper
-import com.google.android.material.carousel.UncontainedCarouselStrategy
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -136,8 +134,9 @@ class LibraryFragment : DynamicLayoutManagerFragment(R.layout.fragment_library) 
     }
 
     private fun setupCarousel(recyclerView: RecyclerView, adapter: CarouselPlaylistAdapter) {
-        recyclerView.layoutManager = CarouselLayoutManager(UncontainedCarouselStrategy())
-        CarouselSnapHelper().attachToRecyclerView(recyclerView)
+        // a plain horizontal row: no carousel parallax
+        recyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         recyclerView.adapter = adapter
     }
 

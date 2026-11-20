@@ -90,6 +90,18 @@ class SingleViewTouchableMotionLayout(context: Context, attributeSet: AttributeS
         swipeDownListener.add(listener)
     }
 
+    /**
+     * Whether a touch at screen position ([rawX], [rawY]) lands on the player: anywhere while it's
+     * expanded, only on the card while it's minimised.
+     */
+    fun isTouchOnPlayer(rawX: Float, rawY: Float): Boolean {
+        if (!isShown) return false
+        if (progress == 0f) return true
+        val rect = Rect()
+        if (!viewToDetectTouch.getGlobalVisibleRect(rect)) return false
+        return rect.contains(rawX.toInt(), rawY.toInt())
+    }
+
     /** Whether the current gesture started outside the mini player while it was (partly) minimised. */
     private var passThroughGesture = false
 

@@ -28,7 +28,7 @@ class CarouselPlaylistAdapter(private val playlistType: PlaylistType) : ListAdap
         viewType: Int
     ): CarouselPlaylistViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        return CarouselPlaylistViewHolder(CarouselPlaylistThumbnailBinding.inflate(layoutInflater))
+        return CarouselPlaylistViewHolder(CarouselPlaylistThumbnailBinding.inflate(layoutInflater, parent, false))
     }
 
     override fun onBindViewHolder(

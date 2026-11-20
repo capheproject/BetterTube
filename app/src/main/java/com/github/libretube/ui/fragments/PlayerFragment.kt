@@ -674,6 +674,8 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
 
                 baseActivity.setPlayerContainerProgress(progress.absoluteValue)
                 MiniPlayerShape.apply(binding.mainContainer, progress.absoluteValue)
+                MiniPlayerShape.applyLeftCorners(binding.player, progress.absoluteValue)
+                binding.miniRim.alpha = progress.absoluteValue
                 updateStatusBarStrip(progress.absoluteValue)
                 // the details panel fades away while minimising, so no grey block is left
                 // under the mini player card
@@ -692,6 +694,8 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
 
                 if (currentId == transitionStartId) {
                     MiniPlayerShape.apply(binding.mainContainer, 0f)
+                    MiniPlayerShape.applyLeftCorners(binding.player, 0f)
+                    binding.miniRim.alpha = 0f
                     updateStatusBarStrip(0f)
                     binding.playerScrollView.isVisible = true
                     if (!isFadingInFromAudio) binding.playerScrollView.alpha = 1f
@@ -707,6 +711,8 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
                     baseActivity.clearSearchViewFocus()
                 } else if (currentId == transitionEndId) {
                     MiniPlayerShape.apply(binding.mainContainer, 1f)
+                    MiniPlayerShape.applyLeftCorners(binding.player, 1f)
+                    binding.miniRim.alpha = 1f
                     binding.playerScrollView.isInvisible = true
                     commonPlayerViewModel.isMiniPlayerVisible.value = true
                     // disable captions temporarily

@@ -43,6 +43,12 @@ Want the very latest changes? Every push is also built by GitHub Actions: open t
 
 ## Changelog
 
+### v0.2.2
+- Swipe sideways on a page to switch to the neighbouring tab
+- Playlist rows (Home, Library): readable titles on a soft gradient, no carousel parallax
+- Mini player: a fine rim separates it from dark backgrounds; the thumbnail runs edge to edge on the left, rounded by the card's corners
+- Audio player: the play button's glow is no longer cut off; new setting to keep the play button in the accent colour (Settings → Appearance → *Play button in the video's colours*)
+
 ### v0.2.1
 - Fixed: scrolling the description in the audio player could minimise the player; only a swipe on the artwork minimises now
 

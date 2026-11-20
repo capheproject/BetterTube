@@ -58,6 +58,8 @@
         android:id="@+id/audio_player_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="@id/audio_player_container"
         app:layout_constraintEnd_toEndOf="@id/audio_player_container"
@@ -241,15 +243,20 @@
             tools:text="Chapter 3: Mushrooms and the brain"
             tools:visibility="visible" />
 
-        <!-- Controls centred between the title and Comments; the description opens on top -->
+        <!-- Controls centred between the title and Comments; the description opens on top.
+             Nothing clips here, so the play button's glow isn't cut off -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:clipChildren="false"
+            android:clipToPadding="false">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:clipChildren="false"
+                android:clipToPadding="false"
                 android:orientation="vertical">
 
                 <Space
@@ -314,7 +321,8 @@
                 android:id="@+id/transport_row"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:clipChildren="false"
+                android:clipToPadding="false"
                 android:gravity="center"
                 android:orientation="horizontal">
 
@@ -400,12 +408,13 @@
         app:layout_constraintStart_toStartOf="@id/audio_player_container"
         app:layout_constraintTop_toTopOf="@id/audio_player_container">
 
+        <!-- edge to edge on the left; its left corners follow the card's (see MiniPlayerShape) -->
         <ImageView
             android:id="@+id/miniPlayerThumbnail"
-            android:layout_width="96dp"
+            android:layout_width="@dimen/mini_player_thumbnail_width"
             android:layout_height="match_parent"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="8dp" />
+            android:contentDescription="@null"
+            android:scaleType="centerCrop" />
 
         <TextView
             android:id="@+id/miniPlayerTitle"
@@ -438,5 +447,19 @@
             android:src="@drawable/ic_close" />
 
     </LinearLayout>
+
+    <!-- Fine rim around the mini player card, so it stands out from dark backgrounds
+         (alpha follows the minimise progress, set in code) -->
+    <View
+        android:id="@+id/mini_rim"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:alpha="0"
+        android:background="@drawable/mini_player_rim"
+        android:importantForAccessibility="no"
+        app:layout_constraintBottom_toBottomOf="@id/audio_player_container"
+        app:layout_constraintEnd_toEndOf="@id/audio_player_container"
+        app:layout_constraintStart_toStartOf="@id/audio_player_container"
+        app:layout_constraintTop_toTopOf="@id/audio_player_container" />
 
 </com.github.libretube.ui.views.SingleViewTouchableMotionLayout>

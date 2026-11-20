@@ -19,6 +19,7 @@ object PreferenceKeys {
     const val AUDIO_ONLY_MODE = "audio_only_mode"
     const val REMEMBER_PLAYER_MODE = "remember_player_mode"
     const val WATCH_LATER_PLAYLIST = "watch_later_playlist"
+    const val PLAYER_COLORS_FROM_VIDEO = "player_colors_from_video"
     const val LAST_PLAYER_MODE_AUDIO = "last_player_mode_audio"
 
     // Appearance

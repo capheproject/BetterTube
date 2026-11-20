@@ -1,5 +1,11 @@
 package com.github.libretube.ui.activities
 
+import com.github.libretube.ui.views.SingleViewTouchableMotionLayout
+import com.github.libretube.helpers.Haptics
+import kotlin.math.abs
+import android.graphics.Rect
+import android.view.MotionEvent
+import android.view.GestureDetector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavOptions
 import android.annotation.SuppressLint
@@ -709,6 +715,75 @@ class MainActivity : AbstractPlayerHostActivity() {
         }
     }
 
+    // ---- swipe sideways on a page to switch to the neighbouring tab ----
+
+    private val tabSwipeDetector by lazy {
+        GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
+            override fun onFling(e1: MotionEvent?, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
+                val start = e1 ?: return false
+                val dx = e2.x - start.x
+                val dy = e2.y - start.y
+                val density = resources.displayMetrics.density
+                if (abs(dx) < TAB_SWIPE_MIN_DISTANCE_DP * density) return false
+                if (abs(dx) < abs(dy) * 2) return false
+                if (abs(velocityX) < TAB_SWIPE_MIN_VELOCITY_DP * density) return false
+                switchTab(if (dx < 0) 1 else -1)
+                return false
+            }
+        })
+    }
+    private var tabSwipeAllowed = false
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (ev.actionMasked == MotionEvent.ACTION_DOWN) tabSwipeAllowed = canSwipeTabsFrom(ev)
+        // only observes the gesture: the page still gets every touch as usual
+        if (tabSwipeAllowed) tabSwipeDetector.onTouchEvent(ev)
+        return super.dispatchTouchEvent(ev)
+    }
+
+    /**
+     * Tab swipes only start on a top-level page, outside the dock and the player, and not on
+     * anything that scrolls sideways itself (playlist rows, chips, ...).
+     */
+    private fun canSwipeTabsFrom(ev: MotionEvent): Boolean {
+        if (!binding.bottomNav.isVisible || searchItem.isActionViewExpanded) return false
+        val tabs = binding.bottomNav.menu.children.filter { it.isVisible }.map { it.itemId }.toList()
+        if (tabs.size < 2 || navController.currentDestination?.id !in tabs) return false
+
+        val navRect = Rect()
+        if (binding.bottomNav.getGlobalVisibleRect(navRect) && navRect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
+            return false
+        }
+        val player = supportFragmentManager.findFragmentById(R.id.container)?.view
+            as? SingleViewTouchableMotionLayout
+        if (player?.isTouchOnPlayer(ev.rawX, ev.rawY) == true) return false
+
+        val page = binding.fragment
+        return !hasSidewaysScrollerAt(page, ev.rawX.toInt(), ev.rawY.toInt())
+    }
+
+    private fun hasSidewaysScrollerAt(view: View, x: Int, y: Int): Boolean {
+        if (!view.isShown) return false
+        val rect = Rect()
+        if (!view.getGlobalVisibleRect(rect) || !rect.contains(x, y)) return false
+        if (view.canScrollHorizontally(1) || view.canScrollHorizontally(-1)) return true
+        if (view is ViewGroup) {
+            for (i in view.childCount - 1 downTo 0) {
+                if (hasSidewaysScrollerAt(view.getChildAt(i), x, y)) return true
+            }
+        }
+        return false
+    }
+
+    /** Switches to the next ([direction] = 1) or previous (-1) tab of the dock. */
+    private fun switchTab(direction: Int) {
+        val tabs = binding.bottomNav.menu.children.filter { it.isVisible }.map { it.itemId }.toList()
+        val index = tabs.indexOf(binding.bottomNav.selectedItemId)
+        val target = tabs.getOrNull(index + direction) ?: return
+        Haptics.tick(binding.bottomNav)
+        binding.bottomNav.selectedItemId = target
+    }
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         this.intent = intent
@@ -792,6 +867,8 @@ class MainActivity : AbstractPlayerHostActivity() {
     }
 
     companion object {
+        private const val TAB_SWIPE_MIN_DISTANCE_DP = 90
+        private const val TAB_SWIPE_MIN_VELOCITY_DP = 450
         const val MINIMUM_SCREEN_SIZE_TABLET = 600
     }
 }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A fine light rim plus a faint top highlight around the floating mini player card -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <gradient
+                android:angle="270"
+                android:centerY="0.35"
+                android:centerColor="@android:color/transparent"
+                android:endColor="@android:color/transparent"
+                android:startColor="@color/mini_player_sheen" />
+            <corners android:radius="@dimen/mini_player_corner" />
+        </shape>
+    </item>
+    <item>
+        <shape>
+            <solid android:color="@android:color/transparent" />
+            <stroke android:width="1dp" android:color="@color/mini_player_rim" />
+            <corners android:radius="@dimen/mini_player_corner" />
+        </shape>
+    </item>
+</layer-list>

@@ -24,5 +24,6 @@
     <dimen name="mini_player_margin_horizontal">12dp</dimen>
     <dimen name="mini_player_margin_bottom">8dp</dimen>
     <dimen name="mini_player_corner">20dp</dimen>
+    <dimen name="mini_player_thumbnail_width">114dp</dimen>
     <dimen name="library_carousel_height">150dp</dimen>
 </resources>
