@@ -22,6 +22,7 @@
         <OnSwipe
             motion:dragDirection="dragDown"
             motion:maxAcceleration="40"
+            motion:nestedScrollFlags="disableScroll"
             motion:onTouchUp="autoComplete"
             motion:touchAnchorId="@+id/audio_player_container"
             motion:touchAnchorSide="top" />

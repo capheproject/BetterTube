@@ -43,6 +43,9 @@ Want the very latest changes? Every push is also built by GitHub Actions: open t
 
 ## Changelog
 
+### v0.2.1
+- Fixed: scrolling the description in the audio player could minimise the player; only a swipe on the artwork minimises now
+
 ### v0.2.0: first signed release
 - Optimised release build (about half the size, faster), signed with BetterTube's private key; see *Download* for moving over from a preview
 
