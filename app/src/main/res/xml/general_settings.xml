@@ -29,6 +29,12 @@
             android:title="@string/remember_player_mode"
             app:key="remember_player_mode" />
 
+        <Preference
+            android:icon="@drawable/ic_time_outlined"
+            android:summary="@string/watch_later_playlist_setting_summary"
+            android:title="@string/watch_later_playlist_setting"
+            app:key="watch_later_playlist" />
+
         <ListPreference
             android:defaultValue="@string/config_default_orientation_pref"
             android:entries="@array/orientation"

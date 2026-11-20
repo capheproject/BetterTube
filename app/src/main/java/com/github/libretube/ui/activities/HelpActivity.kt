@@ -1,6 +1,7 @@
 package com.github.libretube.ui.activities
 
 import android.os.Bundle
+import androidx.core.view.isGone
 import com.github.libretube.databinding.ActivityHelpBinding
 import com.github.libretube.helpers.IntentHelper
 import com.github.libretube.ui.base.BaseActivity
@@ -17,10 +18,11 @@ class HelpActivity : BaseActivity() {
             onBackPressedDispatcher.onBackPressed()
         }
 
-        setupCard(binding.faq, FAQ_URL)
-        setupCard(binding.matrix, MATRIX_URL)
-        setupCard(binding.mastodon, MASTODON_URL)
-        setupCard(binding.lemmy, LEMMY_URL)
+        // BetterTube's help lives on its GitHub page: the README and the issue tracker
+        setupCard(binding.faq, AboutActivity.GITHUB_URL)
+        setupCard(binding.matrix, AboutActivity.ISSUES_URL)
+        binding.mastodon.isGone = true
+        binding.lemmy.isGone = true
     }
 
     private fun setupCard(card: MaterialCardView, link: String) {
@@ -29,10 +31,4 @@ class HelpActivity : BaseActivity() {
         }
     }
 
-    companion object {
-        private const val FAQ_URL = "https://libretube.dev/#faq"
-        private const val MATRIX_URL = "https://matrix.to/#/#LibreTube:matrix.org"
-        private const val MASTODON_URL = "https://fosstodon.org/@libretube"
-        private const val LEMMY_URL = "https://feddit.rocks/c/libretube"
-    }
 }

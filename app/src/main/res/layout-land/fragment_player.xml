@@ -51,10 +51,10 @@
                         app:icon="@drawable/ic_share" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/relPlayer_background"
+                        android:id="@+id/relPlayer_watch_later"
                         style="@style/PlayerActionsButton"
-                        android:text="@string/audio"
-                        app:icon="@drawable/ic_headphones" />
+                        android:text="@string/watch_later"
+                        app:icon="@drawable/ic_time_outlined" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/relPlayer_save"

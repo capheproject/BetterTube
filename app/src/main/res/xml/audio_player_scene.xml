@@ -18,6 +18,13 @@
             motion:clickAction="toggle"
             motion:duration="500"
             motion:targetId="@+id/miniPlayerControls" />
+        <!-- swipe down on the artwork to minimise (see SingleViewTouchableMotionLayout) -->
+        <OnSwipe
+            motion:dragDirection="dragDown"
+            motion:maxAcceleration="40"
+            motion:onTouchUp="autoComplete"
+            motion:touchAnchorId="@+id/audio_player_container"
+            motion:touchAnchorSide="top" />
     </Transition>
 
     <ConstraintSet android:id="@+id/start">

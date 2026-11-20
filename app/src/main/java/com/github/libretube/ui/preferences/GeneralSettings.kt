@@ -1,5 +1,7 @@
 package com.github.libretube.ui.preferences
 
+import androidx.lifecycle.lifecycleScope
+import com.github.libretube.helpers.WatchLater
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -22,6 +24,11 @@ class GeneralSettings : BasePreferenceFragment() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.general_settings, rootKey)
+
+        findPreference<Preference>(PreferenceKeys.WATCH_LATER_PLAYLIST)?.setOnPreferenceClickListener {
+            WatchLater.choosePlaylist(requireActivity(), requireActivity().lifecycleScope)
+            true
+        }
 
         val language = findPreference<ListPreference>("language")
         if (!LocaleHelper.isPerAppLocaleSettingSupported()) {

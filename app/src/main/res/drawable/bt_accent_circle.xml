@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- BetterTube primary action: accent colour flowing into a tertiary tint, with a soft top sheen -->
+<!-- BetterTube play button: the accent flowing into the tertiary colour, a soft light from above
+     and a fine rim, so it reads as a lit, slightly rounded object rather than a flat disc -->
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
     android:color="?attr/colorControlHighlight">
     <item>
         <layer-list>
             <item>
                 <shape android:shape="oval">
-                    <solid android:color="?attr/colorPrimary" />
-                    
+                    <gradient
+                        android:angle="315"
+                        android:endColor="@color/bt_accent_deep"
+                        android:startColor="?attr/colorPrimary"
+                        android:type="linear" />
                 </shape>
             </item>
             <item>
@@ -16,18 +20,24 @@
                         android:angle="315"
                         android:endColor="@color/bt_accent_wash"
                         android:startColor="@android:color/transparent" />
-                    
                 </shape>
             </item>
+            <!-- light from above -->
             <item>
                 <shape android:shape="oval">
                     <gradient
                         android:angle="270"
-                        android:centerY="0.55"
                         android:centerColor="@android:color/transparent"
+                        android:centerY="0.5"
                         android:endColor="@android:color/transparent"
-                        android:startColor="@color/dock_sheen" />
-                    
+                        android:startColor="@color/bt_play_highlight" />
+                </shape>
+            </item>
+            <!-- rim -->
+            <item>
+                <shape android:shape="oval">
+                    <solid android:color="@android:color/transparent" />
+                    <stroke android:width="1dp" android:color="@color/bt_play_rim" />
                 </shape>
             </item>
         </layer-list>

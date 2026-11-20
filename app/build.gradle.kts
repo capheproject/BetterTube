@@ -27,6 +27,10 @@ if (keystoreFileExists) {
     keystoreProperties.load(rootProject.file("keystore.properties").inputStream())
 }
 
+// BetterTube release signing in CI: the private key comes from GitHub Actions secrets (see
+// .github/workflows/release.yml); without them release builds stay unsigned
+val ciKeystore: String? = System.getenv("BETTERTUBE_KEYSTORE")?.takeIf { it.isNotBlank() }
+
 android {
     compileSdk = 36
 
@@ -65,11 +69,21 @@ android {
                 keyAlias = keystoreProperties["keyAlias"] as String
                 keyPassword = keystoreProperties["keyPassword"] as String
             }
+        } else if (ciKeystore != null) {
+            create("release") {
+                storeFile = file(ciKeystore)
+                storePassword = System.getenv("BETTERTUBE_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("BETTERTUBE_KEY_ALIAS")
+                keyPassword = System.getenv("BETTERTUBE_KEY_PASSWORD")
+            }
         }
     }
 
     buildTypes {
         getByName("release") {
+            // its own app id, so BetterTube installs next to the official LibreTube app
+            applicationIdSuffix = ".bettertube"
+            versionNameSuffix = System.getenv("BETTERTUBE_RELEASE")?.let { "-$it" }
             isMinifyEnabled = true
             isShrinkResources = true
             signingConfig = signingConfigs.findByName("release")?.takeIf { it.storeFile != null }
@@ -110,6 +124,9 @@ android {
     }
 
     tasks.register("testClasses")
+
+    // Robolectric tests (app/src/test/.../robo) run against the app's real resources
+    testOptions { unitTests.isIncludeAndroidResources = true }
 
     lint {
         abortOnError = false
@@ -201,6 +218,8 @@ dependencies {
 
     /* Testing */
     testImplementation(libs.junit)
+    testImplementation("org.robolectric:robolectric:4.18.1")
+    testImplementation("androidx.test:core:1.6.1")
 }
 
 //TODO: exclude from release protobuf

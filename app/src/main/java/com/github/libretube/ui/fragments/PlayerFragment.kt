@@ -1,5 +1,12 @@
 package com.github.libretube.ui.fragments
 
+import com.github.libretube.helpers.WatchLater
+import com.github.libretube.helpers.Haptics
+import com.github.libretube.helpers.ArtworkColors
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.LayerDrawable
+import android.graphics.drawable.GradientDrawable
+import androidx.core.graphics.ColorUtils
 import com.github.libretube.helpers.PlayerModeMemory
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -514,8 +521,9 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
                 if (commonPlayerViewModel.isFullscreen.value == true) unsetFullscreen()
                 else {
                     binding.playerMotionLayout.setTransitionDuration(250)
+                    // the screen around the player follows the transition's progress (moving it
+                    // up front made the player jump before it started to shrink)
                     binding.playerMotionLayout.transitionToEnd()
-                    baseActivity.minimizePlayerContainerLayout()
                     baseActivity.requestOrientationChange()
                 }
             }
@@ -600,22 +608,55 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
         }
     }
 
-    @SuppressLint("ClickableViewAccessibility")
+    /**
+     * A hint of the video's own colours: a soft wash at the top of the video page and a tint
+     * on the mini player card.
+     */
+    private fun applyArtworkColors() {
+        if (!this::streams.isInitialized) return
+        val thumbnailUrl = streams.thumbnailUrl
+        viewLifecycleOwner.lifecycleScope.launch {
+            val bitmap = runCatching { ImageHelper.getImage(requireContext(), thumbnailUrl) }.getOrNull()
+                ?: return@launch
+            val vibrant = withContext(Dispatchers.Default) {
+                runCatching { ArtworkColors.dominantVibrant(bitmap) }.getOrNull()
+            } ?: return@launch
+            val binding = _binding ?: return@launch
+            val context = requireContext()
+            val background = ThemeHelper.getThemeColor(context, android.R.attr.colorBackground)
+            val pageTop = ColorUtils.compositeColors(
+                ArtworkColors.surfaceTint(context, vibrant, PAGE_TINT), background
+            )
+            binding.playerScrollView.background = GradientDrawable(
+                GradientDrawable.Orientation.TOP_BOTTOM,
+                intArrayOf(pageTop, background, background)
+            )
+            binding.mainContainer.background = LayerDrawable(
+                arrayOf(
+                    ContextCompat.getDrawable(context, R.drawable.bt_sheen_surface)!!,
+                    ColorDrawable(ArtworkColors.surfaceTint(context, vibrant, MINI_PLAYER_TINT))
+                )
+            )
+        }
+    }
+
     /**
      * The strip under the status bar, above the video, belongs to the video page while it's
      * open; otherwise the screen behind (e.g. the header) shows through it.
      */
     private fun updateStatusBarStrip(progress: Float) {
         val binding = _binding ?: return
-        if (progress == 0f) {
-            binding.playerMotionLayout.setBackgroundColor(
-                ThemeHelper.getThemeColor(requireContext(), android.R.attr.colorBackground)
-            )
-        } else {
+        // fades out with the collapse instead of disappearing on the first frame
+        val color = ThemeHelper.getThemeColor(requireContext(), android.R.attr.colorBackground)
+        val alpha = ((1f - progress.coerceIn(0f, 1f)) * 255).toInt()
+        if (alpha == 0) {
             binding.playerMotionLayout.background = null
+        } else {
+            binding.playerMotionLayout.setBackgroundColor(ColorUtils.setAlphaComponent(color, alpha))
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun initializeTransitionLayout() {
         baseActivity.setPlayerContainerProgress(0f)
 
@@ -763,6 +804,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
         }
 
         binding.player.binding.audioMode.setOnClickListener {
+            Haptics.confirm(it)
             // start the background mode
             switchToAudioMode()
         }
@@ -776,6 +818,13 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
             },
             false
         )
+
+        // one tap: add to the user's Watch later playlist (with Undo)
+        binding.relPlayerWatchLater.setOnClickListener {
+            if (!::streams.isInitialized) return@setOnClickListener
+            Haptics.confirm(it)
+            WatchLater.add(requireActivity(), viewLifecycleOwner.lifecycleScope, streams.toStreamItem(videoId))
+        }
 
         binding.relPlayerSave.setOnClickListener {
             if (!::streams.isInitialized) return@setOnClickListener
@@ -1197,6 +1246,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
     @SuppressLint("SetTextI18n")
     private fun updatePlayerView() {
         dismissCommentsSheet()
+        applyArtworkColors()
 
         setPlayerDefaults()
 
@@ -1549,5 +1599,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
         private const val MODE_SWITCH_RISE_DP = 16
         private const val SWITCH_THUMBNAIL_TIMEOUT_MS = 6000L
         private const val MODE_SWITCH_SETTLE_MS = 80L
+        private const val PAGE_TINT = 0.22f
+        private const val MINI_PLAYER_TINT = 0.35f
     }
 }

@@ -1,5 +1,6 @@
 package com.github.libretube.ui.sheets
 
+import com.github.libretube.helpers.WatchLater
 import android.os.Bundle
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
@@ -56,6 +57,11 @@ class VideoOptionsBottomSheet : BaseBottomSheet() {
                     ),
                     audioOnlyPlayerRequested = true
                 )
+            }
+            // one tap: the user's Watch later playlist
+            VideoBottomSheetItem.WatchLater -> {
+                // the activity's scope: this sheet closes right away
+                WatchLater.add(requireActivity(), requireActivity().lifecycleScope, streamItem)
             }
             // Add Video to Playlist Dialog
             VideoBottomSheetItem.AddToPlaylist -> {
@@ -161,6 +167,7 @@ class VideoOptionsBottomSheet : BaseBottomSheet() {
         setTitle(streamItem.title)
 
         var optionsList = buildList {
+            add(VideoBottomSheetItem.WatchLater)
             add(VideoBottomSheetItem.AddToPlaylist)
             if (!streamItem.isLive) add(VideoBottomSheetItem.Download)
             add(VideoBottomSheetItem.Share)

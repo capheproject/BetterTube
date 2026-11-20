@@ -39,8 +39,8 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 style="@style/AboutItem"
-                android:text="Matrix"
-                app:drawableStartCompat="@drawable/ic_matrix"
+                android:text="@string/report_problem"
+                app:drawableStartCompat="@drawable/ic_bug"
                 tools:ignore="HardcodedText" />
 
         </com.google.android.material.card.MaterialCardView>

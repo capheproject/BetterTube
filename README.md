@@ -30,7 +30,7 @@ Everything else LibreTube offers is still there.
 
 **[Download the latest release](../../releases)**: grab `BetterTube-<version>.apk` under *Assets* and open it on your phone. Android may ask you to allow installs from your browser or file manager.
 
-The current release is a **preview** (`v0.1.10-preview`), signed with BetterTube's public debug key: only install BetterTube updates from this repository.
+The current release is a **preview** (`v0.1.11-preview`), signed with BetterTube's public debug key: only install BetterTube updates from this repository.
 
 Want the very latest changes? Every push is also built by GitHub Actions: open the [latest successful build](../../actions/workflows/ci.yml?query=is%3Asuccess), sign in to GitHub, download **app** under *Artifacts*, unzip it and install `app-debug.apk`.
 
@@ -40,6 +40,16 @@ Want the very latest changes? Every push is also built by GitHub Actions: open t
 > - Builds from before 19 November 2026 used a different key each time: uninstall that version once (export a backup first), then install the new one.
 
 ## Changelog
+
+### 20 November 2026 (night): richer players, Watch later, faster
+- Audio player: deep colours taken from each video's artwork (smooth, no banding), a lit gradient play button and progress bar in the same colours, bigger and better spaced controls, swipe down on the artwork to minimise, placeholders while loading
+- The mini player and the video page pick up a hint of the video's colours
+- One-tap **Watch later**: on the video page, in the audio player's ⋮ menu and in every video's options; pick your playlist once (Settings → General → *Watch later playlist*), with Undo
+- Faster feel: tabs switch with a quick fade and keep their state; quicker list entrance
+- Light haptics when switching audio/video, adding to Watch later and scrubbing
+- Fixed: links shared from other apps (e.g. the YouTube app) now open even when BetterTube is already open; smooth collapse into the mini player (no jump); heading chevrons centred; smaller Comments icon
+- Links in the app (About, Help) now point to BetterTube's GitHub page
+- Under the hood: optimised, privately signed release builds are ready to switch on, and automated tests run on every build
 
 ### 20 November 2026 (evening): audio mode memory
 - BetterTube remembers audio mode: after switching to audio, new videos also start as audio until you switch back to video (Settings → General → *Remember audio mode*, on by default)

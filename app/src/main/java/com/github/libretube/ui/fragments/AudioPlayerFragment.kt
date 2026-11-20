@@ -1,5 +1,14 @@
 package com.github.libretube.ui.fragments
 
+import com.github.libretube.helpers.WatchLater
+import com.google.android.material.slider.Slider
+import com.github.libretube.helpers.Haptics
+import androidx.core.graphics.ColorUtils
+import android.content.res.ColorStateList
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.Dispatchers
+import com.github.libretube.helpers.ArtworkColors
+import android.graphics.drawable.TransitionDrawable
 import com.github.libretube.helpers.PlayerModeMemory
 import androidx.core.view.updateLayoutParams
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -154,6 +163,19 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
         initializeTransitionLayout()
         limitArtworkHeightInLandscape()
 
+        // fine grain keeps the large gradients smooth; the play button glows in the accent colour
+        binding.grain.background = ArtworkColors.grain(requireContext())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            val accent = ThemeHelper.getThemeColor(requireContext(), androidx.appcompat.R.attr.colorPrimary)
+            binding.playPause.outlineSpotShadowColor = accent
+            binding.playPause.outlineAmbientShadowColor = accent
+        }
+        binding.playPause.elevation = PLAY_BUTTON_GLOW_DP * resources.displayMetrics.density
+
+        // until the stream's details arrive, show the title we already know (from the feed),
+        // or a quiet placeholder
+        binding.title.text = PlayingQueue.getCurrent()?.title ?: getString(R.string.loading)
+
         // like on the video page: tap the title for the description, long press to copy it
         binding.titleLayout.setOnClickListener { toggleDescription() }
         binding.titleLayout.setOnLongClickListener {
@@ -162,7 +184,8 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
         }
 
         binding.minimizePlayer.setOnClickListener {
-            activity.minimizePlayerContainerLayout()
+            // the screen around the player follows the transition's progress; moving it up front
+            // made the expanded player jump before it started to shrink
             binding.playerMotionLayout.transitionToEnd()
         }
 
@@ -187,6 +210,7 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
             // ignore repeated taps while the switch is already under way
             if (isSwitchingMode) return@setOnClickListener
             isSwitchingMode = true
+            Haptics.confirm(binding.openVideo)
             // the video page opens with this exact picture in the same place
             ThumbnailHints.put(currentId, current.thumbnail, binding.thumbnail)
             animateAudioOnlyViews(show = false) { switchToVideoMode(currentId) }
@@ -257,7 +281,6 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
             override fun handleOnBackPressed() {
                 binding.audioPlayerContainer.isClickable = false
                 binding.playerMotionLayout.transitionToEnd()
-                activity.minimizePlayerContainerLayout()
                 activity.requestOrientationChange()
             }
 
@@ -433,6 +456,7 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
             backdrop.animate().alpha(0f).setDuration(300).start()
             return
         }
+        applyArtworkColors(bitmap)
         backdrop.setImageBitmap(bitmap)
         val targetAlpha = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             backdrop.setRenderEffect(RenderEffect.createBlurEffect(90f, 90f, Shader.TileMode.CLAMP))
@@ -443,10 +467,51 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
         backdrop.animate().alpha(targetAlpha).setDuration(600).start()
     }
 
+    /**
+     * Gives the player the artwork's own colours: a deep wash from the artwork's most
+     * characteristic colour down to the controls (also shown in the mini player card).
+     */
+    private fun applyArtworkColors(bitmap: Bitmap) {
+        lifecycleScope.launch {
+            val vibrant = withContext(Dispatchers.Default) {
+                runCatching { ArtworkColors.dominantVibrant(bitmap) }.getOrNull()
+            } ?: ThemeHelper.getThemeColor(requireContext(), androidx.appcompat.R.attr.colorPrimary)
+            val binding = _binding ?: return@launch
+            val scrim = binding.ambientScrim
+            val wash = ArtworkColors.playerWash(requireContext(), vibrant)
+
+            // the controls take the artwork's colour too, so everything belongs together
+            val accent = ArtworkColors.accent(requireContext(), vibrant)
+            binding.playPause.background = ArtworkColors.playButton(requireContext(), accent)
+            binding.playPause.iconTint = ColorStateList.valueOf(accent.onAccent)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                binding.playPause.outlineSpotShadowColor = accent.main
+                binding.playPause.outlineAmbientShadowColor = accent.main
+            }
+            binding.timeBar.trackActiveTintList = ColorStateList.valueOf(accent.main)
+            binding.timeBar.thumbTintList = ColorStateList.valueOf(accent.main)
+            binding.timeBar.trackInactiveTintList =
+                ColorStateList.valueOf(ColorUtils.setAlphaComponent(accent.main, 0x40))
+            val current = scrim.background
+            scrim.background = if (current != null) {
+                TransitionDrawable(arrayOf(current, wash)).apply {
+                    isCrossFadeEnabled = true
+                    startTransition(ARTWORK_COLOR_FADE_MS)
+                }
+            } else {
+                wash
+            }
+        }
+    }
+
     private fun initializeSeekBar() {
         binding.timeBar.addOnChangeListener { _, value, fromUser ->
             if (fromUser) playerController?.seekTo(value.toLong() * 1000)
         }
+        binding.timeBar.addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
+            override fun onStartTrackingTouch(slider: Slider) = Haptics.tick(slider)
+            override fun onStopTrackingTouch(slider: Slider) = Haptics.tick(slider)
+        })
         updateSeekBar()
     }
 
@@ -458,8 +523,9 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
         val duration = playerController?.duration?.takeIf { it > 0 } ?: let {
             // if there's no duration available, clear everything
             binding.timeBar.value = 0f
-            binding.duration.text = ""
-            binding.currentPosition.text = ""
+            // placeholders while loading, so the row isn't empty
+            binding.duration.text = TIME_PLACEHOLDER
+            binding.currentPosition.text = TIME_PLACEHOLDER
             handler.postDelayed(this::updateSeekBar, 100)
             return
         }
@@ -579,6 +645,7 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
      */
     private fun showPlayerOptions() {
         val items = listOf(
+            BottomSheetItem(BottomSheetItemTitle.StringResource(R.string.watch_later), R.drawable.ic_time_outlined),
             BottomSheetItem(BottomSheetItemTitle.StringResource(R.string.queue), R.drawable.ic_queue),
             BottomSheetItem(
                 BottomSheetItemTitle.StringResource(R.string.playback_speed),
@@ -606,11 +673,15 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
         BaseBottomSheet()
             .setItems(items) { index ->
                 when (index) {
-                    0 -> PlayingQueueSheet().show(childFragmentManager)
-                    1 -> playerController?.let { PlaybackOptionsSheet(it).show(childFragmentManager) }
-                    2 -> SleepTimerSheet().show(childFragmentManager)
-                    3 -> PlayerHelper.autoPlayEnabled = !PlayerHelper.autoPlayEnabled
-                    4 -> onLongTap()
+                    0 -> PlayingQueue.getCurrent()?.let { current ->
+                        Haptics.confirm(binding.showMore)
+                        WatchLater.add(requireActivity(), viewLifecycleOwner.lifecycleScope, current)
+                    }
+                    1 -> PlayingQueueSheet().show(childFragmentManager)
+                    2 -> playerController?.let { PlaybackOptionsSheet(it).show(childFragmentManager) }
+                    3 -> SleepTimerSheet().show(childFragmentManager)
+                    4 -> PlayerHelper.autoPlayEnabled = !PlayerHelper.autoPlayEnabled
+                    5 -> onLongTap()
                 }
             }
             .show(childFragmentManager)
@@ -625,12 +696,9 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
             .show(childFragmentManager)
     }
 
-    override fun onSwipe(distanceY: Float) {
-        if (!PlayerHelper.swipeGestureEnabled) return
-
-        binding.volumeControls.isVisible = true
-        updateVolume(distanceY)
-    }
+    // a downward swipe on the artwork now minimises the player (like the video), so the volume
+    // swipe is off here; the phone's volume buttons do the same
+    override fun onSwipe(distanceY: Float) = Unit
 
     override fun onSwipeEnd() {
         if (!PlayerHelper.swipeGestureEnabled) return
@@ -778,6 +846,9 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
 
     companion object {
         private const val COMMENTS_SHEET_HEIGHT = 0.75f
+        private const val TIME_PLACEHOLDER = "0:00"
+        private const val ARTWORK_COLOR_FADE_MS = 500
+        private const val PLAY_BUTTON_GLOW_DP = 12
         private const val LANDSCAPE_ARTWORK_MAX_HEIGHT = 0.3f
         private const val DESCRIPTION_ANIMATION_MS = 220L
         private const val RISE_DISTANCE_DP = 16

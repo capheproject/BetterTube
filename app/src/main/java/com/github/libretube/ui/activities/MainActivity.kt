@@ -1,5 +1,7 @@
 package com.github.libretube.ui.activities
 
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavOptions
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
@@ -616,7 +618,12 @@ class MainActivity : AbstractPlayerHostActivity() {
 
         intent.getStringExtra(IntentData.videoId)?.let {
             // the below explained work around only seems to work on Android 11 and above
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && binding.bottomNav.menu.isNotEmpty()) {
+            // when the app is already open (e.g. a link shared from another app while something
+            // plays), the layout is done and no new layout pass would trigger the listener below:
+            // open the video right away, replacing what's playing
+            if (binding.bottomNav.isLaidOut) {
+                navigationVideo(it)
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && binding.bottomNav.menu.isNotEmpty()) {
                 // the bottom navigation bar has to be created before opening the video
                 // otherwise the player layout measures aren't calculated properly
                 // and the miniplayer is opened at a closed state and overlapping the navigation bar
@@ -674,7 +681,23 @@ class MainActivity : AbstractPlayerHostActivity() {
         // Remove focus from search view when navigating to bottom view.
         searchItem.collapseActionView()
 
-        return item.onNavDestinationSelected(navController)
+        // tabs switch with a quick fade (no rise) and keep their state, so switching back and
+        // forth feels instant
+        val options = NavOptions.Builder()
+            .setLaunchSingleTop(true)
+            .setRestoreState(true)
+            .setPopUpTo(navController.graph.findStartDestination().id, inclusive = false, saveState = true)
+            .setEnterAnim(R.animator.tab_enter)
+            .setExitAnim(R.animator.tab_exit)
+            .setPopEnterAnim(R.animator.tab_enter)
+            .setPopExitAnim(R.animator.tab_exit)
+            .build()
+        return try {
+            navController.navigate(item.itemId, null, options)
+            true
+        } catch (e: IllegalArgumentException) {
+            item.onNavDestinationSelected(navController)
+        }
     }
 
     override fun onUserLeaveHint() {

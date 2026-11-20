@@ -21,6 +21,7 @@ class SingleViewTouchableMotionLayout(context: Context, attributeSet: AttributeS
     private val isAudioPlayer by lazy {
         viewToDetectTouch.id == R.id.audio_player_container
     }
+    private val audioSwipeArea: View? by lazy { findViewById(R.id.artwork_frame) }
     private val scaledTouchSlop = ViewConfiguration.get(context).scaledTouchSlop
     private val viewRect = Rect()
     private val transitionListenerList = mutableListOf<TransitionListener?>()
@@ -116,10 +117,18 @@ class SingleViewTouchableMotionLayout(context: Context, attributeSet: AttributeS
                 shouldInterceptTouchEvent = false
                 isTouchDownInsideHitArea = false
 
-                // never intercept touch event if we're currently in audio player mode
-                if (isAudioPlayer) return false
-
-                viewToDetectTouch.getHitRect(viewRect)
+                if (isAudioPlayer) {
+                    // audio player: like the video, a downward swipe on the artwork minimises it
+                    // (only while expanded; elsewhere, e.g. in the description, touches stay
+                    // with the content)
+                    val artwork = audioSwipeArea ?: return false
+                    if (progress != 0f) return false
+                    artwork.getGlobalVisibleRect(viewRect)
+                    val origin = IntArray(2).also { getLocationOnScreen(it) }
+                    viewRect.offset(-origin[0], -origin[1])
+                } else {
+                    viewToDetectTouch.getHitRect(viewRect)
+                }
                 isTouchDownInsideHitArea = viewRect.contains(event.x.toInt(), event.y.toInt())
                 touchInitialY = event.y
                 startedMinimized = progress == 1F

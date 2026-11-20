@@ -38,6 +38,11 @@ sealed class VideoBottomSheetItem(
         drawableRes = R.drawable.ic_eye,
     )
 
+    data object WatchLater : VideoBottomSheetItem(
+        titleStringRes = R.string.watch_later,
+        drawableRes = R.drawable.ic_time_outlined,
+    )
+
     data object AddToPlaylist : VideoBottomSheetItem(
         titleStringRes = R.string.addToPlaylist,
         drawableRes = R.drawable.ic_playlist_add,

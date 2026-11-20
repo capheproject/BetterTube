@@ -33,6 +33,9 @@ jobs:
           distribution: "temurin"
           cache: "gradle"
 
+      - name: Run tests
+        run: ./gradlew testDebugUnitTest
+
       - name: Compile
         run: |
           ./gradlew assembleDebug
