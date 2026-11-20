@@ -1,5 +1,6 @@
 package com.github.libretube.ui.activities
 
+import com.github.libretube.ui.fragments.TabsFragment
 import com.github.libretube.ui.views.SingleViewTouchableMotionLayout
 import com.github.libretube.helpers.Haptics
 import kotlin.math.abs
@@ -237,18 +238,33 @@ class MainActivity : AbstractPlayerHostActivity() {
 
         // set default tab as start fragment
         navController.graph = navController.navInflater.inflate(R.navigation.nav).also {
-            it.setStartDestination(startFragmentId)
+            it.setStartDestination(if (NavBarHelper.hasTabs()) R.id.tabsFragment else startFragmentId)
         }
+
+        // Back on a tab other than the start tab goes to the start tab first
+        onBackPressedDispatcher.addCallback(this, object : androidx.activity.OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val onTabs = navController.currentDestination?.id == R.id.tabsFragment
+                if (onTabs && tabsFragment?.currentTabId != startFragmentId &&
+                    tabsFragment?.selectTab(startFragmentId) == true
+                ) return
+                isEnabled = false
+                onBackPressedDispatcher.onBackPressed()
+                isEnabled = true
+            }
+        })
 
         // Prevent duplicate entries into backstack, if selected item and current
         // visible fragment is different, then navigate to selected item.
         binding.bottomNav.setOnItemReselectedListener {
-            if (it.itemId != navController.currentDestination?.id) {
+            if (it.itemId != currentScreenId()) {
                 navigateToBottomSelectedItem(it)
             } else {
-                // get the current fragment
-                val fragment = navHostFragment.childFragmentManager.fragments.firstOrNull()
-                tryScrollToTop(fragment?.requireView())
+                // get the current fragment (the current tab's page when the tabs are shown)
+                val fragment = tabsFragment?.takeIf { navController.currentDestination?.id == R.id.tabsFragment }
+                    ?.currentTabFragment
+                    ?: navHostFragment.childFragmentManager.fragments.firstOrNull()
+                tryScrollToTop(fragment?.view)
             }
         }
 
@@ -356,6 +372,18 @@ class MainActivity : AbstractPlayerHostActivity() {
         }
     }
 
+    /** Search searches downloads on the Downloads screen, the playlist on a playlist, else online. */
+    private fun updateSearchType() {
+        currentSearchType = when (currentScreenId()) {
+            R.id.downloadsFragment -> SearchType.DOWNLOADS
+            R.id.playlistFragment -> SearchType.PLAYLIST
+            else -> SearchType.ONLINE
+        }
+        // clear query in unused page so that they're reset when visiting the page the next time
+        if (currentSearchType != SearchType.DOWNLOADS) downloadViewModel.setQuery(null)
+        if (currentSearchType != SearchType.PLAYLIST) playlistViewModel.setQuery(null)
+    }
+
     private fun isSearchInProgress(): Boolean {
         if (!this::navController.isInitialized) return false
         val id = navController.currentDestination?.id ?: return false
@@ -402,14 +430,7 @@ class MainActivity : AbstractPlayerHostActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             // always show the toolbar again when switching screens
             binding.appBarLayout.setExpanded(true, false)
-            currentSearchType = when (destination.id) {
-                R.id.downloadsFragment -> SearchType.DOWNLOADS
-                R.id.playlistFragment -> SearchType.PLAYLIST
-                else -> SearchType.ONLINE
-            }
-            // clear query in unused page so that they're reset when visiting the page the next time
-            if (currentSearchType != SearchType.DOWNLOADS) downloadViewModel.setQuery(null)
-            if (currentSearchType != SearchType.PLAYLIST) playlistViewModel.setQuery(null)
+            updateSearchType()
 
             // the same search icon everywhere; the search box hint says what is searched
             searchItem.setIcon(R.drawable.ic_search)
@@ -450,7 +471,7 @@ class MainActivity : AbstractPlayerHostActivity() {
                         // Prevent navigation when search view is collapsed
                         if (searchView.isIconified ||
                             binding.bottomNav.menu.children.any {
-                                it.itemId == navController.currentDestination?.id
+                                it.itemId == currentScreenId()
                             }
                         ) {
                             return true
@@ -569,7 +590,7 @@ class MainActivity : AbstractPlayerHostActivity() {
 
         // Open the Downloads screen if requested
         if (intent?.getBooleanExtra(IntentData.OPEN_DOWNLOADS, false) == true) {
-            navController.navigate(R.id.downloadsFragment)
+            showScreen(R.id.downloadsFragment)
             return
         }
 
@@ -577,10 +598,10 @@ class MainActivity : AbstractPlayerHostActivity() {
         intent?.getStringExtra(IntentData.fragmentToOpen)?.let {
             ShortcutManagerCompat.reportShortcutUsed(this, it)
             when (it) {
-                TopLevelDestination.Home.route -> navController.navigate(R.id.homeFragment)
-                TopLevelDestination.Trends.route -> navController.navigate(R.id.trendsFragment)
-                TopLevelDestination.Subscriptions.route -> navController.navigate(R.id.subscriptionsFragment)
-                TopLevelDestination.Library.route -> navController.navigate(R.id.libraryFragment)
+                TopLevelDestination.Home.route -> showScreen(R.id.homeFragment)
+                TopLevelDestination.Trends.route -> showScreen(R.id.trendsFragment)
+                TopLevelDestination.Subscriptions.route -> showScreen(R.id.subscriptionsFragment)
+                TopLevelDestination.Library.route -> showScreen(R.id.libraryFragment)
             }
         }
 
@@ -687,6 +708,12 @@ class MainActivity : AbstractPlayerHostActivity() {
         // Remove focus from search view when navigating to bottom view.
         searchItem.collapseActionView()
 
+        if (syncingDockFromPager) return true
+        if (usesTabPager && item.itemId in dockTabIds()) {
+            showScreen(item.itemId)
+            return true
+        }
+
         // tabs switch with a quick fade (no rise) and keep their state, so switching back and
         // forth feels instant
         val options = NavOptions.Builder()
@@ -715,74 +742,53 @@ class MainActivity : AbstractPlayerHostActivity() {
         }
     }
 
-    // ---- swipe sideways on a page to switch to the neighbouring tab ----
+    // ---- the dock's tabs live side by side in a swipeable pager (TabsFragment) ----
 
-    private val tabSwipeDetector by lazy {
-        GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
-            override fun onFling(e1: MotionEvent?, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
-                val start = e1 ?: return false
-                val dx = e2.x - start.x
-                val dy = e2.y - start.y
-                val density = resources.displayMetrics.density
-                if (abs(dx) < TAB_SWIPE_MIN_DISTANCE_DP * density) return false
-                if (abs(dx) < abs(dy) * 2) return false
-                if (abs(velocityX) < TAB_SWIPE_MIN_VELOCITY_DP * density) return false
-                switchTab(if (dx < 0) 1 else -1)
-                return false
-            }
-        })
-    }
-    private var tabSwipeAllowed = false
+    private val usesTabPager get() = NavBarHelper.hasTabs()
 
-    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        if (ev.actionMasked == MotionEvent.ACTION_DOWN) tabSwipeAllowed = canSwipeTabsFrom(ev)
-        // only observes the gesture: the page still gets every touch as usual
-        if (tabSwipeAllowed) tabSwipeDetector.onTouchEvent(ev)
-        return super.dispatchTouchEvent(ev)
-    }
+    private val tabsFragment: TabsFragment?
+        get() = binding.fragment.getFragment<NavHostFragment>().childFragmentManager.fragments
+            .firstOrNull { it is TabsFragment } as? TabsFragment
+
+    /** The dock items that are shown, in their order: the pages of the tab pager. */
+    fun dockTabIds(): List<Int> =
+        binding.bottomNav.menu.children.filter { it.isVisible }.map { it.itemId }.toList()
+
+    fun startTabId() = startFragmentId
 
     /**
-     * Tab swipes only start on a top-level page, outside the dock and the player, and not on
-     * anything that scrolls sideways itself (playlist rows, chips, ...).
+     * The screen that's showing: the current tab while the tabs are shown, else the destination.
      */
-    private fun canSwipeTabsFrom(ev: MotionEvent): Boolean {
-        if (!binding.bottomNav.isVisible || searchItem.isActionViewExpanded) return false
-        val tabs = binding.bottomNav.menu.children.filter { it.isVisible }.map { it.itemId }.toList()
-        if (tabs.size < 2 || navController.currentDestination?.id !in tabs) return false
-
-        val navRect = Rect()
-        if (binding.bottomNav.getGlobalVisibleRect(navRect) && navRect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
-            return false
-        }
-        val player = supportFragmentManager.findFragmentById(R.id.container)?.view
-            as? SingleViewTouchableMotionLayout
-        if (player?.isTouchOnPlayer(ev.rawX, ev.rawY) == true) return false
-
-        val page = binding.fragment
-        return !hasSidewaysScrollerAt(page, ev.rawX.toInt(), ev.rawY.toInt())
+    private fun currentScreenId(): Int? {
+        val destination = navController.currentDestination?.id
+        return if (destination == R.id.tabsFragment) tabsFragment?.currentTabId ?: startFragmentId else destination
     }
 
-    private fun hasSidewaysScrollerAt(view: View, x: Int, y: Int): Boolean {
-        if (!view.isShown) return false
-        val rect = Rect()
-        if (!view.getGlobalVisibleRect(rect) || !rect.contains(x, y)) return false
-        if (view.canScrollHorizontally(1) || view.canScrollHorizontally(-1)) return true
-        if (view is ViewGroup) {
-            for (i in view.childCount - 1 downTo 0) {
-                if (hasSidewaysScrollerAt(view.getChildAt(i), x, y)) return true
+    /** Opens [destinationId]: by moving the tab pager if it's one of the tabs, else by navigating. */
+    fun showScreen(destinationId: Int) {
+        if (usesTabPager && destinationId in dockTabIds()) {
+            if (navController.currentDestination?.id != R.id.tabsFragment) {
+                navController.popBackStack(R.id.tabsFragment, false)
             }
+            binding.bottomNav.post { tabsFragment?.selectTab(destinationId) }
+        } else {
+            navController.navigate(destinationId)
         }
-        return false
     }
 
-    /** Switches to the next ([direction] = 1) or previous (-1) tab of the dock. */
-    private fun switchTab(direction: Int) {
-        val tabs = binding.bottomNav.menu.children.filter { it.isVisible }.map { it.itemId }.toList()
-        val index = tabs.indexOf(binding.bottomNav.selectedItemId)
-        val target = tabs.getOrNull(index + direction) ?: return
-        Haptics.tick(binding.bottomNav)
-        binding.bottomNav.selectedItemId = target
+    /** Called by the tab pager when a tab settles (swiped to or selected). */
+    fun onTabShown(tabId: Int) {
+        if (binding.bottomNav.selectedItemId != tabId) {
+            syncingDockFromPager = true
+            binding.bottomNav.selectedItemId = tabId
+            syncingDockFromPager = false
+        }
+        if (tabId == R.id.subscriptionsFragment) binding.bottomNav.removeBadge(R.id.subscriptionsFragment)
+        binding.appBarLayout.setExpanded(true, true)
+        updateSearchType()
     }
+
+    private var syncingDockFromPager = false
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)

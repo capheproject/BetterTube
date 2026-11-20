@@ -4,6 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav"
     app:startDestination="@id/homeFragment">
+    <!-- the dock's tabs side by side in a swipeable pager (see TabsFragment) -->
+    <fragment
+        android:id="@+id/tabsFragment"
+        android:name="com.github.libretube.ui.fragments.TabsFragment"
+        android:label="fragment_tabs" />
+
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.github.libretube.ui.fragments.HomeFragment"

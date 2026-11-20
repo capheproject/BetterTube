@@ -6,9 +6,14 @@
         android:id="@+id/mini_player_transition"
         motion:constraintSetEnd="@+id/end"
         motion:constraintSetStart="@id/start"
-        motion:duration="500"
+        motion:duration="300"
         motion:motionInterpolator="easeInOut">
         <KeyFrameSet>
+            <!-- the audio screen fades out early; only the artwork travels into the mini player -->
+            <KeyAttribute
+                android:alpha="0"
+                motion:framePosition="35"
+                motion:motionTarget="@+id/audio_player_main" />
             <KeyAttribute
                 android:alpha="0"
                 motion:framePosition="90"
@@ -16,7 +21,7 @@
         </KeyFrameSet>
         <OnClick
             motion:clickAction="toggle"
-            motion:duration="500"
+            motion:duration="300"
             motion:targetId="@+id/miniPlayerControls" />
         <!-- swipe down on the artwork to minimise (see SingleViewTouchableMotionLayout) -->
         <OnSwipe
@@ -29,6 +34,14 @@
     </Transition>
 
     <ConstraintSet android:id="@+id/start">
+        <!-- artwork: full width at the top (the status bar margin is set in code) -->
+        <Constraint
+            android:id="@+id/artwork_frame"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            motion:layout_constraintEnd_toEndOf="@id/audio_player_container"
+            motion:layout_constraintStart_toStartOf="@id/audio_player_container"
+            motion:layout_constraintTop_toTopOf="@id/audio_player_container" />
         <Constraint
             android:id="@+id/audio_player_container"
             android:layout_width="match_parent"
@@ -40,6 +53,14 @@
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/end">
+        <!-- artwork: shrunk into the mini player's thumbnail spot, flush left in the card -->
+        <Constraint
+            android:id="@+id/artwork_frame"
+            android:layout_width="@dimen/mini_player_thumbnail_width"
+            android:layout_height="wrap_content"
+            motion:layout_constraintBottom_toBottomOf="@id/audio_player_container"
+            motion:layout_constraintStart_toStartOf="@id/audio_player_container"
+            motion:layout_constraintTop_toTopOf="@id/audio_player_container" />
         <!-- Mini player: a floating rounded card above the dock -->
         <Constraint
             android:id="@+id/audio_player_container"

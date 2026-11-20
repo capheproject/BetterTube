@@ -283,4 +283,215 @@
 
     </style>
 
+
+    <!-- vivid accents -->
+    <style name="Theme.Vivid.Electric" parent="BaseTheme">
+        <item name="colorPrimary">@color/vivid_electric_dark_primary</item>
+        <item name="colorOnPrimary">@color/vivid_electric_dark_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/vivid_electric_dark_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/vivid_electric_dark_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/vivid_electric_dark_secondary</item>
+        <item name="colorOnSecondary">@color/vivid_electric_dark_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/vivid_electric_dark_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/vivid_electric_dark_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/vivid_electric_dark_tertiary</item>
+        <item name="colorOnTertiary">@color/vivid_electric_dark_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/vivid_electric_dark_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/vivid_electric_dark_onTertiaryContainer</item>
+        <item name="android:colorBackground">@color/vivid_electric_dark_background</item>
+        <item name="colorOnBackground">@color/vivid_electric_dark_onBackground</item>
+        <item name="colorSurface">@color/vivid_electric_dark_surface</item>
+        <item name="colorOnSurface">@color/vivid_electric_dark_onSurface</item>
+        <item name="colorSurfaceVariant">@color/vivid_electric_dark_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/vivid_electric_dark_onSurfaceVariant</item>
+        <item name="colorOutline">@color/vivid_electric_dark_outline</item>
+        <item name="colorOnSurfaceInverse">@color/vivid_electric_dark_inverseOnSurface</item>
+        <item name="colorSurfaceInverse">@color/vivid_electric_dark_inverseSurface</item>
+        <item name="colorPrimaryInverse">@color/vivid_electric_dark_inversePrimary</item>
+        <item name="colorSurfaceContainerLowest">@color/vivid_electric_dark_surfaceContainerLowest</item>
+        <item name="colorSurfaceContainerLow">@color/vivid_electric_dark_surfaceContainerLow</item>
+        <item name="colorSurfaceContainer">@color/vivid_electric_dark_surfaceContainer</item>
+        <item name="colorSurfaceContainerHigh">@color/vivid_electric_dark_surfaceContainerHigh</item>
+        <item name="colorSurfaceContainerHighest">@color/vivid_electric_dark_surfaceContainerHighest</item>
+    </style>
+
+    <style name="Theme.Vivid.Neon" parent="BaseTheme">
+        <item name="colorPrimary">@color/vivid_neon_dark_primary</item>
+        <item name="colorOnPrimary">@color/vivid_neon_dark_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/vivid_neon_dark_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/vivid_neon_dark_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/vivid_neon_dark_secondary</item>
+        <item name="colorOnSecondary">@color/vivid_neon_dark_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/vivid_neon_dark_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/vivid_neon_dark_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/vivid_neon_dark_tertiary</item>
+        <item name="colorOnTertiary">@color/vivid_neon_dark_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/vivid_neon_dark_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/vivid_neon_dark_onTertiaryContainer</item>
+        <item name="android:colorBackground">@color/vivid_neon_dark_background</item>
+        <item name="colorOnBackground">@color/vivid_neon_dark_onBackground</item>
+        <item name="colorSurface">@color/vivid_neon_dark_surface</item>
+        <item name="colorOnSurface">@color/vivid_neon_dark_onSurface</item>
+        <item name="colorSurfaceVariant">@color/vivid_neon_dark_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/vivid_neon_dark_onSurfaceVariant</item>
+        <item name="colorOutline">@color/vivid_neon_dark_outline</item>
+        <item name="colorOnSurfaceInverse">@color/vivid_neon_dark_inverseOnSurface</item>
+        <item name="colorSurfaceInverse">@color/vivid_neon_dark_inverseSurface</item>
+        <item name="colorPrimaryInverse">@color/vivid_neon_dark_inversePrimary</item>
+        <item name="colorSurfaceContainerLowest">@color/vivid_neon_dark_surfaceContainerLowest</item>
+        <item name="colorSurfaceContainerLow">@color/vivid_neon_dark_surfaceContainerLow</item>
+        <item name="colorSurfaceContainer">@color/vivid_neon_dark_surfaceContainer</item>
+        <item name="colorSurfaceContainerHigh">@color/vivid_neon_dark_surfaceContainerHigh</item>
+        <item name="colorSurfaceContainerHighest">@color/vivid_neon_dark_surfaceContainerHighest</item>
+    </style>
+
+    <style name="Theme.Vivid.Hotpink" parent="BaseTheme">
+        <item name="colorPrimary">@color/vivid_hotpink_dark_primary</item>
+        <item name="colorOnPrimary">@color/vivid_hotpink_dark_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/vivid_hotpink_dark_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/vivid_hotpink_dark_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/vivid_hotpink_dark_secondary</item>
+        <item name="colorOnSecondary">@color/vivid_hotpink_dark_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/vivid_hotpink_dark_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/vivid_hotpink_dark_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/vivid_hotpink_dark_tertiary</item>
+        <item name="colorOnTertiary">@color/vivid_hotpink_dark_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/vivid_hotpink_dark_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/vivid_hotpink_dark_onTertiaryContainer</item>
+        <item name="android:colorBackground">@color/vivid_hotpink_dark_background</item>
+        <item name="colorOnBackground">@color/vivid_hotpink_dark_onBackground</item>
+        <item name="colorSurface">@color/vivid_hotpink_dark_surface</item>
+        <item name="colorOnSurface">@color/vivid_hotpink_dark_onSurface</item>
+        <item name="colorSurfaceVariant">@color/vivid_hotpink_dark_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/vivid_hotpink_dark_onSurfaceVariant</item>
+        <item name="colorOutline">@color/vivid_hotpink_dark_outline</item>
+        <item name="colorOnSurfaceInverse">@color/vivid_hotpink_dark_inverseOnSurface</item>
+        <item name="colorSurfaceInverse">@color/vivid_hotpink_dark_inverseSurface</item>
+        <item name="colorPrimaryInverse">@color/vivid_hotpink_dark_inversePrimary</item>
+        <item name="colorSurfaceContainerLowest">@color/vivid_hotpink_dark_surfaceContainerLowest</item>
+        <item name="colorSurfaceContainerLow">@color/vivid_hotpink_dark_surfaceContainerLow</item>
+        <item name="colorSurfaceContainer">@color/vivid_hotpink_dark_surfaceContainer</item>
+        <item name="colorSurfaceContainerHigh">@color/vivid_hotpink_dark_surfaceContainerHigh</item>
+        <item name="colorSurfaceContainerHighest">@color/vivid_hotpink_dark_surfaceContainerHighest</item>
+    </style>
+
+    <style name="Theme.Vivid.Sunset" parent="BaseTheme">
+        <item name="colorPrimary">@color/vivid_sunset_dark_primary</item>
+        <item name="colorOnPrimary">@color/vivid_sunset_dark_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/vivid_sunset_dark_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/vivid_sunset_dark_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/vivid_sunset_dark_secondary</item>
+        <item name="colorOnSecondary">@color/vivid_sunset_dark_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/vivid_sunset_dark_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/vivid_sunset_dark_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/vivid_sunset_dark_tertiary</item>
+        <item name="colorOnTertiary">@color/vivid_sunset_dark_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/vivid_sunset_dark_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/vivid_sunset_dark_onTertiaryContainer</item>
+        <item name="android:colorBackground">@color/vivid_sunset_dark_background</item>
+        <item name="colorOnBackground">@color/vivid_sunset_dark_onBackground</item>
+        <item name="colorSurface">@color/vivid_sunset_dark_surface</item>
+        <item name="colorOnSurface">@color/vivid_sunset_dark_onSurface</item>
+        <item name="colorSurfaceVariant">@color/vivid_sunset_dark_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/vivid_sunset_dark_onSurfaceVariant</item>
+        <item name="colorOutline">@color/vivid_sunset_dark_outline</item>
+        <item name="colorOnSurfaceInverse">@color/vivid_sunset_dark_inverseOnSurface</item>
+        <item name="colorSurfaceInverse">@color/vivid_sunset_dark_inverseSurface</item>
+        <item name="colorPrimaryInverse">@color/vivid_sunset_dark_inversePrimary</item>
+        <item name="colorSurfaceContainerLowest">@color/vivid_sunset_dark_surfaceContainerLowest</item>
+        <item name="colorSurfaceContainerLow">@color/vivid_sunset_dark_surfaceContainerLow</item>
+        <item name="colorSurfaceContainer">@color/vivid_sunset_dark_surfaceContainer</item>
+        <item name="colorSurfaceContainerHigh">@color/vivid_sunset_dark_surfaceContainerHigh</item>
+        <item name="colorSurfaceContainerHighest">@color/vivid_sunset_dark_surfaceContainerHighest</item>
+    </style>
+
+    <style name="Theme.Vivid.Lime" parent="BaseTheme">
+        <item name="colorPrimary">@color/vivid_lime_dark_primary</item>
+        <item name="colorOnPrimary">@color/vivid_lime_dark_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/vivid_lime_dark_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/vivid_lime_dark_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/vivid_lime_dark_secondary</item>
+        <item name="colorOnSecondary">@color/vivid_lime_dark_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/vivid_lime_dark_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/vivid_lime_dark_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/vivid_lime_dark_tertiary</item>
+        <item name="colorOnTertiary">@color/vivid_lime_dark_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/vivid_lime_dark_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/vivid_lime_dark_onTertiaryContainer</item>
+        <item name="android:colorBackground">@color/vivid_lime_dark_background</item>
+        <item name="colorOnBackground">@color/vivid_lime_dark_onBackground</item>
+        <item name="colorSurface">@color/vivid_lime_dark_surface</item>
+        <item name="colorOnSurface">@color/vivid_lime_dark_onSurface</item>
+        <item name="colorSurfaceVariant">@color/vivid_lime_dark_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/vivid_lime_dark_onSurfaceVariant</item>
+        <item name="colorOutline">@color/vivid_lime_dark_outline</item>
+        <item name="colorOnSurfaceInverse">@color/vivid_lime_dark_inverseOnSurface</item>
+        <item name="colorSurfaceInverse">@color/vivid_lime_dark_inverseSurface</item>
+        <item name="colorPrimaryInverse">@color/vivid_lime_dark_inversePrimary</item>
+        <item name="colorSurfaceContainerLowest">@color/vivid_lime_dark_surfaceContainerLowest</item>
+        <item name="colorSurfaceContainerLow">@color/vivid_lime_dark_surfaceContainerLow</item>
+        <item name="colorSurfaceContainer">@color/vivid_lime_dark_surfaceContainer</item>
+        <item name="colorSurfaceContainerHigh">@color/vivid_lime_dark_surfaceContainerHigh</item>
+        <item name="colorSurfaceContainerHighest">@color/vivid_lime_dark_surfaceContainerHighest</item>
+    </style>
+
+    <style name="Theme.Vivid.Aqua" parent="BaseTheme">
+        <item name="colorPrimary">@color/vivid_aqua_dark_primary</item>
+        <item name="colorOnPrimary">@color/vivid_aqua_dark_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/vivid_aqua_dark_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/vivid_aqua_dark_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/vivid_aqua_dark_secondary</item>
+        <item name="colorOnSecondary">@color/vivid_aqua_dark_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/vivid_aqua_dark_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/vivid_aqua_dark_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/vivid_aqua_dark_tertiary</item>
+        <item name="colorOnTertiary">@color/vivid_aqua_dark_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/vivid_aqua_dark_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/vivid_aqua_dark_onTertiaryContainer</item>
+        <item name="android:colorBackground">@color/vivid_aqua_dark_background</item>
+        <item name="colorOnBackground">@color/vivid_aqua_dark_onBackground</item>
+        <item name="colorSurface">@color/vivid_aqua_dark_surface</item>
+        <item name="colorOnSurface">@color/vivid_aqua_dark_onSurface</item>
+        <item name="colorSurfaceVariant">@color/vivid_aqua_dark_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/vivid_aqua_dark_onSurfaceVariant</item>
+        <item name="colorOutline">@color/vivid_aqua_dark_outline</item>
+        <item name="colorOnSurfaceInverse">@color/vivid_aqua_dark_inverseOnSurface</item>
+        <item name="colorSurfaceInverse">@color/vivid_aqua_dark_inverseSurface</item>
+        <item name="colorPrimaryInverse">@color/vivid_aqua_dark_inversePrimary</item>
+        <item name="colorSurfaceContainerLowest">@color/vivid_aqua_dark_surfaceContainerLowest</item>
+        <item name="colorSurfaceContainerLow">@color/vivid_aqua_dark_surfaceContainerLow</item>
+        <item name="colorSurfaceContainer">@color/vivid_aqua_dark_surfaceContainer</item>
+        <item name="colorSurfaceContainerHigh">@color/vivid_aqua_dark_surfaceContainerHigh</item>
+        <item name="colorSurfaceContainerHighest">@color/vivid_aqua_dark_surfaceContainerHighest</item>
+    </style>
+
+    <style name="Theme.Vivid.Crimson" parent="BaseTheme">
+        <item name="colorPrimary">@color/vivid_crimson_dark_primary</item>
+        <item name="colorOnPrimary">@color/vivid_crimson_dark_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/vivid_crimson_dark_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/vivid_crimson_dark_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/vivid_crimson_dark_secondary</item>
+        <item name="colorOnSecondary">@color/vivid_crimson_dark_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/vivid_crimson_dark_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/vivid_crimson_dark_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/vivid_crimson_dark_tertiary</item>
+        <item name="colorOnTertiary">@color/vivid_crimson_dark_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/vivid_crimson_dark_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/vivid_crimson_dark_onTertiaryContainer</item>
+        <item name="android:colorBackground">@color/vivid_crimson_dark_background</item>
+        <item name="colorOnBackground">@color/vivid_crimson_dark_onBackground</item>
+        <item name="colorSurface">@color/vivid_crimson_dark_surface</item>
+        <item name="colorOnSurface">@color/vivid_crimson_dark_onSurface</item>
+        <item name="colorSurfaceVariant">@color/vivid_crimson_dark_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/vivid_crimson_dark_onSurfaceVariant</item>
+        <item name="colorOutline">@color/vivid_crimson_dark_outline</item>
+        <item name="colorOnSurfaceInverse">@color/vivid_crimson_dark_inverseOnSurface</item>
+        <item name="colorSurfaceInverse">@color/vivid_crimson_dark_inverseSurface</item>
+        <item name="colorPrimaryInverse">@color/vivid_crimson_dark_inversePrimary</item>
+        <item name="colorSurfaceContainerLowest">@color/vivid_crimson_dark_surfaceContainerLowest</item>
+        <item name="colorSurfaceContainerLow">@color/vivid_crimson_dark_surfaceContainerLow</item>
+        <item name="colorSurfaceContainer">@color/vivid_crimson_dark_surfaceContainer</item>
+        <item name="colorSurfaceContainerHigh">@color/vivid_crimson_dark_surfaceContainerHigh</item>
+        <item name="colorSurfaceContainerHighest">@color/vivid_crimson_dark_surfaceContainerHighest</item>
+    </style>
 </resources>

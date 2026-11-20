@@ -1,5 +1,6 @@
 package com.github.libretube.ui.fragments
 
+import com.github.libretube.ui.activities.MainActivity
 import com.github.libretube.ui.models.LibraryViewModel
 import androidx.fragment.app.activityViewModels
 import android.os.Bundle
@@ -100,7 +101,7 @@ class LibraryFragment : DynamicLayoutManagerFragment(R.layout.fragment_library) 
         header.downloads.isGone =
             navBarItems.any { (itemId, isVisible) -> isVisible && itemId == R.id.downloadsFragment }
         header.downloads.setOnClickListener {
-            findNavController().navigate(R.id.action_libraryFragment_to_downloadsFragment)
+            (requireActivity() as MainActivity).showScreen(R.id.downloadsFragment)
         }
 
         binding.playlistRefresh.isEnabled = true
@@ -179,7 +180,7 @@ class LibraryFragment : DynamicLayoutManagerFragment(R.layout.fragment_library) 
         }
 
         header.watchHistory.setOnClickListener {
-            findNavController().navigate(R.id.action_libraryFragment_to_watchHistoryFragment)
+            findNavController().navigate(R.id.watchHistoryFragment)
         }
 
         historyModel.filteredWatchHistory.observe(viewLifecycleOwner) { history ->

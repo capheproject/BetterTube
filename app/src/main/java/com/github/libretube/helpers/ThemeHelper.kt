@@ -52,6 +52,13 @@ object ThemeHelper {
             "purple" -> R.style.Theme_Purple
             "monochrome" -> R.style.Theme_Monochrome
             "violet" -> R.style.Theme_Violet
+            "vivid_electric" -> R.style.Theme_Vivid_Electric
+            "vivid_neon" -> R.style.Theme_Vivid_Neon
+            "vivid_hotpink" -> R.style.Theme_Vivid_Hotpink
+            "vivid_sunset" -> R.style.Theme_Vivid_Sunset
+            "vivid_lime" -> R.style.Theme_Vivid_Lime
+            "vivid_aqua" -> R.style.Theme_Vivid_Aqua
+            "vivid_crimson" -> R.style.Theme_Vivid_Crimson
             else -> throw IllegalArgumentException()
         }
     }
@@ -73,12 +80,21 @@ object ThemeHelper {
     }
 
     /**
+     * The launcher icon aliases are declared relative to the code's namespace in the manifest
+     * (e.g. ".Default"), not to the app id, which differs per build type (".debug",
+     * ".bettertube"). Deriving them from the app id broke changing the icon in release builds.
+     */
+    const val ICON_ALIAS_NAMESPACE = "com.github.libretube"
+
+    fun iconAliasClass(activityAlias: String) = "$ICON_ALIAS_NAMESPACE.$activityAlias"
+
+    /**
      * change the app icon
      */
     fun changeIcon(context: Context, newLogoActivityAlias: String) {
         // Disable Old Icon(s)
         for (appIcon in IconsSheetAdapter.availableIcons) {
-            val activityClass = context.packageName.removeSuffix(".debug") + "." + appIcon.activityAlias
+            val activityClass = iconAliasClass(appIcon.activityAlias)
 
             // remove old icons
             context.packageManager.setComponentEnabledSetting(
@@ -89,7 +105,7 @@ object ThemeHelper {
         }
 
         // set the class name for the activity alias
-        val newLogoActivityClass = context.packageName.removeSuffix(".debug") + "." + newLogoActivityAlias
+        val newLogoActivityClass = iconAliasClass(newLogoActivityAlias)
         // Enable New Icon
         context.packageManager.setComponentEnabledSetting(
             ComponentName(context.packageName, newLogoActivityClass),

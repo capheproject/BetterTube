@@ -1,5 +1,8 @@
 package com.github.libretube.ui.fragments
 
+import androidx.core.view.isInvisible
+import androidx.constraintlayout.widget.ConstraintSet
+import android.animation.ValueAnimator
 import com.github.libretube.helpers.PreferenceHelper
 import com.github.libretube.constants.PreferenceKeys
 import com.github.libretube.helpers.WatchLater
@@ -112,6 +115,12 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
     private val commentsViewModel: CommentsViewModel by activityViewModels()
     private var isSwitchingMode = false
 
+    // colours of the play button and progress bar (see updateControlColors)
+    private var lastVibrant: Int? = null
+    private var shownAccent: ArtworkColors.Accent? = null
+    private var playButtonDrawable: ArtworkColors.PlayButton? = null
+    private var accentAnimator: ValueAnimator? = null
+
     // for the transition
     private var transitionStartId = 0
     private var transitionEndId = 0
@@ -160,7 +169,23 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
                     paddingBottom + systemBars.bottom
                 )
             }
+            // the artwork floats above the content: below the status bar while expanded
+            val startSet = binding.playerMotionLayout.getConstraintSet(R.id.start)
+            startSet.setMargin(R.id.artwork_frame, ConstraintSet.TOP, systemBars.top)
+            binding.playerMotionLayout.updateState(R.id.start, startSet)
         }
+
+        // keep room for the artwork in the content below it (same size as the artwork when open)
+        binding.audioPlayerMain.addOnLayoutChangeListener { _, left, _, right, _, _, _, _, _ ->
+            val height = expandedArtworkHeight(right - left)
+            val space = _binding?.artworkSpace ?: return@addOnLayoutChangeListener
+            if (space.layoutParams.height != height) {
+                space.post { _binding?.artworkSpace?.updateLayoutParams { this.height = height } }
+            }
+        }
+
+        // the description panel clips its own text (cut cleanly at its rounded corners)
+        binding.descriptionScroll.clipToOutline = true
 
         initializeTransitionLayout()
         limitArtworkHeightInLandscape()
@@ -174,12 +199,10 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
 
         // fine grain keeps the large gradients smooth; the play button glows in the accent colour
         binding.grain.background = ArtworkColors.grain(requireContext())
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            val accent = ThemeHelper.getThemeColor(requireContext(), androidx.appcompat.R.attr.colorPrimary)
-            binding.playPause.outlineSpotShadowColor = accent
-            binding.playPause.outlineAmbientShadowColor = accent
-        }
         binding.playPause.elevation = PLAY_BUTTON_GLOW_DP * resources.displayMetrics.density
+        playButtonDrawable = null
+        shownAccent = null
+        updateControlColors(animate = false)
 
         // until the stream's details arrive, show the title we already know (from the feed),
         // or a quiet placeholder
@@ -373,6 +396,7 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
                     MiniPlayerShape.apply(it.audioPlayerContainer, progress.absoluteValue)
                     it.miniRim.alpha = progress.absoluteValue
                 }
+                updateArtworkForProgress(progress.absoluteValue)
                 transitionEndId = endId
                 transitionStartId = startId
             }
@@ -383,6 +407,7 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
                         MiniPlayerShape.apply(it.audioPlayerContainer, 1f)
                         it.miniRim.alpha = 1f
                     }
+                    updateArtworkForProgress(1f)
                     viewModel.isMiniPlayerVisible.value = true
                     activity.minimizePlayerContainerLayout()
                 } else if (currentId == transitionStartId) {
@@ -390,6 +415,7 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
                         MiniPlayerShape.apply(it.audioPlayerContainer, 0f)
                         it.miniRim.alpha = 0f
                     }
+                    updateArtworkForProgress(0f)
                     viewModel.isMiniPlayerVisible.value = false
                     activity.maximizePlayerContainerLayout()
                 }
@@ -498,22 +524,8 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
             val scrim = binding.ambientScrim
             val wash = ArtworkColors.playerWash(requireContext(), vibrant)
 
-            // the controls take the artwork's colour too (unless turned off in the settings)
-            if (!PreferenceHelper.getBoolean(PreferenceKeys.PLAYER_COLORS_FROM_VIDEO, true)) {
-                scrim.background = wash
-                return@launch
-            }
-            val accent = ArtworkColors.accent(requireContext(), vibrant)
-            binding.playPause.background = ArtworkColors.playButton(requireContext(), accent)
-            binding.playPause.iconTint = ColorStateList.valueOf(accent.onAccent)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                binding.playPause.outlineSpotShadowColor = accent.main
-                binding.playPause.outlineAmbientShadowColor = accent.main
-            }
-            binding.timeBar.trackActiveTintList = ColorStateList.valueOf(accent.main)
-            binding.timeBar.thumbTintList = ColorStateList.valueOf(accent.main)
-            binding.timeBar.trackInactiveTintList =
-                ColorStateList.valueOf(ColorUtils.setAlphaComponent(accent.main, 0x40))
+            lastVibrant = vibrant
+            updateControlColors()
             val current = scrim.background
             scrim.background = if (current != null) {
                 TransitionDrawable(arrayOf(current, wash)).apply {
@@ -524,6 +536,53 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
                 wash
             }
         }
+    }
+
+    /** The colours the play button and progress bar should have now. */
+    private fun targetAccent(): ArtworkColors.Accent {
+        val vibrant = lastVibrant
+        val fromVideo = PreferenceHelper.getBoolean(PreferenceKeys.PLAYER_COLORS_FROM_VIDEO, true)
+        return if (vibrant != null && fromVideo) ArtworkColors.accent(requireContext(), vibrant)
+        else ArtworkColors.themeAccent(requireContext())
+    }
+
+    /**
+     * Brings the play button and progress bar to their current colours (the video's, or the
+     * accent colour when that's turned off), fading smoothly from the colours shown before.
+     */
+    private fun updateControlColors(animate: Boolean = true) {
+        if (_binding == null) return
+        val target = targetAccent()
+        val from = shownAccent
+        accentAnimator?.cancel()
+        if (from == null || !animate || from == target) {
+            showAccent(target)
+            return
+        }
+        accentAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
+            duration = CONTROL_COLOR_FADE_MS
+            addUpdateListener { showAccent(ArtworkColors.blend(from, target, it.animatedFraction)) }
+            start()
+        }
+    }
+
+    private fun showAccent(accent: ArtworkColors.Accent) {
+        val binding = _binding ?: return
+        val playButton = playButtonDrawable ?: ArtworkColors.playButton(requireContext(), accent).also {
+            playButtonDrawable = it
+            binding.playPause.background = it.drawable
+        }
+        playButton.base.colors = intArrayOf(accent.light, accent.deep)
+        binding.playPause.iconTint = ColorStateList.valueOf(accent.onAccent)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            binding.playPause.outlineSpotShadowColor = accent.main
+            binding.playPause.outlineAmbientShadowColor = accent.main
+        }
+        binding.timeBar.trackActiveTintList = ColorStateList.valueOf(accent.main)
+        binding.timeBar.thumbTintList = ColorStateList.valueOf(accent.main)
+        binding.timeBar.trackInactiveTintList =
+            ColorStateList.valueOf(ColorUtils.setAlphaComponent(accent.main, 0x40))
+        shownAccent = accent
     }
 
     private fun initializeSeekBar() {
@@ -623,7 +682,14 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
         initializeSeekBar()
     }
 
+    override fun onResume() {
+        super.onResume()
+        // e.g. back from the settings: "Play button in the video's colours" may have changed
+        updateControlColors()
+    }
+
     override fun onDestroyView() {
+        accentAnimator?.cancel()
         super.onDestroyView()
         _binding = null
     }
@@ -770,6 +836,34 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
         if (_binding != null) limitArtworkHeightInLandscape(newConfig)
     }
 
+    /** Height of the expanded 16:9 artwork for a given width (capped in landscape). */
+    private fun expandedArtworkHeight(width: Int): Int {
+        val config = resources.configuration
+        val natural = width * 9 / 16
+        if (config.orientation != Configuration.ORIENTATION_LANDSCAPE) return natural
+        val max = (config.screenHeightDp * resources.displayMetrics.density * LANDSCAPE_ARTWORK_MAX_HEIGHT).toInt()
+        return minOf(natural, max)
+    }
+
+    /**
+     * While minimising, the artwork travels into the mini player's thumbnail spot: its buttons
+     * fade out early and its left corners take the card's rounding.
+     */
+    private fun updateArtworkForProgress(progress: Float) {
+        val binding = _binding ?: return
+        MiniPlayerShape.applyLeftCorners(binding.artworkFrame, progress)
+        val overlayAlpha = (1f - progress * ARTWORK_OVERLAY_FADE_SPEED).coerceIn(0f, 1f)
+        val overlays = listOf(binding.minimizePlayer, binding.showMore, binding.artworkScrim)
+        overlays.forEach {
+            it.alpha = overlayAlpha
+            it.isInvisible = overlayAlpha == 0f
+        }
+        if (!isSwitchingMode) {
+            binding.openVideo.alpha = overlayAlpha
+            binding.openVideo.isInvisible = overlayAlpha == 0f
+        }
+    }
+
     private fun toggleDescription() {
         setDescriptionExpanded(!binding.descriptionScroll.isVisible)
     }
@@ -868,9 +962,11 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
 
     companion object {
         private const val COMMENTS_SHEET_HEIGHT = 0.75f
+        private const val ARTWORK_OVERLAY_FADE_SPEED = 3f
         private const val TIME_PLACEHOLDER = "0:00"
         private const val ARTWORK_COLOR_FADE_MS = 500
         private const val PLAY_BUTTON_GLOW_DP = 12
+        private const val CONTROL_COLOR_FADE_MS = 450L
         private const val LANDSCAPE_ARTWORK_MAX_HEIGHT = 0.3f
         private const val DESCRIPTION_ANIMATION_MS = 220L
         private const val RISE_DISTANCE_DP = 16

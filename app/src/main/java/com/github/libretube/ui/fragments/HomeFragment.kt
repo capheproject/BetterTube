@@ -1,5 +1,6 @@
 package com.github.libretube.ui.fragments
 
+import com.github.libretube.ui.activities.MainActivity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -85,23 +86,23 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
 
         binding.featuredTV.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_subscriptionsFragment)
+            (requireActivity() as MainActivity).showScreen(R.id.subscriptionsFragment)
         }
 
         binding.watchingTV.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_watchHistoryFragment)
+            findNavController().navigate(R.id.watchHistoryFragment)
         }
 
         binding.trendingTV.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_trendsFragment)
+            (requireActivity() as MainActivity).showScreen(R.id.trendsFragment)
         }
 
         binding.playlistsTV.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_libraryFragment)
+            (requireActivity() as MainActivity).showScreen(R.id.libraryFragment)
         }
 
         binding.bookmarksTV.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_libraryFragment)
+            (requireActivity() as MainActivity).showScreen(R.id.libraryFragment)
         }
 
         binding.refresh.setOnRefreshListener {

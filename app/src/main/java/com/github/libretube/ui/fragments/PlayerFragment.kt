@@ -520,7 +520,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player), CustomPlayerCallback 
             override fun handleOnBackPressed() {
                 if (commonPlayerViewModel.isFullscreen.value == true) unsetFullscreen()
                 else {
-                    binding.playerMotionLayout.setTransitionDuration(250)
+                    binding.playerMotionLayout.setTransitionDuration(200)
                     // the screen around the player follows the transition's progress (moving it
                     // up front made the player jump before it started to shrink)
                     binding.playerMotionLayout.transitionToEnd()

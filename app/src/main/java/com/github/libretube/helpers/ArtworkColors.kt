@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.scale
+import com.google.android.material.color.MaterialColors
 import kotlin.random.Random
 
 /**
@@ -104,8 +105,32 @@ object ArtworkColors {
         }
     }
 
+    /** Linear blend between two accents ([fraction] 0 = [from], 1 = [to]), for colour fades. */
+    fun blend(from: Accent, to: Accent, fraction: Float) = Accent(
+        light = ColorUtils.blendARGB(from.light, to.light, fraction),
+        deep = ColorUtils.blendARGB(from.deep, to.deep, fraction),
+        onAccent = ColorUtils.blendARGB(from.onAccent, to.onAccent, fraction),
+        main = ColorUtils.blendARGB(from.main, to.main, fraction)
+    )
+
+    /** The theme's own accent in the same shape (used when the video's colours are turned off). */
+    fun themeAccent(context: Context): Accent {
+        val primary = MaterialColors.getColor(context, androidx.appcompat.R.attr.colorPrimary, Color.BLUE)
+        val tertiary = MaterialColors.getColor(context, com.google.android.material.R.attr.colorTertiary, primary)
+        val onPrimary = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnPrimary, Color.WHITE)
+        return Accent(
+            light = primary,
+            deep = ColorUtils.blendARGB(primary, tertiary, 0.45f),
+            onAccent = onPrimary,
+            main = primary
+        )
+    }
+
+    /** The play button's drawable and its colour layer, whose colours can be animated. */
+    class PlayButton(val drawable: Drawable, val base: GradientDrawable)
+
     /** The play button: a lit oval from [Accent.light] to [Accent.deep] with a soft top light. */
-    fun playButton(context: Context, accent: Accent): Drawable {
+    fun playButton(context: Context, accent: Accent): PlayButton {
         val base = GradientDrawable(
             GradientDrawable.Orientation.TL_BR, intArrayOf(accent.light, accent.deep)
         ).apply { shape = GradientDrawable.OVAL }
@@ -119,9 +144,10 @@ object ArtworkColors {
             setStroke((context.resources.displayMetrics.density).toInt().coerceAtLeast(1), Color.argb(0x2E, 255, 255, 255))
         }
         val layers = android.graphics.drawable.LayerDrawable(arrayOf(base, light, rim))
-        return android.graphics.drawable.RippleDrawable(
+        val ripple = android.graphics.drawable.RippleDrawable(
             android.content.res.ColorStateList.valueOf(Color.argb(0x33, 255, 255, 255)), layers, null
         )
+        return PlayButton(ripple, base)
     }
 
     /** A gentle tint of [color] for surfaces like the mini player card and the video page. */

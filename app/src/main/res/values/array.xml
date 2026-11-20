@@ -43,6 +43,13 @@
         <item>@string/color_purple</item>
         <item>@string/theme_monochrome</item>
         <item>@string/color_violet</item>
+        <item>@string/vivid_electric</item>
+        <item>@string/vivid_neon</item>
+        <item>@string/vivid_hotpink</item>
+        <item>@string/vivid_sunset</item>
+        <item>@string/vivid_lime</item>
+        <item>@string/vivid_aqua</item>
+        <item>@string/vivid_crimson</item>
     </string-array>
 
     <string-array name="accentsValue">
@@ -54,6 +61,13 @@
         <item>purple</item>
         <item>monochrome</item>
         <item>violet</item>
+        <item>vivid_electric</item>
+        <item>vivid_neon</item>
+        <item>vivid_hotpink</item>
+        <item>vivid_sunset</item>
+        <item>vivid_lime</item>
+        <item>vivid_aqua</item>
+        <item>vivid_crimson</item>
     </string-array>
 
     <string-array name="defres">

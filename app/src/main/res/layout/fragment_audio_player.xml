@@ -58,138 +58,18 @@
         android:id="@+id/audio_player_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipChildren="false"
-        android:clipToPadding="false"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="@id/audio_player_container"
         app:layout_constraintEnd_toEndOf="@id/audio_player_container"
         app:layout_constraintStart_toStartOf="@id/audio_player_container"
         app:layout_constraintTop_toTopOf="@id/audio_player_container">
 
-        <!-- Artwork in the same 16:9 slot as the video, with the top buttons floating on it,
-             so switching between audio and video keeps the picture in place -->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/artwork_frame"
+        <!-- Room for the artwork, which floats above (see artwork_frame below): it's a direct
+             part of the player's motion so it can shrink into the mini player's thumbnail -->
+        <Space
+            android:id="@+id/artwork_space"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/thumbnail"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:background="@android:color/black"
-                android:contentDescription="@null"
-                android:scaleType="centerCrop"
-                app:layout_constraintDimensionRatio="16:9"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:src="@tools:sample/backgrounds/scenic" />
-
-            <!-- keeps the floating buttons visible on bright artwork -->
-            <View
-                android:layout_width="0dp"
-                android:layout_height="88dp"
-                android:background="@drawable/audio_artwork_top_scrim"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/thumbnail" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/minimize_player"
-                style="@style/AudioPlayerOverlayButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="4dp"
-                android:contentDescription="@string/minimize"
-                app:icon="@drawable/ic_arrow_down"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/thumbnail" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/show_more"
-                style="@style/AudioPlayerOverlayButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="8dp"
-                android:contentDescription="@string/more_options"
-                app:icon="@drawable/ic_more_vert"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/thumbnail" />
-
-            <!-- Switch back to video: on the picture it turns on -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/open_video"
-                style="@style/AudioPlayerVideoPill"
-                android:layout_marginEnd="12dp"
-                android:layout_marginBottom="12dp"
-                android:text="@string/video"
-                app:icon="@drawable/ic_video"
-                app:layout_constraintBottom_toBottomOf="@id/thumbnail"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-            <LinearLayout
-                android:id="@+id/volumeControls"
-                android:layout_width="42dp"
-                android:layout_height="wrap_content"
-                android:background="@drawable/controls_layout_bg"
-                app:layout_constraintBottom_toBottomOf="@id/thumbnail"
-                app:layout_constraintEnd_toEndOf="@id/thumbnail"
-                app:layout_constraintStart_toStartOf="@id/thumbnail"
-                app:layout_constraintTop_toTopOf="@id/thumbnail"
-                android:orientation="vertical"
-                android:visibility="gone"
-                tools:ignore="RtlHardcoded">
-
-                <TextView
-                    android:id="@+id/volume_textView"
-                    style="@style/SwipeControlString"
-                    android:layout_gravity="center"
-                    app:autoSizeTextType="uniform" />
-
-                <ProgressBar
-                    android:id="@+id/volume_progressBar"
-                    style="@android:style/Widget.ProgressBar.Horizontal"
-                    android:layout_width="7dp"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center"
-                    android:layout_marginVertical="4dp"
-                    android:progressDrawable="@drawable/vertical_progressbar" />
-
-                <ImageView
-                    android:id="@+id/volume_imageView"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center"
-                    android:contentDescription="@string/volume"
-                    android:src="@drawable/ic_volume_up" />
-
-            </LinearLayout>
-
-            <com.google.android.material.progressindicator.CircularProgressIndicator
-                android:id="@+id/progress"
-                style="@style/Spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:indeterminate="true"
-                app:layout_constraintBottom_toBottomOf="@id/thumbnail"
-                app:layout_constraintEnd_toEndOf="@id/thumbnail"
-                app:layout_constraintStart_toStartOf="@id/thumbnail"
-                app:layout_constraintTop_toTopOf="@id/thumbnail" />
-
-            <include
-                android:id="@+id/playback_error"
-                layout="@layout/view_playback_error"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="@id/thumbnail"
-                app:layout_constraintEnd_toEndOf="@id/thumbnail"
-                app:layout_constraintStart_toStartOf="@id/thumbnail"
-                app:layout_constraintTop_toTopOf="@id/thumbnail" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_height="0dp" />
 
         <!-- Title: tap to show the description, like on the video page -->
         <LinearLayout
@@ -244,13 +124,12 @@
             tools:visibility="visible" />
 
         <!-- Controls centred between the title and Comments; the description opens on top.
-             Nothing clips here, so the play button's glow isn't cut off -->
+             Only the controls column and row skip clipping (for the play button's glow): the
+             description panel clips itself -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:clipChildren="false"
-            android:clipToPadding="false">
+            android:layout_weight="1">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -373,6 +252,7 @@
                 android:id="@+id/description_scroll"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:outlineProvider="background"
                 android:layout_marginHorizontal="12dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="12dp"
@@ -397,6 +277,135 @@
 
     </LinearLayout>
 
+    <!-- Artwork in the same 16:9 slot as the video, with the top buttons floating on it,
+         so switching between audio and video keeps the picture in place -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/artwork_frame"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@id/audio_player_container"
+        app:layout_constraintStart_toStartOf="@id/audio_player_container"
+        app:layout_constraintTop_toTopOf="@id/audio_player_container">
+
+        <ImageView
+            android:id="@+id/thumbnail"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@android:color/black"
+            android:contentDescription="@null"
+            android:scaleType="centerCrop"
+            app:layout_constraintDimensionRatio="16:9"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@tools:sample/backgrounds/scenic" />
+
+        <!-- keeps the floating buttons visible on bright artwork -->
+        <View
+            android:id="@+id/artwork_scrim"
+            android:layout_width="0dp"
+            android:layout_height="88dp"
+            android:background="@drawable/audio_artwork_top_scrim"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/thumbnail" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/minimize_player"
+            style="@style/AudioPlayerOverlayButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:contentDescription="@string/minimize"
+            app:icon="@drawable/ic_arrow_down"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/thumbnail" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/show_more"
+            style="@style/AudioPlayerOverlayButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:contentDescription="@string/more_options"
+            app:icon="@drawable/ic_more_vert"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/thumbnail" />
+
+        <!-- Switch back to video: on the picture it turns on -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/open_video"
+            style="@style/AudioPlayerVideoPill"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="12dp"
+            android:text="@string/video"
+            app:icon="@drawable/ic_video"
+            app:layout_constraintBottom_toBottomOf="@id/thumbnail"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/volumeControls"
+            android:layout_width="42dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/controls_layout_bg"
+            app:layout_constraintBottom_toBottomOf="@id/thumbnail"
+            app:layout_constraintEnd_toEndOf="@id/thumbnail"
+            app:layout_constraintStart_toStartOf="@id/thumbnail"
+            app:layout_constraintTop_toTopOf="@id/thumbnail"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:ignore="RtlHardcoded">
+
+            <TextView
+                android:id="@+id/volume_textView"
+                style="@style/SwipeControlString"
+                android:layout_gravity="center"
+                app:autoSizeTextType="uniform" />
+
+            <ProgressBar
+                android:id="@+id/volume_progressBar"
+                style="@android:style/Widget.ProgressBar.Horizontal"
+                android:layout_width="7dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:layout_marginVertical="4dp"
+                android:progressDrawable="@drawable/vertical_progressbar" />
+
+            <ImageView
+                android:id="@+id/volume_imageView"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/volume"
+                android:src="@drawable/ic_volume_up" />
+
+        </LinearLayout>
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/progress"
+            style="@style/Spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            app:layout_constraintBottom_toBottomOf="@id/thumbnail"
+            app:layout_constraintEnd_toEndOf="@id/thumbnail"
+            app:layout_constraintStart_toStartOf="@id/thumbnail"
+            app:layout_constraintTop_toTopOf="@id/thumbnail" />
+
+        <include
+            android:id="@+id/playback_error"
+            layout="@layout/view_playback_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/thumbnail"
+            app:layout_constraintEnd_toEndOf="@id/thumbnail"
+            app:layout_constraintStart_toStartOf="@id/thumbnail"
+            app:layout_constraintTop_toTopOf="@id/thumbnail" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <LinearLayout
         android:id="@+id/miniPlayerControls"
         android:layout_width="match_parent"
@@ -408,13 +417,14 @@
         app:layout_constraintStart_toStartOf="@id/audio_player_container"
         app:layout_constraintTop_toTopOf="@id/audio_player_container">
 
-        <!-- edge to edge on the left; its left corners follow the card's (see MiniPlayerShape) -->
+        <!-- the artwork shrinks into this spot when minimised (see audio_player_scene) -->
         <ImageView
             android:id="@+id/miniPlayerThumbnail"
             android:layout_width="@dimen/mini_player_thumbnail_width"
             android:layout_height="match_parent"
             android:contentDescription="@null"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/miniPlayerTitle"

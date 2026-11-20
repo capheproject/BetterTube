@@ -43,6 +43,12 @@ Want the very latest changes? Every push is also built by GitHub Actions: open t
 
 ## Changelog
 
+### v0.3.0
+- Swipe between tabs: the next tab slides in under your finger, already loaded, and snaps into place
+- Seven vivid accent colours (Electric blue, Neon violet, Hot pink, Sunset orange, Lime, Aqua, Crimson), readable in light and dark mode
+- Audio player: swiping down shrinks the artwork into the mini player; the play button and progress bar fade between videos' colours, and the colour setting applies immediately; quicker open and close (video player 20% faster)
+- Fixed: long descriptions spilling over the artwork in the audio player; changing the app icon in release builds
+
 ### v0.2.2
 - Swipe sideways on a page to switch to the neighbouring tab
 - Playlist rows (Home, Library): readable titles on a soft gradient, no carousel parallax
