@@ -56,10 +56,10 @@ class IconsSheetAdapter : RecyclerView.Adapter<IconsSheetViewHolder>() {
         }
 
         val availableIcons = listOf(
+            AppIcon.Gradient,
             AppIcon.Default,
             AppIcon.DefaultLight,
             AppIcon.Legacy,
-            AppIcon.Gradient,
             AppIcon.Fire,
             AppIcon.Torch,
             AppIcon.Shaped,

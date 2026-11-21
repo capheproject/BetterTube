@@ -24,7 +24,7 @@ object ThemeHelper {
     fun updateTheme(activity: AppCompatActivity) {
         var accentColor = PreferenceHelper.getString(PreferenceKeys.ACCENT_COLOR, "")
         if (accentColor.isEmpty()) {
-            accentColor = if (DynamicColors.isDynamicColorAvailable()) "my" else "blue"
+            accentColor = DEFAULT_ACCENT
             PreferenceHelper.putString(PreferenceKeys.ACCENT_COLOR, accentColor)
         }
 
@@ -84,6 +84,9 @@ object ThemeHelper {
      * (e.g. ".Default"), not to the app id, which differs per build type (".debug",
      * ".bettertube"). Deriving them from the app id broke changing the icon in release builds.
      */
+    /** BetterTube's default accent colour (vivid lime) */
+    const val DEFAULT_ACCENT = "vivid_lime"
+
     const val ICON_ALIAS_NAMESPACE = "com.github.libretube"
 
     fun iconAliasClass(activityAlias: String) = "$ICON_ALIAS_NAMESPACE.$activityAlias"

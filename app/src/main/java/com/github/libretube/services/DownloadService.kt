@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.net.ConnectivityManager
 import android.net.Network
+import android.net.NetworkCapabilities
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
@@ -110,26 +111,39 @@ class DownloadService : LifecycleService() {
         IS_DOWNLOAD_RUNNING = true
         notifyForeground()
         sendBroadcast(Intent(ACTION_SERVICE_STARTED))
+        registerNetworkChangedCallback()
     }
 
-    /**
-     * Listen for network changes and pause the download if the network connection becomes metered
-     */
-    fun registerNetworkChangedCallback() {
-        val connectivityManager = getSystemService<ConnectivityManager>()
-        connectivityManager?.registerDefaultNetworkCallback(object :
-            ConnectivityManager.NetworkCallback() {
-            override fun onAvailable(network: Network) {
-                super.onAvailable(network)
+    /** Whether the last known default network was unmetered (null until the first report). */
+    private var wasUnmetered: Boolean? = null
 
-                // pause all downloads when switching to an unmetered connection
-                if (NetworkHelper.isNetworkMetered(this@DownloadService)) {
+    private val networkCallback = object : ConnectivityManager.NetworkCallback() {
+        override fun onCapabilitiesChanged(network: Network, capabilities: NetworkCapabilities) {
+            val unmetered =
+                capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED)
+            val switchedToMetered = wasUnmetered == true && !unmetered
+            wasUnmetered = unmetered
+            // pause running downloads only when moving from e.g. Wi-Fi to mobile data, not
+            // because a download started while already on mobile data (the user chose that)
+            if (switchedToMetered) {
+                lifecycleScope.launch(Dispatchers.Main) {
                     for (download in downloadQueue.keyIterator()) {
-                        pause(download)
+                        if (downloadQueue[download]) pause(download)
                     }
                 }
             }
-        })
+        }
+    }
+
+    /**
+     * Listen for network changes and pause downloads if the connection switches to a metered one.
+     * Registered once per service (it used to be registered again for every download, and each
+     * registration reported the current network right away, pausing everything on mobile data).
+     */
+    private fun registerNetworkChangedCallback() {
+        runCatching {
+            getSystemService<ConnectivityManager>()?.registerDefaultNetworkCallback(networkCallback)
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -141,8 +155,6 @@ class DownloadService : LifecycleService() {
             ACTION_DOWNLOAD_STOP -> stop(downloadId!!)
             ACTION_RESUME_ALL -> resumeAll()
         }
-
-        registerNetworkChangedCallback()
 
         val downloadData = intent?.parcelableExtra<DownloadData>(IntentData.downloadData)
             ?: return START_NOT_STICKY
@@ -263,18 +275,27 @@ class DownloadService : LifecycleService() {
      */
     @SuppressLint("UnsafeOptInUsageError")
     private suspend fun selectFormatAndDownloadFile(item: DownloadItem) {
-        val streams = loadStreamsInfo(item.videoId) ?: return
-        if (item.type == FileType.SUBTITLE) {
+        val provider = createDownloadProvider(item) ?: return
+        downloadFile(item, provider) {
+            // stream links expire after a few hours (e.g. a download paused overnight): fetch
+            // fresh ones and carry on from where the file ends
+            cachedStreamsInfo.remove(item.videoId)
+            createDownloadProvider(item)
+        }
+    }
+
+    private suspend fun createDownloadProvider(item: DownloadItem): DownloadProvider? {
+        val streams = loadStreamsInfo(item.videoId) ?: return null
+        return if (item.type == FileType.SUBTITLE) {
             // subtitles are always plain files and don't use SABR
-            val subtitle = streams.subtitles.firstOrNull { it.code == item.language } ?: return
-            downloadFile(item, RawByteStreamDownloadProvider(subtitle.url!!.toHttpUrl()))
+            val subtitle = streams.subtitles.firstOrNull { it.code == item.language } ?: return null
+            RawByteStreamDownloadProvider(subtitle.url!!.toHttpUrl())
         } else {
-            val selectedStream = selectMatchingStream(streams, item) ?: return
+            val selectedStream = selectMatchingStream(streams, item) ?: return null
             if (selectedStream.url?.startsWith("http") == true) {
-                downloadFile(item, RawByteStreamDownloadProvider(selectedStream.url!!.toHttpUrl()))
+                RawByteStreamDownloadProvider(selectedStream.url!!.toHttpUrl())
             } else {
-                val sabrDownloader = SabrDownloadProvider(item, streams, selectedStream)
-                downloadFile(item, sabrDownloader)
+                SabrDownloadProvider(item, streams, selectedStream)
             }
         }
     }
@@ -286,8 +307,11 @@ class DownloadService : LifecycleService() {
      */
     private suspend fun downloadFile(
         item: DownloadItem,
-        downloadProvider: DownloadProvider,
+        initialProvider: DownloadProvider,
+        refreshProvider: (suspend () -> DownloadProvider?)? = null,
     ) {
+        var downloadProvider = initialProvider
+        var refreshed = false
         downloadQueue[item.id] = true
         val notificationBuilder = getNotificationBuilder(item)
         setResumeNotification(notificationBuilder, item)
@@ -306,9 +330,23 @@ class DownloadService : LifecycleService() {
                     }
                     DownloadProgressResult.Failed -> {
                         if (numberOfTries < MAX_SEGMENT_RETRIES) {
-                            // try to download segment again after a short delay
-                            delay(200)
+                            // try again with a growing pause (0.5s, 1s, 2s … up to 8s), so a
+                            // short drop in signal doesn't stop the download
+                            delay(
+                                (RETRY_BASE_DELAY_MS shl numberOfTries)
+                                    .coerceAtMost(RETRY_MAX_DELAY_MS)
+                            )
                             numberOfTries++
+                        } else if (!refreshed && refreshProvider != null) {
+                            // still failing: the stream link has probably expired
+                            refreshed = true
+                            val fresh = withContext(Dispatchers.IO) {
+                                runCatching { refreshProvider() }.getOrNull()
+                            }
+                            if (fresh != null) {
+                                downloadProvider = fresh
+                                numberOfTries = 0
+                            }
                         } else {
                             setPauseNotification(notificationBuilder, item, false)
                             pause(item.id)
@@ -651,6 +689,9 @@ class DownloadService : LifecycleService() {
     }
 
     override fun onDestroy() {
+        runCatching {
+            getSystemService<ConnectivityManager>()?.unregisterNetworkCallback(networkCallback)
+        }
         downloadQueue.clear()
         IS_DOWNLOAD_RUNNING = false
         sendBroadcast(Intent(ACTION_SERVICE_STOPPED))
@@ -676,7 +717,9 @@ class DownloadService : LifecycleService() {
         const val ACTION_RESUME_ALL =
             "com.github.libretube.services.DownloadService.ACTION_RESUME_ALL"
 
-        private const val MAX_SEGMENT_RETRIES = 3
+        private const val MAX_SEGMENT_RETRIES = 7
+        private const val RETRY_BASE_DELAY_MS = 500L
+        private const val RETRY_MAX_DELAY_MS = 8_000L
         var IS_DOWNLOAD_RUNNING = false
     }
 }

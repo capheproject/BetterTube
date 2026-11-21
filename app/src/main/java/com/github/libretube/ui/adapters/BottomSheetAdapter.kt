@@ -34,8 +34,13 @@ class BottomSheetAdapter(
             setDrawables(start = item.drawable)
 
             setOnClickListener {
-                item.onClick.invoke()
-                listener.invoke(position)
+                // the row's position now, not when it was bound: options added to the top of the
+                // list later (e.g. "Play in background") move rows without rebinding them, and the
+                // old position made "Watch later" start playback instead
+                val current = holder.bindingAdapterPosition
+                if (current == androidx.recyclerview.widget.RecyclerView.NO_POSITION) return@setOnClickListener
+                getItem(current).onClick.invoke()
+                listener.invoke(current)
             }
         }
     }

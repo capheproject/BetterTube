@@ -404,7 +404,8 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
                 activity.setPlayerContainerProgress(progress.absoluteValue)
                 _binding?.let {
                     MiniPlayerShape.apply(it.audioPlayerContainer, progress.absoluteValue)
-                    it.miniRim.alpha = progress.absoluteValue
+                    // the rim belongs to the card, which only appears at the end of the transition
+                    it.miniRim.alpha = ((progress.absoluteValue - 0.9f) / 0.1f).coerceIn(0f, 1f)
                 }
                 updateArtworkForProgress(progress.absoluteValue)
                 transitionEndId = endId

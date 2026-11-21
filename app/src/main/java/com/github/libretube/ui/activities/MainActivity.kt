@@ -170,12 +170,16 @@ class MainActivity : AbstractPlayerHostActivity() {
                     }
                     // the dock floats: keep it clear of the system navigation bar
                     binding.bottomNav.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                        // sits a little higher, in easy reach of the thumb: 5% of the screen
+                        // height on top of the base margin
                         bottomMargin = systemBarInsets.bottom +
-                            resources.getDimensionPixelSize(R.dimen.dock_margin_bottom)
+                            resources.getDimensionPixelSize(R.dimen.dock_margin_bottom) +
+                            (binding.root.height * DOCK_LIFT_FRACTION).toInt()
                     }
                     binding.bottomFade.updateLayoutParams<ViewGroup.LayoutParams> {
                         height = systemBarInsets.bottom +
-                            resources.getDimensionPixelSize(R.dimen.bottom_fade_height)
+                            resources.getDimensionPixelSize(R.dimen.bottom_fade_height) +
+                            (binding.root.height * DOCK_LIFT_FRACTION).toInt()
                     }
                     binding.root.viewTreeObserver.removeOnGlobalLayoutListener(this)
                 }
@@ -874,6 +878,9 @@ class MainActivity : AbstractPlayerHostActivity() {
 
     companion object {
         private const val TAB_SWIPE_MIN_DISTANCE_DP = 90
+
+        /** How far the dock is lifted above its base margin, as a share of the screen height */
+        private const val DOCK_LIFT_FRACTION = 0.05f
         private const val TAB_SWIPE_MIN_VELOCITY_DP = 450
         const val MINIMUM_SCREEN_SIZE_TABLET = 600
     }

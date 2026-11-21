@@ -64,6 +64,49 @@ object WatchLater {
         }
     }
 
+    /**
+     * For the share menu ("Watch later" when sharing a link to BetterTube): adds the video and
+     * confirms with a toast, since the share screen closes right away. [onDone] runs at the end,
+     * also when the user backs out of choosing a playlist.
+     */
+    fun addFromShare(
+        activity: Activity,
+        scope: LifecycleCoroutineScope,
+        video: StreamItem,
+        onDone: () -> Unit
+    ) {
+        val id = playlistId
+        if (id == null) {
+            choosePlaylist(activity, scope, onCancel = onDone) {
+                addFromShare(activity, scope, video, onDone)
+            }
+            return
+        }
+        val videoId = video.url?.toID() ?: return onDone()
+        scope.launch {
+            val playlist = withContext(Dispatchers.IO) {
+                runCatching { PlaylistsHelper.getPlaylist(id, PlaylistType.PRIVATE) }.getOrNull()
+            }
+            if (playlist == null) {
+                playlistId = null
+                choosePlaylist(activity, scope, onCancel = onDone) {
+                    addFromShare(activity, scope, video, onDone)
+                }
+                return@launch
+            }
+            val message = when {
+                playlist.relatedStreams.any { it.url?.toID() == videoId } ->
+                    R.string.watch_later_already
+                withContext(Dispatchers.IO) {
+                    runCatching { PlaylistsHelper.addToPlaylist(id, video) }.isSuccess
+                } -> R.string.watch_later_added
+                else -> R.string.unknown_error
+            }
+            activity.toastFromMainDispatcher(message)
+            onDone()
+        }
+    }
+
     private fun remove(
         activity: Activity,
         scope: LifecycleCoroutineScope,
@@ -84,7 +127,12 @@ object WatchLater {
      * Lets the user pick the Watch later playlist (playlists named like "watch later" first)
      * or create one. Also used by the setting.
      */
-    fun choosePlaylist(activity: Activity, scope: LifecycleCoroutineScope, onChosen: () -> Unit = {}) {
+    fun choosePlaylist(
+        activity: Activity,
+        scope: LifecycleCoroutineScope,
+        onCancel: () -> Unit = {},
+        onChosen: () -> Unit = {}
+    ) {
         scope.launch {
             val playlists = withContext(Dispatchers.IO) {
                 runCatching { PlaylistsHelper.getPlaylists() }.getOrDefault(emptyList())
@@ -111,11 +159,13 @@ object WatchLater {
                                 onChosen()
                             } else {
                                 activity.toastFromMainDispatcher(R.string.unknown_error)
+                                onCancel()
                             }
                         }
                     }
                 }
-                .setNegativeButton(R.string.cancel, null)
+                .setNegativeButton(R.string.cancel) { _, _ -> onCancel() }
+                .setOnCancelListener { onCancel() }
                 .show()
         }
     }

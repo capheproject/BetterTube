@@ -116,6 +116,22 @@
         </activity>
 
         <activity
+            android:name=".ui.activities.WatchLaterActivity"
+            android:enabled="true"
+            android:exported="true"
+            android:label="@string/watch_later"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.Material3.DayNight.Dialog">
+
+            <intent-filter android:label="@string/watch_later">
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+
+        </activity>
+
+        <activity
             android:name=".ui.activities.DownloadActivity"
             android:enabled="true"
             android:exported="true"
@@ -150,7 +166,7 @@
         <activity-alias
             android:name=".Default"
             android:configChanges="keyboard|keyboardHidden|screenSize|smallestScreenSize|screenLayout|orientation|uiMode"
-            android:enabled="true"
+            android:enabled="false"
             android:exported="true"
             android:icon="@mipmap/ic_launcher"
             android:roundIcon="@mipmap/ic_launcher_round"
@@ -169,7 +185,7 @@
         <activity-alias
             android:name=".IconGradient"
             android:configChanges="keyboard|keyboardHidden|screenSize|smallestScreenSize|screenLayout|orientation|uiMode"
-            android:enabled="false"
+            android:enabled="true"
             android:exported="true"
             android:icon="@mipmap/ic_gradient"
             android:roundIcon="@mipmap/ic_gradient_round"

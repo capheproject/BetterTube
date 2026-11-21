@@ -18,6 +18,17 @@
                 android:alpha="0"
                 motion:framePosition="90"
                 motion:motionTarget="@+id/miniPlayerControls" />
+            <!-- the page's backdrop fades out with the audio screen and only comes back as the
+                 mini player card at the very end, like the video player's page: otherwise a big
+                 translucent panel shrinks along behind the artwork -->
+            <KeyAttribute
+                android:alpha="0"
+                motion:framePosition="35"
+                motion:motionTarget="@+id/audio_player_container" />
+            <KeyAttribute
+                android:alpha="0"
+                motion:framePosition="90"
+                motion:motionTarget="@+id/audio_player_container" />
         </KeyFrameSet>
         <!-- tapping the mini player expands it (in code, at the video player's speed) -->
         <!-- swipe down on the artwork to minimise (see SingleViewTouchableMotionLayout) -->
@@ -78,6 +89,7 @@
             android:id="@+id/audio_player_main"
             android:layout_width="0dp"
             android:layout_height="1dp"
+            android:alpha="0"
             motion:layout_constraintBottom_toBottomOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
