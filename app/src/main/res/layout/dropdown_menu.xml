@@ -19,6 +19,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:inputType="none"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
             tools:text="1080p MPEG_4" />
     </com.google.android.material.textfield.TextInputLayout>
 

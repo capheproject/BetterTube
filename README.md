@@ -43,8 +43,12 @@ Want the very latest changes? Every push is also built by GitHub Actions: open t
 
 ## Changelog
 
+### v0.3.3
+- Fixed: downloads failing with a "closed" message in v0.3.2 (back to the previous request pattern; unexpected errors are retried, with fresh links, before giving up)
+- Download dialog: smaller, regular-weight text in the format lists and title
+
 ### v0.3.2
-- Downloads: larger requests, patient retries, fresh links for long-paused downloads; starting a download on mobile data no longer pauses the others
+- Downloads: patient retries, fresh links for long-paused downloads; starting a download on mobile data no longer pauses the others
 - Share a YouTube link to BetterTube → **Watch later** saves it in one tap
 - Fixed: Watch later in a video's long-press menu could start the video
 - Lime accent and Glib gradient icon are the new defaults

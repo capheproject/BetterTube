@@ -21,6 +21,13 @@ import kotlin.math.min
  * Download from RAW HTTP stream.
  */
 class RawByteStreamDownloadProvider(val url: HttpUrl) : DownloadProvider {
+    private val httpClient: OkHttpClient by lazy {
+        OkHttpClient.Builder()
+            .connectTimeout(Duration.ofMillis(DownloadHelper.DEFAULT_TIMEOUT.toLong()))
+            .readTimeout(Duration.ofMillis(DownloadHelper.DEFAULT_TIMEOUT.toLong()))
+            .retryOnConnectionFailure(true)
+            .build()
+    }
 
     override suspend fun downloadNextChunk(
         item: DownloadItem,
@@ -34,31 +41,19 @@ class RawByteStreamDownloadProvider(val url: HttpUrl) : DownloadProvider {
 
         var totalRead = 0L
         var lastRead = 0L
-        try {
-            withContext(Dispatchers.IO) {
-                // read in large blocks and write whole buffer segments to the file as they fill
-                while (sourceByte
-                        .read(sink.buffer, DownloadHelper.DOWNLOAD_CHUNK_SIZE)
-                        .also { lastRead = it } != -1L
-                ) {
-                    sink.emitCompleteSegments()
-                    totalRead += lastRead
-                }
-            }
-        } catch (e: IOException) {
-            // the connection dropped mid-request: keep what arrived, the next request resumes
-            // from the end of the file
-            Log.e(TAG(), "Download interrupted: ${e.message}")
-        } finally {
-            // everything read so far is on disk, so the file size is the resume offset
-            withContext(Dispatchers.IO) {
-                sink.emit()
-                sourceByte.close()
-                source.close()
-            }
+        // Check if downloading is still active and read next bytes.
+        while (sourceByte
+                .read(sink.buffer, DownloadHelper.DOWNLOAD_CHUNK_SIZE)
+                .also { lastRead = it } != -1L
+        ) {
+            sink.emit()
+            totalRead += lastRead
         }
 
-        if (totalRead == 0L) return DownloadProgressResult.Failed
+        withContext(Dispatchers.IO) {
+            sourceByte.close()
+            source.close()
+        }
 
         return if (startByteOffset + totalRead < item.downloadSize) {
             DownloadProgressResult.Progressed(totalRead)
@@ -108,17 +103,7 @@ class RawByteStreamDownloadProvider(val url: HttpUrl) : DownloadProvider {
     }
 
     companion object {
-        // larger requests mean fewer round trips (each one paused the download briefly); the
-        // maximum working tested chunk size is 3MB
-        private const val BYTES_PER_REQUEST = 2 * 1024 * 1024L
-
-        // shared, so connections are reused across requests and files
-        private val httpClient: OkHttpClient by lazy {
-            OkHttpClient.Builder()
-                .connectTimeout(Duration.ofMillis(DownloadHelper.DEFAULT_TIMEOUT.toLong()))
-                .readTimeout(Duration.ofMillis(DownloadHelper.DEFAULT_TIMEOUT.toLong()))
-                .retryOnConnectionFailure(true)
-                .build()
-        }
+        // maximum working tested chunk size is 3MB, the 512MB value here is from NewPipe
+        private const val BYTES_PER_REQUEST = 512 * 1024L
     }
 }

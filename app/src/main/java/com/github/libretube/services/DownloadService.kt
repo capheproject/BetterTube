@@ -369,9 +369,29 @@ class DownloadService : LifecycleService() {
             } catch (_: CancellationException) {
                 break
             } catch (e: Exception) {
-                toastFromMainThread("${getString(R.string.download)}: ${e.message}")
                 Log.e(this@DownloadService::class.java.name, e.stackTraceToString())
-                _downloadFlow.emit(item.id to DownloadStatus.Error(e.message.toString(), e))
+                // an unexpected error (e.g. a dropped connection) is retried like a failed chunk,
+                // then with fresh stream links, before giving up
+                if (numberOfTries < MAX_SEGMENT_RETRIES) {
+                    delay((RETRY_BASE_DELAY_MS shl numberOfTries).coerceAtMost(RETRY_MAX_DELAY_MS))
+                    numberOfTries++
+                    continue
+                }
+                if (!refreshed && refreshProvider != null) {
+                    refreshed = true
+                    val fresh = withContext(Dispatchers.IO) {
+                        runCatching { refreshProvider() }.getOrNull()
+                    }
+                    if (fresh != null) {
+                        downloadProvider = fresh
+                        numberOfTries = 0
+                        continue
+                    }
+                }
+                // name the error type too: a bare message such as "closed" says too little
+                val reason = listOfNotNull(e.javaClass.simpleName, e.message).joinToString(": ")
+                toastFromMainThread("${getString(R.string.download)}: $reason")
+                _downloadFlow.emit(item.id to DownloadStatus.Error(reason, e))
                 break
             }
         }
