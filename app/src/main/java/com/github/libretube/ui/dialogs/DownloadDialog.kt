@@ -161,6 +161,10 @@ class DownloadDialog : DialogFragment() {
                 subtitleCode = subtitle?.code
             )
             DownloadHelper.startDownloadService(requireContext(), downloadData)
+            // feedback, e.g. when downloading from a feed's long-press menu
+            Toast.makeText(
+                requireContext().applicationContext, R.string.download_started, Toast.LENGTH_SHORT
+            ).show()
 
             dismiss()
         }

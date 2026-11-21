@@ -1,5 +1,9 @@
 package com.github.libretube.ui.adapters
 
+import android.content.res.ColorStateList
+import com.github.libretube.helpers.DownloadFailures
+import com.github.libretube.helpers.ThemeHelper
+
 import android.annotation.SuppressLint
 import android.content.Context
 import android.text.format.DateUtils
@@ -82,10 +86,24 @@ class DownloadsAdapter(
             } else {
                 context.getString(R.string.unknown)
             }
+            // remember the theme's colour before tinting it for a failed download
+            val defaultSizeColor = (fileSize.getTag(R.id.file_size) as? ColorStateList)
+                ?: fileSize.textColors.also { fileSize.setTag(R.id.file_size, it) }
+            fileSize.setTextColor(defaultSizeColor)
             if (downloadSize > currentSize) {
                 downloadOverlay.isVisible = true
-                resumePauseBtn.setImageResource(R.drawable.ic_download)
-                fileSize.text = "${currentSize.formatAsFileSize()} / $totalSizeInfo"
+                val failed = items.any { !it.isFinished && DownloadFailures.isFailed(it.id) }
+                if (failed) {
+                    // gave up after all retries: retry later, e.g. on another network or VPN
+                    resumePauseBtn.setImageResource(R.drawable.ic_restart)
+                    fileSize.text = context.getString(R.string.download_failed_retry)
+                    fileSize.setTextColor(
+                        ThemeHelper.getThemeColor(context, androidx.appcompat.R.attr.colorError)
+                    )
+                } else {
+                    resumePauseBtn.setImageResource(R.drawable.ic_download)
+                    fileSize.text = "${currentSize.formatAsFileSize()} / $totalSizeInfo"
+                }
             } else {
                 downloadOverlay.isGone = true
                 fileSize.text = totalSizeInfo

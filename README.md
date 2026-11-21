@@ -43,6 +43,10 @@ Want the very latest changes? Every push is also built by GitHub Actions: open t
 
 ## Changelog
 
+### v0.3.4
+- Failed downloads stay on the Downloads page marked *Failed*, with a retry that resumes where it stopped
+- "Download started" confirmation when starting a download (e.g. from a long-press menu)
+
 ### v0.3.3
 - Fixed: downloads failing with a "closed" message in v0.3.2 (back to the previous request pattern; unexpected errors are retried, with fresh links, before giving up)
 - Download dialog: smaller, regular-weight text in the format lists and title

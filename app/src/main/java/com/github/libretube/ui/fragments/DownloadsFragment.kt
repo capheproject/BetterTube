@@ -1,5 +1,7 @@
 package com.github.libretube.ui.fragments
 
+import com.github.libretube.helpers.ThemeHelper
+
 import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Context
@@ -485,6 +487,8 @@ class DownloadsFragmentPage : DynamicLayoutManagerFragment(R.layout.fragment_dow
                 DownloadStatus.Stopped -> Unit
 
                 is DownloadStatus.Progress -> {
+                    (fileSize.getTag(R.id.file_size) as? android.content.res.ColorStateList)
+                        ?.let { fileSize.setTextColor(it) }
                     downloadOverlay.isVisible = true
                     resumePauseBtn.setImageResource(R.drawable.ic_pause)
                     if (progressBar.isIndeterminate) return
@@ -496,6 +500,12 @@ class DownloadsFragmentPage : DynamicLayoutManagerFragment(R.layout.fragment_dow
 
                 is DownloadStatus.Error -> {
                     resumePauseBtn.setImageResource(R.drawable.ic_restart)
+                    fileSize.text = getString(R.string.download_failed_retry)
+                    fileSize.setTextColor(
+                        ThemeHelper.getThemeColor(
+                            requireContext(), androidx.appcompat.R.attr.colorError
+                        )
+                    )
                 }
             }
         }

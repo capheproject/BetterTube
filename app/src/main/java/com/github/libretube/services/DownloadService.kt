@@ -43,6 +43,7 @@ import com.github.libretube.extensions.parcelableExtra
 import com.github.libretube.extensions.toLocalDate
 import com.github.libretube.extensions.toastFromMainDispatcher
 import com.github.libretube.extensions.toastFromMainThread
+import com.github.libretube.helpers.DownloadFailures
 import com.github.libretube.helpers.DownloadHelper
 import com.github.libretube.helpers.DownloadHelper.getNotificationId
 import com.github.libretube.helpers.ImageHelper
@@ -312,6 +313,7 @@ class DownloadService : LifecycleService() {
     ) {
         var downloadProvider = initialProvider
         var refreshed = false
+        DownloadFailures.clear(item.id)
         downloadQueue[item.id] = true
         val notificationBuilder = getNotificationBuilder(item)
         setResumeNotification(notificationBuilder, item)
@@ -349,7 +351,11 @@ class DownloadService : LifecycleService() {
                             }
                         } else {
                             setPauseNotification(notificationBuilder, item, false)
-                            pause(item.id)
+                            // kept on the Downloads page as failed, to retry later (e.g. on
+                            // another network)
+                            DownloadFailures.markFailed(item.id)
+                            _downloadFlow.emit(item.id to DownloadStatus.Error("failed", null))
+                            downloadQueue[item.id] = false
                             break
                         }
                     }
@@ -391,7 +397,9 @@ class DownloadService : LifecycleService() {
                 // name the error type too: a bare message such as "closed" says too little
                 val reason = listOfNotNull(e.javaClass.simpleName, e.message).joinToString(": ")
                 toastFromMainThread("${getString(R.string.download)}: $reason")
+                DownloadFailures.markFailed(item.id)
                 _downloadFlow.emit(item.id to DownloadStatus.Error(reason, e))
+                downloadQueue[item.id] = false
                 break
             }
         }
@@ -405,7 +413,8 @@ class DownloadService : LifecycleService() {
         startNextEnqueueDownload()
 
         // explicitly send a pause event if the user paused the download, although it's not yet finished
-        if (!item.isFinished) pause(item.id)
+        // (a failed item keeps its "failed" state instead of showing as paused)
+        if (!item.isFinished && !DownloadFailures.isFailed(item.id)) pause(item.id)
 
         // if no new download was enqueued (i.e. there's no paused/stopped download left),
         // look if any downloads are still running, and if not, stop the service
@@ -550,6 +559,7 @@ class DownloadService : LifecycleService() {
         downloadQueue[id] = false
         _downloadFlow.emit(id to DownloadStatus.Stopped)
 
+        DownloadFailures.clear(id)
         val item = Database.downloadDao().findDownloadItemById(id) ?: return@launch
         notificationManager.cancel(item.getNotificationId())
         Database.downloadDao().deleteDownloadItemById(id)
