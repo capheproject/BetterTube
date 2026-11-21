@@ -160,11 +160,8 @@ class DownloadDialog : DialogFragment() {
                 audioLanguage = audioStream?.audioTrackLocale,
                 subtitleCode = subtitle?.code
             )
+            // the service confirms with "Download started" once the download really exists
             DownloadHelper.startDownloadService(requireContext(), downloadData)
-            // feedback, e.g. when downloading from a feed's long-press menu
-            Toast.makeText(
-                requireContext().applicationContext, R.string.download_started, Toast.LENGTH_SHORT
-            ).show()
 
             dismiss()
         }

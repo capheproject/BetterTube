@@ -2,6 +2,8 @@ package com.github.libretube.ui.adapters
 
 import android.content.res.ColorStateList
 import com.github.libretube.helpers.DownloadFailures
+import com.github.libretube.helpers.DownloadStates
+import androidx.recyclerview.widget.RecyclerView
 import com.github.libretube.helpers.ThemeHelper
 
 import android.annotation.SuppressLint
@@ -71,62 +73,15 @@ class DownloadsAdapter(
             videoInfo.text = download.uploadDate?.let { TextUtils.localizeDate(it) }
             watchProgress.setWatchProgressLength(download.videoId, download.duration ?: 0)
 
-            val downloadSize = items.sumOf { it.downloadSize }
-            val currentSize = items.filter { it.path.exists() }.sumOf { it.path.fileSize() }
-
-            if (downloadSize == -1L) {
-                progressBar.isIndeterminate = true
-            } else {
-                progressBar.max = downloadSize.toInt()
-                progressBar.progress = currentSize.toInt()
-            }
-
-            val totalSizeInfo = if (downloadSize > 0) {
-                downloadSize.formatAsFileSize()
-            } else {
-                context.getString(R.string.unknown)
-            }
-            // remember the theme's colour before tinting it for a failed download
-            val defaultSizeColor = (fileSize.getTag(R.id.file_size) as? ColorStateList)
-                ?: fileSize.textColors.also { fileSize.setTag(R.id.file_size, it) }
-            fileSize.setTextColor(defaultSizeColor)
-            if (downloadSize > currentSize) {
-                downloadOverlay.isVisible = true
-                val failed = items.any { !it.isFinished && DownloadFailures.isFailed(it.id) }
-                if (failed) {
-                    // gave up after all retries: retry later, e.g. on another network or VPN
-                    resumePauseBtn.setImageResource(R.drawable.ic_restart)
-                    fileSize.text = context.getString(R.string.download_failed_retry)
-                    fileSize.setTextColor(
-                        ThemeHelper.getThemeColor(context, androidx.appcompat.R.attr.colorError)
-                    )
-                } else {
-                    resumePauseBtn.setImageResource(R.drawable.ic_download)
-                    fileSize.text = "${currentSize.formatAsFileSize()} / $totalSizeInfo"
-                }
-            } else {
-                downloadOverlay.isGone = true
-                fileSize.text = totalSizeInfo
-                thumbnailDurationCard.isVisible = true
-                download.duration?.let {
-                    thumbnailDuration.text = DateUtils.formatElapsedTime(it)
-                }
-            }
+            bindStatus(this, downloadWithItems)
 
             download.thumbnailPath?.let { path ->
                 ImageHelper.loadImage(path.toString(), thumbnail)
             }
 
+            // the icon follows the item's state (see bindStatus), whoever changes it
             progressBar.setOnClickListener {
-                val isDownloading = toggleDownload(getItem(holder.bindingAdapterPosition))
-
-                resumePauseBtn.setImageResource(
-                    if (isDownloading) {
-                        R.drawable.ic_pause
-                    } else {
-                        R.drawable.ic_download
-                    }
-                )
+                toggleDownload(getItem(holder.bindingAdapterPosition))
             }
 
             root.setOnClickListener {
@@ -179,6 +134,87 @@ class DownloadsAdapter(
         }
     }
 
+    /** Live download states, see [DownloadStates]; rows render from it. */
+    var liveStates: Map<Int, DownloadStates.State> = emptyMap()
+
+    /** Re-renders the status part of the rows on screen (no flicker, thumbnails stay). */
+    fun refreshVisibleStatus(recyclerView: RecyclerView) {
+        for (i in 0 until recyclerView.childCount) {
+            val holder = recyclerView.getChildViewHolder(recyclerView.getChildAt(i))
+                as? DownloadsViewHolder ?: continue
+            val position = holder.bindingAdapterPosition
+            if (position == RecyclerView.NO_POSITION || position >= itemCount) continue
+            bindStatus(holder.binding, getItem(position))
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun bindStatus(binding: VideoRowBinding, downloadWithItems: DownloadWithItems) =
+        with(binding) {
+            val (download, items, _) = downloadWithItems
+            // remember the theme's colour before tinting it for a failed download
+            val defaultSizeColor = (fileSize.getTag(R.id.file_size) as? ColorStateList)
+                ?: fileSize.textColors.also { fileSize.setTag(R.id.file_size, it) }
+            fileSize.setTextColor(defaultSizeColor)
+
+            val unfinished = items.filter { !DownloadStates.isComplete(it, download.duration) }
+            val totalSize = items.sumOf { it.downloadSize.coerceAtLeast(0L) }
+                .takeIf { items.none { item -> item.downloadSize <= 0L } } ?: -1L
+
+            if (unfinished.isEmpty() && items.isNotEmpty()) {
+                downloadOverlay.isGone = true
+                fileSize.text = if (totalSize > 0) totalSize.formatAsFileSize()
+                else items.sumOf { DownloadStates.fileSizeOf(it) }.formatAsFileSize()
+                thumbnailDurationCard.isVisible = true
+                download.duration?.let { thumbnailDuration.text = DateUtils.formatElapsedTime(it) }
+                return@with
+            }
+
+            downloadOverlay.isVisible = true
+            thumbnailDurationCard.isGone = true
+            val states = unfinished.mapNotNull { liveStates[it.id] }
+            val downloaded = items.sumOf { item ->
+                (liveStates[item.id] as? DownloadStates.State.Running)?.downloaded
+                    ?: DownloadStates.fileSizeOf(item)
+            }
+            val running = states.any { it is DownloadStates.State.Running }
+            val queued = states.any { it == DownloadStates.State.Queued }
+            val failed = states.any { it == DownloadStates.State.Failed } ||
+                unfinished.any { DownloadFailures.isFailed(it.id) && liveStates[it.id] == null }
+
+            if (totalSize > 0) {
+                progressBar.isIndeterminate = false
+                progressBar.max = PROGRESS_STEPS
+                progressBar.progress =
+                    (downloaded.coerceAtMost(totalSize) * PROGRESS_STEPS / totalSize).toInt()
+            } else {
+                progressBar.isIndeterminate = running
+            }
+
+            when {
+                running -> {
+                    resumePauseBtn.setImageResource(R.drawable.ic_pause)
+                    fileSize.text = DownloadStates.progressLabel(downloaded, totalSize)
+                }
+                queued -> {
+                    resumePauseBtn.setImageResource(R.drawable.ic_pause)
+                    fileSize.text = context.getString(R.string.download_queued)
+                }
+                failed -> {
+                    // gave up after all retries: retry later, e.g. on another network or VPN
+                    resumePauseBtn.setImageResource(R.drawable.ic_restart)
+                    fileSize.text = context.getString(R.string.download_failed_retry)
+                    fileSize.setTextColor(
+                        ThemeHelper.getThemeColor(context, androidx.appcompat.R.attr.colorError)
+                    )
+                }
+                else -> {
+                    resumePauseBtn.setImageResource(R.drawable.ic_download)
+                    fileSize.text = DownloadStates.progressLabel(downloaded, totalSize)
+                }
+            }
+        }
+
     fun showDeleteDialog(context: Context, position: Int) {
         MaterialAlertDialogBuilder(context)
             .setTitle(R.string.delete)
@@ -224,5 +260,10 @@ class DownloadsAdapter(
         // moves the item back to its initial horizontal position
         notifyItemRemoved(position)
         notifyItemInserted(position)
+    }
+
+    private companion object {
+        // the circular progress works in thousandths (byte counts overflow an Int above 2 GB)
+        const val PROGRESS_STEPS = 1000
     }
 }

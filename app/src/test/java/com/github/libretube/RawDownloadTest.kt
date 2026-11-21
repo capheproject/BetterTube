@@ -39,7 +39,7 @@ class RawDownloadTest {
             val results = mutableListOf<String>()
             runBlocking {
                 var guard = 0
-                while (!item.isFinished && guard++ < 50) {
+                while (Files.size(path) < data.size && guard++ < 50) {
                     val r = provider.downloadNextChunk(item, sink)
                     results += r.javaClass.simpleName
                     if (r is DownloadProgressResult.DownloadComplete || r is DownloadProgressResult.Failed) break

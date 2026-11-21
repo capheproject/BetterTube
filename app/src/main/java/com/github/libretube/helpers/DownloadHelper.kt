@@ -59,6 +59,20 @@ object DownloadHelper {
         ContextCompat.startForegroundService(context, intent)
     }
 
+    /**
+     * Sends a resume/pause/stop command (see [DownloadService] and NotificationReceiver) to the
+     * download service. Pausing or stopping only reaches a running service; resuming starts it.
+     */
+    fun sendServiceAction(context: Context, action: String, id: Int? = null) {
+        val starts = action == DownloadService.ACTION_RESUME_ALL ||
+            action == com.github.libretube.receivers.NotificationReceiver.ACTION_DOWNLOAD_RESUME
+        if (!starts && !DownloadService.IS_DOWNLOAD_RUNNING) return
+        val intent = Intent(context, DownloadService::class.java).setAction(action)
+        if (id != null) intent.putExtra("id", id)
+        if (starts) ContextCompat.startForegroundService(context, intent)
+        else context.startService(intent)
+    }
+
     fun DownloadItem.getNotificationId(): Int {
         return Int.MAX_VALUE - id
     }
@@ -153,6 +167,22 @@ object DownloadHelper {
     suspend fun deleteDownloadIncludingFiles(downloadWithItems: DownloadWithItems) {
         val download = downloadWithItems.download
         val items = downloadWithItems.downloadItems
+
+        // stop anything still downloading for this video first, and forget its state, so a new
+        // download of the same video starts clean (it used to show up as complete right away)
+        val context = com.github.libretube.LibreTubeApp.instance
+        items.forEach {
+            withContext(Dispatchers.Main) {
+                runCatching {
+                    sendServiceAction(
+                        context,
+                        com.github.libretube.receivers.NotificationReceiver.ACTION_DOWNLOAD_STOP,
+                        it.id
+                    )
+                }
+            }
+            DownloadStates.clear(it.id)
+        }
 
         items.forEach {
             it.path.deleteIfExists()

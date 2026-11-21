@@ -1,5 +1,13 @@
 package com.github.libretube.ui.fragments
 
+import androidx.lifecycle.repeatOnLifecycle
+
+import androidx.lifecycle.Lifecycle
+
+import com.github.libretube.receivers.NotificationReceiver
+
+import com.github.libretube.helpers.DownloadStates
+
 import com.github.libretube.helpers.ThemeHelper
 
 import android.annotation.SuppressLint
@@ -189,14 +197,12 @@ class DownloadsFragmentPage : DynamicLayoutManagerFragment(R.layout.fragment_dow
     private val playerViewModel: CommonPlayerViewModel by activityViewModels()
     private val downloadsModel: DownloadsViewModel by activityViewModels()
 
-    private var binder: DownloadService.LocalBinder? = null
-    private val downloadReceiver = DownloadReceiver()
-
     // Either downloadTab or downloadPlaylistId are set, never both at the same time!
     private lateinit var downloadTab: DownloadTab
     private var downloadPlaylistId: String? = null
 
-    private val activeDownloadIds = mutableSetOf<Int>()
+    /** Everything shown on this page (before sorting/searching). */
+    private var allDownloads: List<DownloadWithItems> = emptyList()
 
     private var selectedSortType
         get() = PreferenceHelper.getInt(
@@ -205,27 +211,6 @@ class DownloadsFragmentPage : DynamicLayoutManagerFragment(R.layout.fragment_dow
         set(value) {
             PreferenceHelper.putInt(PreferenceKeys.SELECTED_DOWNLOAD_SORT_TYPE, value)
         }
-
-    private val serviceConnection = object : ServiceConnection {
-        var isBound = false
-        var job: Job? = null
-
-        override fun onServiceConnected(name: ComponentName?, iBinder: IBinder?) {
-            binder = iBinder as DownloadService.LocalBinder
-            isBound = true
-            job?.cancel()
-            job = lifecycleScope.launch {
-                binder?.getService()?.downloadFlow?.collectLatest {
-                    updateProgress(it.first, it.second)
-                }
-            }
-        }
-
-        override fun onServiceDisconnected(name: ComponentName?) {
-            binder = null
-            isBound = false
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -258,25 +243,7 @@ class DownloadsFragmentPage : DynamicLayoutManagerFragment(R.layout.fragment_dow
         binding.sortType.text = filterOptions[selectedSortType].title.getText(requireContext())
 
         lifecycleScope.launch(Dispatchers.Main) {
-            val playlistItems = downloadPlaylistId?.let { playlistId ->
-                val playlist = withContext(Dispatchers.IO) {
-                    Database.downloadDao().getDownloadPlaylistById(playlistId)
-                }
-
-                binding.playlistName.text = playlist.downloadPlaylist.title
-                binding.playlistName.isVisible = true
-
-                playlist.downloadVideos.map { it.videoId }
-            }
-
-            val downloads = withContext(Dispatchers.IO) {
-                Database.downloadDao().getAll()
-            }.let { downloads ->
-                if (downloadTab != DownloadTab.PLAYLIST) downloads.filterByTab(downloadTab)
-                else downloads.filter { playlistItems.orEmpty().contains(it.download.videoId) }
-            }
-
-            submitDownloadList(downloads)
+            reloadDownloads()
 
             binding.sortType.setOnClickListener {
                 BaseBottomSheet().setItems(filterOptions.toList()) { index ->
@@ -284,12 +251,12 @@ class DownloadsFragmentPage : DynamicLayoutManagerFragment(R.layout.fragment_dow
                     selectedSortType = index
 
                     binding.sortType.text = filterOptions[index].title.getText(requireContext())
-                    submitDownloadList(downloads)
+                    submitDownloadList(allDownloads)
                 }.show(childFragmentManager)
             }
 
             downloadsModel.searchQuery.observe(viewLifecycleOwner) {
-                submitDownloadList(downloads)
+                submitDownloadList(allDownloads)
             }
 
             binding.downloadsRecView.setOnDismissListener { position ->
@@ -318,10 +285,35 @@ class DownloadsFragmentPage : DynamicLayoutManagerFragment(R.layout.fragment_dow
             toggleVisibilities()
         }
 
+        // one button for all downloads, showing what it will do: resume or pause them all
         binding.resumeAll.setOnClickListener {
-            resumeAllDownloads()
+            val anyActive = DownloadStates.states.value.values.any {
+                it is DownloadStates.State.Running || it == DownloadStates.State.Queued
+            }
+            DownloadHelper.sendServiceAction(
+                requireContext(),
+                if (anyActive) DownloadService.ACTION_PAUSE_ALL else DownloadService.ACTION_RESUME_ALL
+            )
+        }
 
-            binding.resumeAll.isGone = true
+        // every row, its button and the button for all follow the same states
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                DownloadStates.states.collect { states ->
+                    val previous = adapter.liveStates
+                    adapter.liveStates = states
+                    _binding?.let { adapter.refreshVisibleStatus(it.downloadsRecView) }
+                    toggleVisibilities()
+                    // a download added elsewhere, or one that just finished: reload the list
+                    val shownIds = allDownloads.flatMap { d -> d.downloadItems.map { it.id } }
+                    val changed = states.keys.any { it !in shownIds } ||
+                        states.any { (id, state) ->
+                            state == DownloadStates.State.Complete &&
+                                previous[id] != DownloadStates.State.Complete
+                        }
+                    if (changed) reloadDownloads()
+                }
+            }
         }
 
         binding.deleteAll.setOnClickListener {
@@ -349,39 +341,45 @@ class DownloadsFragmentPage : DynamicLayoutManagerFragment(R.layout.fragment_dow
         }
     }
 
+    /** Pause the row's downloads if any is running or queued, otherwise resume (or retry) them. */
     private fun toggleDownload(download: DownloadWithItems): Boolean {
         val ids = download.downloadItems
-            .filter { item -> item.path.fileSize() < item.downloadSize }
+            .filter { item -> !DownloadStates.isComplete(item, download.download.duration) }
             .map { item -> item.id }
-
-        if (!serviceConnection.isBound) {
-            DownloadHelper.startDownloadService(requireContext())
-            bindDownloadService(ids.toIntArray())
-            return true
+        val active = ids.any { id ->
+            val state = DownloadStates.get(id)
+            state is DownloadStates.State.Running || state == DownloadStates.State.Queued
         }
-
-        binder?.getService()?.let { service ->
-            val isDownloading = ids.any { id -> service.isDownloading(id) }
-
-            for (id in ids) {
-                if (isDownloading) {
-                    service.pause(id)
-                } else {
-                    service.resume(id)
-                }
-            }
-
-            return isDownloading
+        ids.forEach { id ->
+            DownloadHelper.sendServiceAction(
+                requireContext(),
+                if (active) NotificationReceiver.ACTION_DOWNLOAD_PAUSE
+                else NotificationReceiver.ACTION_DOWNLOAD_RESUME,
+                id
+            )
         }
-        return false
+        return !active
     }
 
-    private fun resumeAllDownloads() {
-        val intent = Intent(requireContext(), DownloadService::class.java)
-        intent.action = DownloadService.ACTION_RESUME_ALL
-        requireContext().startService(intent)
+    /** Loads this page's downloads from the database (also when they changed elsewhere). */
+    private suspend fun reloadDownloads() {
+        val playlistItems = downloadPlaylistId?.let { playlistId ->
+            val playlist = withContext(Dispatchers.IO) {
+                Database.downloadDao().getDownloadPlaylistById(playlistId)
+            }
+            _binding?.playlistName?.text = playlist.downloadPlaylist.title
+            _binding?.playlistName?.isVisible = true
+            playlist.downloadVideos.map { it.videoId }
+        }
 
-        bindDownloadService()
+        val downloads = withContext(Dispatchers.IO) {
+            Database.downloadDao().getAll().also { DownloadStates.auditLegacy(it) }
+        }.let { downloads ->
+            if (downloadTab != DownloadTab.PLAYLIST) downloads.filterByTab(downloadTab)
+            else downloads.filter { playlistItems.orEmpty().contains(it.download.videoId) }
+        }
+        allDownloads = downloads
+        if (_binding != null) submitDownloadList(downloads)
     }
 
     private fun submitDownloadList(items: List<DownloadWithItems>) {
@@ -402,14 +400,21 @@ class DownloadsFragmentPage : DynamicLayoutManagerFragment(R.layout.fragment_dow
         val binding = _binding ?: return
 
         val isEmpty = adapter.itemCount == 0
-        val hasIncomplete = adapter.currentList.any { download ->
-            download.downloadItems.any { !it.isFinished } &&
-                    download.downloadItems.none { activeDownloadIds.contains(it.id) }
+        val incompleteIds = adapter.currentList.flatMap { download ->
+            download.downloadItems
+                .filter { !DownloadStates.isComplete(it, download.download.duration) }
+                .map { it.id }
+        }
+        val anyActive = incompleteIds.any {
+            val state = DownloadStates.get(it)
+            state is DownloadStates.State.Running || state == DownloadStates.State.Queued
         }
         binding.downloadsEmpty.isVisible = isEmpty
         binding.downloadsContainer.isGone = isEmpty
         binding.deleteAll.isGone = isEmpty
-        binding.resumeAll.isVisible = hasIncomplete
+        binding.resumeAll.isVisible = incompleteIds.isNotEmpty()
+        binding.resumeAll.setText(if (anyActive) R.string.pause_all else R.string.resume_all)
+        binding.resumeAll.setIconResource(if (anyActive) R.drawable.ic_pause else R.drawable.ic_play)
         binding.shuffleAll.isGone = isEmpty
     }
 
@@ -431,106 +436,15 @@ class DownloadsFragmentPage : DynamicLayoutManagerFragment(R.layout.fragment_dow
             .show()
     }
 
-    override fun onStart() {
-        if (DownloadService.IS_DOWNLOAD_RUNNING) bindDownloadService()
-
-        super.onStart()
-    }
-
     override fun onResume() {
         super.onResume()
-
-        // this page stays alive in the tab pager: a download started from another tab (while
-        // this page wasn't listening for the service starting) still has to show its progress
-        if (DownloadService.IS_DOWNLOAD_RUNNING) bindDownloadService()
-
-        val filter = IntentFilter().apply {
-            addAction(DownloadService.ACTION_SERVICE_STARTED)
-            addAction(DownloadService.ACTION_SERVICE_STOPPED)
-        }
-        ContextCompat.registerReceiver(
-            requireContext(),
-            downloadReceiver,
-            filter,
-            ContextCompat.RECEIVER_NOT_EXPORTED
-        )
+        // this page stays alive in the tab pager: show downloads added or deleted meanwhile
+        viewLifecycleOwner.lifecycleScope.launch { reloadDownloads() }
     }
 
-    /**
-     * Attach to running [DownloadService]. This should be called whenever it's possible that the service
-     * was stopped, so the connection has to be re-initiated.
-     */
-    fun bindDownloadService(ids: IntArray? = null) {
-        if (serviceConnection.isBound) return
-
-        val intent = Intent(context, DownloadService::class.java)
-        intent.putExtra("ids", ids)
-        context?.bindService(intent, serviceConnection, 0)
-    }
-
-    fun updateProgress(id: Int, status: DownloadStatus) {
-        val index = adapter.currentList.indexOfFirst {
-            it.downloadItems.any { item -> item.id == id }
-        }
-        val view =
-            _binding?.downloadsRecView?.findViewHolderForAdapterPosition(index) as? DownloadsViewHolder
-
-        if (status is DownloadStatus.Progress) activeDownloadIds.add(id)
-        else activeDownloadIds.remove(id)
-
-        view?.binding?.apply {
-            when (status) {
-                DownloadStatus.Paused -> {
-                    resumePauseBtn.setImageResource(R.drawable.ic_download)
-                }
-
-                DownloadStatus.Completed -> {
-                    downloadOverlay.isGone = true
-                }
-
-                DownloadStatus.Stopped -> Unit
-
-                is DownloadStatus.Progress -> {
-                    (fileSize.getTag(R.id.file_size) as? android.content.res.ColorStateList)
-                        ?.let { fileSize.setTextColor(it) }
-                    downloadOverlay.isVisible = true
-                    resumePauseBtn.setImageResource(R.drawable.ic_pause)
-                    if (progressBar.isIndeterminate) return
-                    progressBar.incrementProgressBy(status.progress.toInt())
-                    val progressInfo = progressBar.progress.formatAsFileSize() +
-                            " /\n" + progressBar.max.formatAsFileSize()
-                    fileSize.text = progressInfo
-                }
-
-                is DownloadStatus.Error -> {
-                    resumePauseBtn.setImageResource(R.drawable.ic_restart)
-                    fileSize.text = getString(R.string.download_failed_retry)
-                    fileSize.setTextColor(
-                        ThemeHelper.getThemeColor(
-                            requireContext(), androidx.appcompat.R.attr.colorError
-                        )
-                    )
-                }
-            }
-        }
-
-        toggleVisibilities()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        context?.unregisterReceiver(downloadReceiver)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        runCatching {
-            context?.unbindService(serviceConnection)
-        }
-        // unbinding doesn't report a disconnect: mark it here, or the page would never bind again
-        serviceConnection.isBound = false
-        serviceConnection.job?.cancel()
-        binder = null
+    /** Called when downloads may have changed (kept for callers of the old service binding). */
+    fun bindDownloadService(@Suppress("UNUSED_PARAMETER") ids: IntArray? = null) {
+        if (view != null) viewLifecycleOwner.lifecycleScope.launch { reloadDownloads() }
     }
 
     override fun onDestroyView() {

@@ -30,6 +30,9 @@ class SabrDownloadProvider(
 ) : DownloadProvider {
     private val downloadHandle: SabrDownloaderHandle
 
+    /** The video's length, to tell a finished download from one whose end isn't known yet. */
+    private val expectedDurationMs = streams.duration.takeIf { it > 0 }?.times(1000)
+
     init {
         val sabrManifest = SabrManifest(downloadItem.videoId, streams)
         val sabrClient = SabrClient(sabrManifest)
@@ -88,11 +91,27 @@ class SabrDownloadProvider(
         val endSegmentNumber = downloadHandle.sabrClient.getEndSegmentNumber(
             downloadHandle.streamRepresentation.formatId()
         )
-        return if (endSegmentNumber != null && downloadHandle.nextSegmentNumber < endSegmentNumber) {
-            val downloadedBytesLength = segment.data.sumOf { it.size }
-            DownloadProgressResult.Progressed(downloadedBytesLength.toLong())
-        } else {
-            DownloadProgressResult.DownloadComplete
+        val downloadedBytesLength = segment.data.sumOf { it.size }.toLong()
+        val finished = when {
+            // the server told us where the stream ends
+            endSegmentNumber != null -> downloadHandle.nextSegmentNumber >= endSegmentNumber
+            // otherwise only when we've reached the video's length (an unknown end used to count
+            // as finished, leaving half-downloaded files marked complete)
+            expectedDurationMs != null ->
+                currentPositionMillis >= expectedDurationMs - END_TOLERANCE_MS
+            else -> segment.duration <= 0L && downloadedBytesLength == 0L
         }
+        return if (finished) {
+            DownloadProgressResult.DownloadComplete
+        } else if (segment.duration <= 0L && downloadedBytesLength == 0L) {
+            // no progress at all: let the service retry (and eventually mark it failed)
+            DownloadProgressResult.Failed
+        } else {
+            DownloadProgressResult.Progressed(downloadedBytesLength)
+        }
+    }
+
+    private companion object {
+        const val END_TOLERANCE_MS = 1_500L
     }
 }

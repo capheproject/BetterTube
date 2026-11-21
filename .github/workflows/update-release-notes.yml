@@ -1,0 +1,28 @@
+name: Update release notes
+
+# Replaces the text of existing releases with .github/release-notes/<version>.md, without
+# rebuilding anything (Actions > Update release notes > Run workflow). Takes one or more versions,
+# separated by spaces, e.g. "v0.3.1 v0.3.2".
+on:
+  workflow_dispatch:
+    inputs:
+      versions:
+        description: "Versions to update, e.g. v0.3.1 v0.3.2"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Update release text
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSIONS: ${{ inputs.versions }}
+        run: |
+          for version in $VERSIONS; do
+            gh release edit "$version" --notes-file ".github/release-notes/$version.md"
+          done

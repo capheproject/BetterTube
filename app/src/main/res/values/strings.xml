@@ -532,7 +532,7 @@
     <string name="showing_results_for">Showing results for:</string>
     <string name="long_press_fast_forward">Fast forward on long press</string>
     <string name="long_press_fast_forward_summary">Play video with double speed while tapping and holding the screen.</string>
-    <string name="resume_all">Resume Downloads</string>
+    <string name="resume_all">Resume downloads</string>
     <string name="missing_auth_falling_back">Not logged in. Data synchronization turned off.</string>
     <string name="sync_type_summary_none">Store all user data offline within the app. That means that you can\'t synchronize data between your devices, but might be the right choice if you only use a single device or don\'t care about syncing between devices.</string>
     <string name="sync_type_summary_libretube">Store playlists and subscriptions data on LibreTube\'s sync server (%1$s). This allows you to log in to your account at any other device to have access to your subscriptions and playlists. Privacy Disclaimer: User data is pseudonymized on server side, but not end-to-end encrypted. By choice, you can also host your own version of the server, but usually the official server should be just fine.</string>
@@ -596,6 +596,9 @@
     <string name="player_colors_from_video_summary">In the audio player, the play button and progress bar take the colours of the video\'s artwork instead of the accent colour</string>
     <string name="watch_later">Watch later</string>
     <string name="download_started">Download started</string>
+    <string name="download_format_unavailable">Couldn’t download: the chosen format isn’t available any more. Try again.</string>
+    <string name="download_queued">Queued</string>
+    <string name="pause_all">Pause downloads</string>
     <string name="download_failed_retry">Failed · tap ↻ to retry</string>
     <string name="watch_later_choose">Your Watch later playlist</string>
     <string name="watch_later_new">New playlist “Watch later”</string>

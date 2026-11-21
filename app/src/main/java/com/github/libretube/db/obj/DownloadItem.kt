@@ -39,5 +39,6 @@ data class DownloadItem(
      */
     var currentDownloadPositionMillis: Long? = null
 ) {
-    val isFinished get() = downloadSize > 0L && runCatching { path.fileSize() }.getOrDefault(0L) >= downloadSize
+    /** Fully downloaded and verified (see [com.github.libretube.helpers.DownloadStates.isComplete]). */
+    val isFinished get() = com.github.libretube.helpers.DownloadStates.isComplete(this)
 }

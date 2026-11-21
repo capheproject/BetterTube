@@ -43,6 +43,13 @@ Want the very latest changes? Every push is also built by GitHub Actions: open t
 
 ## Changelog
 
+### v0.3.6
+- Downloads count as finished only once verified; half-finished ones show as incomplete and resume
+- Delete and download again starts cleanly; new downloads show up right away
+- Clear message when a download can't start; "Download started" only once it has
+- One Resume/Pause button for all downloads, in step with each video's button; *Queued* state
+- Short progress label, e.g. "40/120 MB"
+
 ### v0.3.5
 - Fixed: running downloads showed no progress on the Downloads page (started from another tab, or after returning to the app)
 
