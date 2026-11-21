@@ -43,6 +43,9 @@ Want the very latest changes? Every push is also built by GitHub Actions: open t
 
 ## Changelog
 
+### v0.3.5
+- Fixed: running downloads showed no progress on the Downloads page (started from another tab, or after returning to the app)
+
 ### v0.3.4
 - Failed downloads stay on the Downloads page marked *Failed*, with a retry that resumes where it stopped
 - "Download started" confirmation when starting a download (e.g. from a long-press menu)

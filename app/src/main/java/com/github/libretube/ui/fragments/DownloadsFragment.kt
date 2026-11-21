@@ -440,6 +440,10 @@ class DownloadsFragmentPage : DynamicLayoutManagerFragment(R.layout.fragment_dow
     override fun onResume() {
         super.onResume()
 
+        // this page stays alive in the tab pager: a download started from another tab (while
+        // this page wasn't listening for the service starting) still has to show its progress
+        if (DownloadService.IS_DOWNLOAD_RUNNING) bindDownloadService()
+
         val filter = IntentFilter().apply {
             addAction(DownloadService.ACTION_SERVICE_STARTED)
             addAction(DownloadService.ACTION_SERVICE_STOPPED)
@@ -523,6 +527,10 @@ class DownloadsFragmentPage : DynamicLayoutManagerFragment(R.layout.fragment_dow
         runCatching {
             context?.unbindService(serviceConnection)
         }
+        // unbinding doesn't report a disconnect: mark it here, or the page would never bind again
+        serviceConnection.isBound = false
+        serviceConnection.job?.cancel()
+        binder = null
     }
 
     override fun onDestroyView() {
