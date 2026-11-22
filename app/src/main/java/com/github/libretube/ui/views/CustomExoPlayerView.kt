@@ -589,8 +589,8 @@ class CustomExoPlayerView(
         }
     }
 
-    // a short list: Quality first; autoplay, repeat, resize mode and the sleep timer aren't offered
-    // here (autoplay and repeat stay in the settings)
+    // a short list: Quality first; autoplay, repeat, resize mode, the sleep timer and stats for
+    // nerds aren't offered here
     fun getOptionsMenuItems(): List<BottomSheetItem> = listOf(
         BottomSheetItem(
             BottomSheetItemTitle.Text(context.getString(R.string.quality)),
@@ -625,12 +625,6 @@ class CustomExoPlayerView(
             }
         ) {
             onCaptionsClicked()
-        },
-        BottomSheetItem(
-            BottomSheetItemTitle.Text(context.getString(R.string.stats_for_nerds)),
-            R.drawable.ic_info
-        ) {
-            onStatsClicked()
         }
     )
 

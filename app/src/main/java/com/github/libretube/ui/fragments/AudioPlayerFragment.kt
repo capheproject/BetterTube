@@ -1,5 +1,13 @@
 package com.github.libretube.ui.fragments
 
+import com.github.libretube.enums.ShareObjectType
+
+import com.github.libretube.obj.ShareData
+
+import com.github.libretube.ui.dialogs.ShareDialog
+
+import com.github.libretube.helpers.DownloadHelper
+
 import androidx.core.view.isInvisible
 import androidx.constraintlayout.widget.ConstraintSet
 import android.animation.ValueAnimator
@@ -95,7 +103,6 @@ import com.github.libretube.ui.sheets.BaseBottomSheet
 import com.github.libretube.ui.sheets.ChaptersBottomSheet
 import com.github.libretube.ui.sheets.PlaybackOptionsSheet
 import com.github.libretube.ui.sheets.PlayingQueueSheet
-import com.github.libretube.ui.sheets.SleepTimerSheet
 import com.github.libretube.ui.sheets.VideoOptionsBottomSheet
 import com.github.libretube.ui.views.DataUsageView
 import com.github.libretube.util.DataSaverMode
@@ -743,44 +750,42 @@ class AudioPlayerFragment : Fragment(R.layout.fragment_audio_player), AudioPlaye
      * Overflow menu with the less frequently used player actions, keeping the player itself minimal.
      */
     private fun showPlayerOptions() {
+        // the same gear menu as the video player: Watch later, Download, Share, speed
         val items = listOf(
             BottomSheetItem(BottomSheetItemTitle.StringResource(R.string.watch_later), R.drawable.ic_time_outlined),
-            BottomSheetItem(BottomSheetItemTitle.StringResource(R.string.queue), R.drawable.ic_queue),
+            BottomSheetItem(BottomSheetItemTitle.StringResource(R.string.download), R.drawable.ic_download),
+            BottomSheetItem(BottomSheetItemTitle.StringResource(R.string.share), R.drawable.ic_share),
             BottomSheetItem(
                 BottomSheetItemTitle.StringResource(R.string.playback_speed),
                 R.drawable.ic_speed
-            ),
-            BottomSheetItem(
-                BottomSheetItemTitle.StringResource(R.string.sleep_timer),
-                R.drawable.ic_sleep
-            ),
-            BottomSheetItem(
-                BottomSheetItemTitle.StringResource(R.string.player_autoplay),
-                R.drawable.ic_playlist,
-                getCurrent = {
-                    BottomSheetItemTitle.StringResource(
-                        if (PlayerHelper.autoPlayEnabled) R.string.enabled else R.string.disabled
-                    )
-                }
-            ),
-            BottomSheetItem(
-                BottomSheetItemTitle.StringResource(R.string.video_options_more),
-                R.drawable.ic_share
             )
         )
 
         BaseBottomSheet()
             .setItems(items) { index ->
+                val current = PlayingQueue.getCurrent()
+                val videoId = current?.url?.toID()
                 when (index) {
-                    0 -> PlayingQueue.getCurrent()?.let { current ->
+                    0 -> current?.let {
                         Haptics.confirm(binding.showMore)
-                        WatchLater.add(requireActivity(), viewLifecycleOwner.lifecycleScope, current)
+                        WatchLater.add(requireActivity(), viewLifecycleOwner.lifecycleScope, it)
                     }
-                    1 -> PlayingQueueSheet().show(childFragmentManager)
-                    2 -> playerController?.let { PlaybackOptionsSheet(it).show(childFragmentManager) }
-                    3 -> SleepTimerSheet().show(childFragmentManager)
-                    4 -> PlayerHelper.autoPlayEnabled = !PlayerHelper.autoPlayEnabled
-                    5 -> onLongTap()
+                    1 -> videoId?.let {
+                        DownloadHelper.startDownloadDialog(requireContext(), childFragmentManager, it)
+                    }
+                    2 -> if (current != null && videoId != null) {
+                        ShareDialog().apply {
+                            arguments = bundleOf(
+                                IntentData.id to videoId,
+                                IntentData.shareObjectType to ShareObjectType.VIDEO,
+                                IntentData.shareData to ShareData(
+                                    title = current.title,
+                                    previewImageUrl = current.thumbnail
+                                )
+                            )
+                        }.show(childFragmentManager, ShareDialog::class.java.name)
+                    }
+                    3 -> playerController?.let { PlaybackOptionsSheet(it).show(childFragmentManager) }
                 }
             }
             .show(childFragmentManager)

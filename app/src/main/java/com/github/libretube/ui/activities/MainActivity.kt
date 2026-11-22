@@ -891,7 +891,7 @@ class MainActivity : AbstractPlayerHostActivity() {
         private const val TAB_SWIPE_MIN_DISTANCE_DP = 90
 
         /** How far the dock is lifted above its base margin, as a share of the screen height */
-        private const val DOCK_LIFT_FRACTION = 0.05f
+        private const val DOCK_LIFT_FRACTION = 0.025f
         private const val TAB_SWIPE_MIN_VELOCITY_DP = 450
         const val MINIMUM_SCREEN_SIZE_TABLET = 600
     }

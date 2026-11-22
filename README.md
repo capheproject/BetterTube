@@ -43,6 +43,11 @@ Want the very latest changes? Every push is also built by GitHub Actions: open t
 
 ## Changelog
 
+### v0.3.8
+- Dock 2.5% lower; slightly more space between the dock and the mini player
+- Audio player: gear icon like the video player; menu: Watch later, Download, Share, Playback speed
+- Video player settings: Stats for nerds removed
+
 ### v0.3.7
 - Fixed: crash at launch when the player service resumed in the background
 - The dock sits higher (the v0.3.2 lift only moved the mini player)

@@ -333,7 +333,7 @@
             android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
             android:contentDescription="@string/more_options"
-            app:icon="@drawable/ic_more_vert"
+            app:icon="@drawable/ic_player_settings"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/thumbnail" />
 
