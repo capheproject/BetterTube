@@ -136,13 +136,16 @@
         <TextView
             android:visibility="gone"
             android:id="@+id/file_size"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
             android:ellipsize="end"
+            android:fontFeatureSettings="tnum"
+            android:gravity="end"
             android:maxLines="2"
+            android:maxWidth="120dp"
             android:textAlignment="viewEnd"
-            tools:text="55MB/2050MB"
+            tools:text="55/2050\nMB"
             tools:visibility="visible" />
 
     </LinearLayout>

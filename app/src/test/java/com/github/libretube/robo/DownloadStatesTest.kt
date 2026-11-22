@@ -78,8 +78,8 @@ class DownloadStatesTest {
 
     @Test fun shortProgressLabel() {
         val mb = 1024L * 1024
-        assertEquals("40/120 MB", DownloadStates.progressLabel(40 * mb + 30_000, 120 * mb))
-        assertEquals("1.5/3.0 GB", DownloadStates.progressLabel(1536 * mb, 3072 * mb))
-        assertEquals("40 MB", DownloadStates.progressLabel(40 * mb, -1))
+        assertEquals("40/120\nMB", DownloadStates.progressLabel(40 * mb + 30_000, 120 * mb))
+        assertEquals("1.5/3.0\nGB", DownloadStates.progressLabel(1536 * mb, 3072 * mb))
+        assertEquals("40\nMB", DownloadStates.progressLabel(40 * mb, -1))
     }
 }

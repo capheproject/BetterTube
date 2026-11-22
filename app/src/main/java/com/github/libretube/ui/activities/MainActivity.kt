@@ -1,5 +1,7 @@
 package com.github.libretube.ui.activities
 
+import androidx.constraintlayout.widget.ConstraintSet
+
 import com.github.libretube.ui.fragments.TabsFragment
 import com.github.libretube.ui.views.SingleViewTouchableMotionLayout
 import com.github.libretube.helpers.Haptics
@@ -175,6 +177,15 @@ class MainActivity : AbstractPlayerHostActivity() {
                         bottomMargin = systemBarInsets.bottom +
                             resources.getDimensionPixelSize(R.dimen.dock_margin_bottom) +
                             (binding.root.height * DOCK_LIFT_FRACTION).toInt()
+                    }
+                    // the root is a MotionLayout: its layout states would put the dock back at
+                    // its XML margin (only the mini player, which reads the margin, moved up)
+                    val dockMargin = binding.bottomNav.marginBottom
+                    binding.root.constraintSetIds.forEach { id ->
+                        binding.root.getConstraintSet(id)?.let { set ->
+                            set.setMargin(R.id.bottomNav, ConstraintSet.BOTTOM, dockMargin)
+                            binding.root.updateState(id, set)
+                        }
                     }
                     binding.bottomFade.updateLayoutParams<ViewGroup.LayoutParams> {
                         height = systemBarInsets.bottom +

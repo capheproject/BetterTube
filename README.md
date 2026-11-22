@@ -43,6 +43,13 @@ Want the very latest changes? Every push is also built by GitHub Actions: open t
 
 ## Changelog
 
+### v0.3.7
+- Fixed: crash at launch when the player service resumed in the background
+- The dock sits higher (the v0.3.2 lift only moved the mini player)
+- Video player ⋮ menu: Quality first; Autoplay, Repeat mode, Resize mode and Sleep timer removed
+- Crimson → vibrant Red, Sunset orange → vibrant Orange
+- Download progress label: numbers above, unit below, right-aligned with steady digits
+
 ### v0.3.6
 - Downloads count as finished only once verified; half-finished ones show as incomplete and resume
 - Delete and download again starts cleanly; new downloads show up right away
@@ -77,7 +84,7 @@ Want the very latest changes? Every push is also built by GitHub Actions: open t
 
 ### v0.3.0
 - Swipe between tabs: the next tab slides in under your finger, already loaded, and snaps into place
-- Seven vivid accent colours (Electric blue, Neon violet, Hot pink, Sunset orange, Lime, Aqua, Crimson), readable in light and dark mode
+- Seven vivid accent colours (Electric blue, Neon violet, Hot pink, Orange, Lime, Aqua, Red), readable in light and dark mode
 - Audio player: swiping down shrinks the artwork into the mini player; the play button and progress bar fade between videos' colours, and the colour setting applies immediately; quicker open and close (video player 20% faster)
 - Fixed: long descriptions spilling over the artwork in the audio player; changing the app icon in release builds
 

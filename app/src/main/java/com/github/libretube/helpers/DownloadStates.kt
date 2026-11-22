@@ -116,14 +116,18 @@ object DownloadStates {
     fun fileSizeOf(item: DownloadItem): Long =
         runCatching { if (item.path.exists()) item.path.fileSize() else 0L }.getOrDefault(0L)
 
-    /** Short progress label that fits the row, e.g. "40/120 MB" or "1.2/3.4 GB". */
+    /**
+     * Short progress label that fits the row: the numbers on the first line, the unit on the
+     * second, e.g. "40/120\nMB" or "1.2/3.4\nGB" (the row shows it right-aligned with equal-width
+     * digits, so it grows to the left instead of jumping around).
+     */
     fun progressLabel(downloaded: Long, total: Long): String {
         val gb = 1024L * 1024 * 1024
         val mb = 1024L * 1024
         return when {
-            total <= 0L -> "${downloaded / mb} MB"
-            total >= gb -> "%.1f/%.1f GB".format(downloaded.toDouble() / gb, total.toDouble() / gb)
-            else -> "${downloaded / mb}/${total / mb} MB"
+            total <= 0L -> "${downloaded / mb}\nMB"
+            total >= gb -> "%.1f/%.1f\nGB".format(downloaded.toDouble() / gb, total.toDouble() / gb)
+            else -> "${downloaded / mb}/${total / mb}\nMB"
         }
     }
 

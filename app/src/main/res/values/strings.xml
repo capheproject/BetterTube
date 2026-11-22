@@ -588,10 +588,10 @@
     <string name="vivid_electric">Electric blue (vivid)</string>
     <string name="vivid_neon">Neon violet (vivid)</string>
     <string name="vivid_hotpink">Hot pink (vivid)</string>
-    <string name="vivid_sunset">Sunset orange (vivid)</string>
+    <string name="vivid_sunset">Orange (vivid)</string>
     <string name="vivid_lime">Lime (vivid)</string>
     <string name="vivid_aqua">Aqua (vivid)</string>
-    <string name="vivid_crimson">Crimson (vivid)</string>
+    <string name="vivid_crimson">Red (vivid)</string>
     <string name="player_colors_from_video">Play button in the video\'s colours</string>
     <string name="player_colors_from_video_summary">In the audio player, the play button and progress bar take the colours of the video\'s artwork instead of the accent colour</string>
     <string name="watch_later">Watch later</string>
@@ -599,7 +599,7 @@
     <string name="download_format_unavailable">Couldn’t download: the chosen format isn’t available any more. Try again.</string>
     <string name="download_queued">Queued</string>
     <string name="pause_all">Pause downloads</string>
-    <string name="download_failed_retry">Failed · tap ↻ to retry</string>
+    <string name="download_failed_retry">Failed\nTap ↻ to retry</string>
     <string name="watch_later_choose">Your Watch later playlist</string>
     <string name="watch_later_new">New playlist “Watch later”</string>
     <string name="watch_later_added">Added to Watch later</string>

@@ -589,44 +589,15 @@ class CustomExoPlayerView(
         }
     }
 
+    // a short list: Quality first; autoplay, repeat, resize mode and the sleep timer aren't offered
+    // here (autoplay and repeat stay in the settings)
     fun getOptionsMenuItems(): List<BottomSheetItem> = listOf(
-        // autoplay lives here instead of as a switch in the top bar (it looked like a pause button)
         BottomSheetItem(
-            BottomSheetItemTitle.Text(context.getString(R.string.player_autoplay)),
-            R.drawable.ic_playlist,
-            {
-                BottomSheetItemTitle.Text(
-                    context.getString(if (PlayerHelper.autoPlayEnabled) R.string.enabled else R.string.disabled)
-                )
-            }
+            BottomSheetItemTitle.Text(context.getString(R.string.quality)),
+            R.drawable.ic_hd,
+            { this.getCurrentResolutionSummary().let(BottomSheetItemTitle::Text) }
         ) {
-            PlayerHelper.autoPlayEnabled = !PlayerHelper.autoPlayEnabled
-            binding.autoPlay.isChecked = PlayerHelper.autoPlayEnabled
-        },
-        BottomSheetItem(
-            BottomSheetItemTitle.Text(context.getString(R.string.repeat_mode)),
-            R.drawable.ic_repeat,
-            {
-                when (PlayingQueue.repeatMode) {
-                    Player.REPEAT_MODE_OFF -> context.getString(R.string.repeat_mode_none)
-                    Player.REPEAT_MODE_ONE -> context.getString(R.string.repeat_mode_current)
-                    Player.REPEAT_MODE_ALL -> context.getString(R.string.repeat_mode_all)
-                    else -> throw IllegalArgumentException()
-                }.let(BottomSheetItemTitle::Text)
-            }
-        ) {
-            onRepeatModeClicked()
-        },
-        resizeModes.first { it.aspectRatioKey == resizeMode }.let { resizeMode ->
-            BottomSheetItem(
-                BottomSheetItemTitle.Text(context.getString(R.string.player_resize_mode)),
-                resizeMode.drawable,
-                {
-                    BottomSheetItemTitle.Text(resizeMode.title.getText(context))
-                }
-            ) {
-                onResizeModeClicked()
-            }
+            onQualityClicked()
         },
         BottomSheetItem(
             BottomSheetItemTitle.Text(context.getString(R.string.playback_speed)),
@@ -636,33 +607,6 @@ class CustomExoPlayerView(
             }
         ) {
             onPlaybackSpeedClicked()
-        },
-        BottomSheetItem(
-            BottomSheetItemTitle.Text(context.getString(R.string.sleep_timer)),
-            R.drawable.ic_sleep,
-            {
-                val text = if (SleepTimer.timeLeftMillis > 0) {
-                    val minutesLeft =
-                        ceil(SleepTimer.timeLeftMillis.toDouble() / DateUtils.MINUTE_IN_MILLIS).toInt()
-                    context.resources.getQuantityString(
-                        R.plurals.minutes_left,
-                        minutesLeft,
-                        minutesLeft
-                    )
-                } else {
-                    context.getString(R.string.disabled)
-                }
-                BottomSheetItemTitle.Text(text)
-            }
-        ) {
-            onSleepTimerClicked()
-        },
-        BottomSheetItem(
-            BottomSheetItemTitle.Text(context.getString(R.string.quality)),
-            R.drawable.ic_hd,
-            { this.getCurrentResolutionSummary().let(BottomSheetItemTitle::Text) }
-        ) {
-            onQualityClicked()
         },
         BottomSheetItem(
             BottomSheetItemTitle.Text(context.getString(R.string.audio_track)),

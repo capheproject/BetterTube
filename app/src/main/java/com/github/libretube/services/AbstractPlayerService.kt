@@ -372,6 +372,49 @@ abstract class AbstractPlayerService : MediaLibraryService(), MediaLibrarySessio
         createPlayerAndMediaSession()
     }
 
+    /**
+     * When the service is started with startForegroundService() (e.g. by Media3 when playback
+     * starts, or to resume playback at launch), Android requires startForeground() within a few
+     * seconds, or it closes the app (ForegroundServiceDidNotStartInTimeException). The media
+     * notification can take longer than that (or never come, if playback stops first), so go
+     * foreground right away with a quiet placeholder that Media3's notification replaces.
+     */
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        val result = super.onStartCommand(intent, flags, startId)
+        goForegroundNow()
+        return result
+    }
+
+    private fun goForegroundNow() {
+        runCatching {
+            val notification = androidx.core.app.NotificationCompat.Builder(
+                this, com.github.libretube.LibreTubeApp.PLAYER_CHANNEL_NAME
+            )
+                .setSmallIcon(R.drawable.ic_launcher_lockscreen)
+                .setContentTitle(getString(R.string.app_name))
+                .setSilent(true)
+                .build()
+            ServiceCompat.startForeground(
+                this,
+                com.github.libretube.enums.NotificationId.PLAYER_PLAYBACK.id,
+                notification,
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                    android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
+                } else {
+                    0
+                }
+            )
+        }.onFailure { Log.e(TAG(), "goForegroundNow: ${it.message}") }
+
+        // nothing to play after all: don't leave the placeholder behind (Media3 posts its own
+        // notification again as soon as there is something to play)
+        handler.postDelayed(PLACEHOLDER_CHECK_MS) {
+            if ((exoPlayer?.mediaItemCount ?: 0) == 0) {
+                ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
+            }
+        }
+    }
+
     open fun getIntentActivity(): Class<*> = MainActivity::class.java
 
     abstract suspend fun onServiceCreated(args: Bundle)
@@ -563,6 +606,7 @@ abstract class AbstractPlayerService : MediaLibraryService(), MediaLibrarySessio
 
     companion object {
         private const val START_SERVICE_ACTION = "start_service_action"
+        private const val PLACEHOLDER_CHECK_MS = 3_000L
         private const val STOP_SERVICE_ACTION = "stop_service_action"
         private const val RUN_PLAYER_COMMAND_ACTION = "run_player_command_action"
 
